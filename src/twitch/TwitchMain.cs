@@ -28,12 +28,11 @@ public static class TwitchMain
     Bot = new(Obj["bot"]);
 
     TwitchAPI api = new TwitchAPI(loggerFactory: Log.Factory);
+    api.Settings.ClientId = (string)Obj["id"];
+    api.Settings.Secret = (string)Obj["secret"];
 
-    Task<string> channelTokenTask = GetToken(Channel, api);
-    Task<string> botTokenTask = GetToken(Bot, api);
-
-    string channelToken = await channelTokenTask;
-    string botToken = await botTokenTask;
+    string channelToken = await GetToken(Channel, api);
+    string botToken = await GetToken(Bot, api);
 
     Task botSetup = TwitchBot.SetUp(Bot, Channel.Name);
   }
@@ -55,9 +54,9 @@ public static class TwitchMain
 
         validity = await api.Auth.ValidateAccessTokenAsync(which.Token);
       }
-      catch (BadRequestException ex)
+      catch (Exception ex)
       {
-        Logger.LogCritical($"{which.Which} token regeneration failed.");
+        Logger.LogCritical($"{which.Which} token regeneration failed. Stack trace: {ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}");
         throw new InvalidDataException("Token regeneration failed", ex);
       }
       if (validity == null)
