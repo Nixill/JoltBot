@@ -19,8 +19,10 @@ public static class Log
       {
         opts.Append = true;
         opts.FormatLogFileName = name => string.Format(name, DateTime.UtcNow);
-        opts.MinLevel = LogLevel.Debug;
-      }).AddConsole());
+        opts.MinLevel = LogLevel.Trace;
+      }).AddConsole()
+      // .SetMinimumLevel(LogLevel.Trace)
+      );
 
   // private static readonly ILogger Local = Factory.CreateLogger("BasicLogger");
 }

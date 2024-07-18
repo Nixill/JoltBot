@@ -16,12 +16,18 @@ public static class TwitchBot
   {
     ConnectionCredentials credentials = new ConnectionCredentials(auth.Name, auth.Token);
 
-    Client = new TwitchClient(loggerFactory: Log.Factory);
+    CommandDispatch.Register();
+
+    Client = new TwitchClient(loggerFactory: Log.Factory)
+    {
+      ChatCommandIdentifiers = { '!' }
+    };
 
     Client.OnConnected += ConnectHandler;
     Client.OnJoinedChannel += JoinHandler;
     Client.OnFailureToReceiveJoinConfirmation += FailJoinHandler;
     Client.OnSendReceiveData += DataHandler;
+    Client.OnChatCommandReceived += CommandDispatch.Dispatch;
 
     Logger.LogInformation("Attempting to connect...");
     Client.Initialize(credentials, channelName);
