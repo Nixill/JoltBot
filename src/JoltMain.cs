@@ -19,7 +19,7 @@ class JoltMain
   static async Task MainAsync()
   {
     Logger.LogInformation("Jolt server initializing.");
-    var setupTask = TwitchMain.SetUpTwitchConnections();
+    var setupTask = JoltTwitchMain.SetUpTwitchConnections();
 
     await Task.Delay(-1);
   }

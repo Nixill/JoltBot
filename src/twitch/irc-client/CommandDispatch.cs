@@ -1,7 +1,10 @@
 using System.Reflection;
 using Microsoft.Extensions.Logging;
+using Nixill.Streaming.JoltBot.Twitch.Api;
 using Nixill.Utils;
 using TwitchLib.Api;
+using TwitchLib.Api.Helix.Models.Channels.GetChannelEditors;
+using TwitchLib.Api.Helix.Models.Channels.GetChannelFollowers;
 using TwitchLib.Client.Events;
 
 namespace Nixill.Streaming.JoltBot.Twitch;
@@ -85,23 +88,12 @@ public static class CommandDispatch
           });
         }
 
-        TwitchUserGroup[] groups;
-
-        var groupsAttr = m.GetCustomAttribute<AllowedGroupsAttribute>();
-
-        if (groupsAttr == null)
-          groups = Enum.GetValues<TwitchUserGroup>().ToArray();
-        else if (groupsAttr.IsAllowList)
-          groups = groupsAttr.List;
-        else
-          groups = Enum.GetValues<TwitchUserGroup>().Except(groupsAttr.List).ToArray();
-
         BotCommand cmd = new BotCommand
         {
           Name = attr.Name,
           Aliases = attr.Aliases,
           Method = m,
-          AllowedGroups = groups,
+          Access = m.GetCustomAttribute<AllowedGroupsAttribute>(),
           Parameters = botParams.ToArray()
         };
 
@@ -134,7 +126,7 @@ public static class CommandDispatch
 
     BotCommand cmd = Commands[commandName];
 
-    if (!cmd.AllowedGroups.Contains(ev.GetUserGroup()))
+    if (!cmd.Access.IsAllowed(await ev.GetUserGroup(checkFollower: cmd.Access.CheckFollower(), checkEditor: cmd.Access.CheckEditor())))
     {
       await ev.ReplyAsync("You are not allowed to use this command!");
       return;
@@ -215,7 +207,7 @@ public class BotCommand
   public string Name { get; init; }
   public string[] Aliases { get; init; }
   public BotParam[] Parameters { get; init; }
-  public TwitchUserGroup[] AllowedGroups { get; init; }
+  public AllowedGroupsAttribute Access { get; init; }
   public MethodInfo Method { get; init; }
 }
 
@@ -233,23 +225,38 @@ public class BotParam
 public static class CommandExtensions
 {
   public static Task ReplyAsync(this OnChatCommandReceivedArgs ev, string message)
-    => TwitchBot.Client.SendReplyAsync(ev.ChatMessage.Channel, ev.ChatMessage.Id, message);
+    => JoltChatBot.Client.SendReplyAsync(ev.ChatMessage.Channel, ev.ChatMessage.Id, message);
 
   public static Task MessageAsync(this OnChatCommandReceivedArgs ev, string message)
-    => TwitchBot.Client.SendMessageAsync(ev.ChatMessage.Channel, message);
+    => JoltChatBot.Client.SendMessageAsync(ev.ChatMessage.Channel, message);
 
-  public static TwitchUserGroup GetUserGroup(this OnChatCommandReceivedArgs ev)
+  public static async Task<TwitchUserGroup> GetUserGroup(this OnChatCommandReceivedArgs ev, bool checkEditor = false, bool checkFollower = false)
   {
+    await Task.Delay(0);
+
+    TwitchUserGroup ret = 0;
+
     var msg = ev.ChatMessage;
     var detail = msg.UserDetail;
-    if (msg.Channel == msg.Username) return TwitchUserGroup.Broadcaster;
-    // if (TwitchAPI.Helix.Channels.GetChannelEditorsAsync().Contains(user)) return TwitchUserGroup.Editor;
-    if (detail.IsModerator) return TwitchUserGroup.Moderator;
-    if (detail.IsVip) return TwitchUserGroup.VIP;
-    if (detail.IsSubscriber) return TwitchUserGroup.Subscriber;
+
+    Task<GetChannelEditorsResponse> getEditors = null;
+    Task<GetChannelFollowersResponse> getFollowers = null;
+
+    if (checkEditor) getEditors = JoltApiClient.WithToken(api => api.Helix.Channels.GetChannelEditorsAsync(JoltTwitchMain.Channel.UserId));
+    if (checkFollower) getFollowers = JoltApiClient.WithToken(api => api.Helix.Channels.GetChannelFollowersAsync(JoltTwitchMain.Channel.UserId, msg.UserId));
+
+    bool isBroadcaster = (msg.Channel == msg.Username);
+
+    if (msg.Channel == msg.Username) ret |= TwitchUserGroup.Broadcaster;
+    if (checkEditor && (isBroadcaster || (await getEditors).Data.Any(x => x.UserId == msg.UserId))) ret |= TwitchUserGroup.Editor;
+    if (isBroadcaster || detail.IsModerator) ret |= TwitchUserGroup.Moderator;
+    if (isBroadcaster || detail.IsModerator || detail.IsVip) ret |= TwitchUserGroup.VIP;
+    if (detail.IsSubscriber) ret |= TwitchUserGroup.Subscriber;
     // TODO add a way to get a regular
-    // if (new TwitchAPI().Helix.Channels.GetChannelFollowersAsync(channel, user)) return TwitchUserGroup.Follower;
-    return TwitchUserGroup.Anyone;
+    if (checkFollower && (isBroadcaster || (await getFollowers).Data.Any(x => x.UserId == msg.UserId))) ret |= TwitchUserGroup.Follower;
+    if (ret == 0) ret = TwitchUserGroup.Anyone;
+
+    return ret;
   }
 }
 

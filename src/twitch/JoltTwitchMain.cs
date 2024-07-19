@@ -1,12 +1,13 @@
 using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging;
+using Nixill.Streaming.JoltBot.Twitch.Api;
 using TwitchLib.Api;
 using TwitchLib.Api.Auth;
 using TwitchLib.Api.Core.Exceptions;
 
 namespace Nixill.Streaming.JoltBot.Twitch;
 
-public static class TwitchMain
+public static class JoltTwitchMain
 {
   internal static AuthInfo Channel;
   internal static AuthInfo Bot;
@@ -34,7 +35,13 @@ public static class TwitchMain
     string channelToken = await GetToken(Channel, api);
     string botToken = await GetToken(Bot, api);
 
-    Task botSetup = TwitchBot.SetUp(Bot, Channel.Name);
+    Task botSetup = JoltChatBot.SetUp(Bot, Channel.Name);
+    Task clientSetup = JoltApiClient.SetUp(Channel, api);
+  }
+
+  internal static void SaveTwitchData()
+  {
+    File.WriteAllText("data/twitch.json", Obj.ToString());
   }
 
   public static async Task<string> GetToken(AuthInfo which, TwitchAPI api)
@@ -50,7 +57,7 @@ public static class TwitchMain
         RefreshResponse answer = await api.Auth.RefreshAuthTokenAsync(which.Refresh, ClientSecret);
         which.Token = answer.AccessToken;
         which.Refresh = answer.RefreshToken;
-        File.WriteAllText("data/twitch.json", Obj.ToString());
+        SaveTwitchData();
 
         validity = await api.Auth.ValidateAccessTokenAsync(which.Token);
       }
@@ -96,6 +103,11 @@ public class AuthInfo
   {
     get => (string)Obj["refresh"];
     set => Obj["refresh"] = value;
+  }
+  public string UserId
+  {
+    get => (string)Obj["uid"];
+    set => Obj["uid"] = value;
   }
   public string Which => Obj.GetPropertyName();
 

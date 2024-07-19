@@ -8,7 +8,7 @@ public static class SillyCommands
   [Command("ban")]
   public static async Task BanCommand(OnChatCommandReceivedArgs ev, [LongText] string name)
   {
-    if (ev.GetUserGroup() < TwitchUserGroup.Moderator && Random.Shared.NextDouble() < 0.05)
+    if (await ev.GetUserGroup() < TwitchUserGroup.Moderator && Random.Shared.NextDouble() < 0.05)
     {
       name = ev.ChatMessage.DisplayName;
     }

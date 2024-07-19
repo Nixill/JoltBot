@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+using Nixill.Streaming.JoltBot.Twitch.Api;
 using NodaTime;
 using NodaTime.Text;
 using NodaTime.TimeZones;
@@ -12,6 +14,40 @@ public static class InfoCommands
   [Command("discord")]
   public static Task DiscordCommand(Args ev)
     => ev.ReplyAsync("Join the Shadow Den discord server! → https://discord.nixill.net/");
+
+  [Command("images")]
+  public static Task ImagesCommand(Args ev)
+    => ev.ReplyAsync("See images and names here → https://imgur.com/a/CvUnjC0");
+
+  public static readonly Regex username = new Regex(@"@([A-Za-z0-9][A-Za-z0-9_]{0,24})");
+
+  [Command("multi", "multistream")]
+  public static async Task MultiCommand(Args ev)
+  {
+    string title = (await JoltCache.GetOwnChannelInfo()).Title;
+
+    string multiOutput = "";
+    int count = 0;
+
+    foreach (Match match in username.Matches(title))
+    {
+      multiOutput += $"/{match.Groups[1].Value}";
+      count++;
+    }
+
+    if (count == 0)
+    {
+      await ev.ReplyAsync("No multistream tonight!");
+    }
+    else if (count == 1)
+    {
+      await ev.ReplyAsync($"https://multi.nixill.net{multiOutput}/layout4");
+    }
+    else
+    {
+      await ev.ReplyAsync($"https://multi.nixill.net{multiOutput}");
+    }
+  }
 
   [Command("pronouns")]
   public static Task PronounsCommand(Args ev)

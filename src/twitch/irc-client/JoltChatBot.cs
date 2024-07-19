@@ -6,7 +6,7 @@ using TwitchLib.Client.Models;
 
 namespace Nixill.Streaming.JoltBot.Twitch;
 
-public static class TwitchBot
+public static class JoltChatBot
 {
   internal static TwitchClient Client;
 
