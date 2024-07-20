@@ -126,7 +126,7 @@ public static class CommandDispatch
 
     BotCommand cmd = Commands[commandName];
 
-    if (!cmd.Access.IsAllowed(await ev.GetUserGroup(checkFollower: cmd.Access.CheckFollower(), checkEditor: cmd.Access.CheckEditor())))
+    if (cmd.Access != null && !cmd.Access.IsAllowed(await ev.GetUserGroup(checkFollower: cmd.Access.CheckFollower, checkEditor: cmd.Access.CheckEditor)))
     {
       await ev.ReplyAsync("You are not allowed to use this command!");
       return;

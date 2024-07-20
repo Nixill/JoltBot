@@ -85,10 +85,10 @@ public static class AllowedGroupsAttributeExtension
     && !(attr.DenyList.Any(g => (g & group) == g)));
 
   public static bool CheckEditor(this AllowedGroupsAttribute attr)
-    => attr == null || attr.CheckEditor;
+    => attr != null && attr.CheckEditor;
 
   public static bool CheckFollower(this AllowedGroupsAttribute attr)
-    => attr == null || attr.CheckFollower;
+    => attr != null && attr.CheckFollower;
 }
 
 [AttributeUsage(AttributeTargets.Method)]

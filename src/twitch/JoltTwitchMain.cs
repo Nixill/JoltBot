@@ -1,6 +1,7 @@
 using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging;
 using Nixill.Streaming.JoltBot.Twitch.Api;
+using Nixill.Streaming.JoltBot.Twitch.Events;
 using TwitchLib.Api;
 using TwitchLib.Api.Auth;
 using TwitchLib.Api.Core.Exceptions;
@@ -37,6 +38,7 @@ public static class JoltTwitchMain
 
     Task botSetup = JoltChatBot.SetUp(Bot, Channel.Name);
     Task clientSetup = JoltApiClient.SetUp(Channel, api);
+    JoltEventClient.SetUp();
   }
 
   internal static void SaveTwitchData()

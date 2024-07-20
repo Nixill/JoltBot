@@ -33,7 +33,7 @@ public static class JoltApiClient
       await RefreshToken();
       return await call(Api);
     }
-    catch (BadTokenException)
+    catch (BadScopeException)
     {
       await RefreshToken();
       return await call(Api);
@@ -51,7 +51,7 @@ public static class JoltApiClient
       await RefreshToken();
       await call(Api);
     }
-    catch (BadTokenException)
+    catch (BadScopeException)
     {
       await RefreshToken();
       await call(Api);

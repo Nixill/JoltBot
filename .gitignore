@@ -4,3 +4,7 @@ data/*
 !data/get-tokens.bat
 obj/
 logs/
+
+# Just in case I accidentally run the batch file from the project folder
+channel-token.txt
+bot-token.txt
