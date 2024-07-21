@@ -1,6 +1,9 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Nixill.Streaming.JoltBot.Twitch.Api;
+using TwitchLib.Api.Helix.Models.Channels.GetChannelInformation;
+using TwitchLib.Client.Events;
 using TwitchLib.EventSub.Websockets;
 using TwitchLib.EventSub.Websockets.Client;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
@@ -10,34 +13,72 @@ namespace Nixill.Streaming.JoltBot.Twitch.Events;
 
 public class JoltEventService : IHostedService
 {
-  ILogger Logger = Log.Factory.CreateLogger("JoltEventService");
+  ILogger Logger = Log.Factory.CreateLogger(typeof(JoltEventService));
   EventSubWebsocketClient Client;
+  List<EventSubArgs> EventsToSubscribe = new();
+
+  internal async Task RegisterEventSub(string eventType, string version,
+    params KeyValuePair<string, string>[] conditions)
+  {
+    await JoltApiClient.WithToken(api => api.Helix.EventSub.CreateEventSubSubscriptionAsync(eventType, version,
+      new Dictionary<string, string>(conditions), TwitchLib.Api.Core.Enums.EventSubTransportMethod.Websocket,
+      Client.SessionId));
+  }
 
   public JoltEventService(ILogger<JoltEventService> _, EventSubWebsocketClient client)
   {
     Client = client ?? throw new ArgumentNullException(nameof(client));
 
-    Client.WebsocketConnected += OnConnect;
-    Client.ChannelChatMessage += OnChatMessage;
+    Client.WebsocketConnected += WebsocketConnected;
+    Client.WebsocketDisconnected += WebsocketDisconnected;
+    Client.WebsocketReconnected += WebsocketReconnected;
+
+    // https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/
+    EventsToSubscribe.Add(("channel.update", "2", EventCondition.Broadcaster));
+    Client.ChannelUpdate += OnChannelUpdate;
   }
 
-  private async Task OnConnect(object sender, WebsocketConnectedArgs e)
+  private async Task OnChannelUpdate(object sender, ChannelUpdateArgs ev)
+  {
+    await JoltCache.UpdateOwnChannelInfo();
+  }
+
+  private async Task WebsocketConnected(object sender, WebsocketConnectedArgs ev)
   {
     Logger.LogInformation("Connected.");
 
-    if (!e.IsRequestedReconnect)
+    if (!ev.IsRequestedReconnect)
     {
-      await JoltApiClient.WithToken(api => api.Helix.EventSub.CreateEventSubSubscriptionAsync("channel.chat.message", "1", new()
+      foreach (EventSubArgs args in EventsToSubscribe)
       {
-        ["broadcaster_user_id"] = JoltTwitchMain.Channel.UserId,
-        ["user_id"] = JoltTwitchMain.Channel.UserId
-      }, TwitchLib.Api.Core.Enums.EventSubTransportMethod.Websocket, Client.SessionId));
+        Task _ = RegisterEventSub(args.Name, args.Version, args.Conditions);
+      }
     }
+
+    await Task.Delay(0);
   }
 
-  private async Task OnChatMessage(Object sender, ChannelChatMessageArgs ev)
+  private async Task WebsocketDisconnected(object sender, EventArgs ev)
   {
-    Logger.LogInformation("Chat message received.");
+    Logger.LogWarning("Disconnected.");
+
+    int time = 1;
+    int count = 1;
+    bool connected = false;
+
+    do
+    {
+      await Task.Delay(TimeSpan.FromSeconds(time));
+      Logger.LogInformation($"Reconnect attempt #{count++}...");
+      time *= 2;
+    } while (!(connected = await Client.ReconnectAsync()) && count < 10);
+
+    if (!connected) Logger.LogCritical("Reconnect failed.");
+  }
+
+  private async Task WebsocketReconnected(object sender, EventArgs ev)
+  {
+    Logger.LogWarning("Reconnected.");
     await Task.Delay(0);
   }
 
@@ -50,4 +91,29 @@ public class JoltEventService : IHostedService
   {
     await Client.DisconnectAsync();
   }
+}
+
+internal struct EventSubArgs
+{
+  public string Name { get; init; }
+  public string Version { get; init; }
+  public KeyValuePair<string, string>[] Conditions { get; init; }
+
+  public static implicit operator EventSubArgs((string Name, string Version, KeyValuePair<string, string> Condition) input)
+    => new EventSubArgs
+    {
+      Name = input.Name,
+      Version = input.Version,
+      Conditions = new KeyValuePair<string, string>[] { input.Condition }
+    };
+
+  public static implicit operator EventSubArgs(
+    (string Name, string Version, KeyValuePair<string, string> Condition1, KeyValuePair<string, string> Condition2) input
+  )
+    => new EventSubArgs
+    {
+      Name = input.Name,
+      Version = input.Version,
+      Conditions = new KeyValuePair<string, string>[] { input.Condition1, input.Condition2 }
+    };
 }

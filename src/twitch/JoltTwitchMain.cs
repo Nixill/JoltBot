@@ -13,7 +13,7 @@ public static class JoltTwitchMain
   internal static AuthInfo Channel;
   internal static AuthInfo Bot;
 
-  static ILogger Logger = Log.Factory.CreateLogger("TwitchMain");
+  static ILogger Logger = Log.Factory.CreateLogger(typeof(JoltTwitchMain));
 
   static JsonObject Obj;
 

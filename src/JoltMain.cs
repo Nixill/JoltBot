@@ -12,7 +12,7 @@ namespace Nixill.Streaming.JoltBot;
 
 class JoltMain
 {
-  static ILogger Logger = Log.Factory.CreateLogger("JoltMain");
+  static ILogger Logger = Log.Factory.CreateLogger(typeof(JoltMain));
 
   static void Main(string[] args) => MainAsync().GetAwaiter().GetResult();
 

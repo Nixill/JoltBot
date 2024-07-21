@@ -10,7 +10,7 @@ public static class JoltChatBot
 {
   internal static TwitchClient Client;
 
-  static ILogger Logger = Log.Factory.CreateLogger("TwitchBot");
+  static ILogger Logger = Log.Factory.CreateLogger(typeof(JoltChatBot));
 
   public static async Task SetUp(AuthInfo auth, string channelName)
   {

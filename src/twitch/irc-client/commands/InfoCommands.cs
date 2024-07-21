@@ -55,6 +55,9 @@ public static class InfoCommands
       + "https://pronouns.alejo.io/, you can get an extension to view people's pronouns or set them for other users of"
       + "the extension.");
 
+  // [Command("song")]
+  // public static Task SongCommand
+
   static DateTimeZone Here = BclDateTimeZone.ForSystemDefault();
   static SystemClock Clock = SystemClock.Instance;
   static Instant Now => Clock.GetCurrentInstant();

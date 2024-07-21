@@ -11,7 +11,7 @@ namespace Nixill.Streaming.JoltBot.Twitch;
 
 public static class CommandDispatch
 {
-  static ILogger logger = Log.Factory.CreateLogger("CommandDispatch");
+  static ILogger logger = Log.Factory.CreateLogger(typeof(CommandDispatch));
   static Dictionary<string, BotCommand> Commands;
   static Dictionary<Type, Func<IList<string>, bool, object>> Deserializers;
 

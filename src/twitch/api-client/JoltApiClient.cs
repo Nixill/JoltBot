@@ -7,7 +7,7 @@ namespace Nixill.Streaming.JoltBot.Twitch.Api;
 
 public static class JoltApiClient
 {
-  static ILogger Logger = Log.Factory.CreateLogger("JoltApiClient");
+  static ILogger Logger = Log.Factory.CreateLogger(typeof(JoltApiClient));
 
   static AuthInfo ClientInfo;
   static TwitchAPI Api;

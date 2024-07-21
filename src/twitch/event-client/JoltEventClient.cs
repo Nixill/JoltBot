@@ -10,7 +10,7 @@ namespace Nixill.Streaming.JoltBot.Twitch.Events;
 
 public static class JoltEventClient
 {
-  static ILogger Logger = Log.Factory.CreateLogger("JoltEventClient");
+  static ILogger Logger = Log.Factory.CreateLogger(typeof(JoltEventClient));
 
   public static void SetUp()
   {
