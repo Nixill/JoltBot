@@ -11,12 +11,14 @@
   <ItemGroup>
     <PackageReference Include="TwitchLib.Api" Version="3.10.0-preview-9ccfdfb" />
     <PackageReference Include="TwitchLib.Client" Version="4.0.0-preview-5677f50eb2a7544e1b9b136a0e1537abf5083385" />
-    <PackageReference Include="TwitchLib.EventSub.Websockets" Version="0.5.0" />
+    <PackageReference Include="TwitchLib.EventSub.Websockets" Version="0.5.0-preview-abba5e7 " />
     <PackageReference Include="Nixill" Version="0.11.1" />
     <PackageReference Include="NodaTime" Version="3.1.11" />
     <PackageReference Include="NReco.Logging.File" Version="1.2.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Websocket.Client" Version="5.1.2" />
+    <PackageReference Include="Quartz" Version="3.11.0" />
   </ItemGroup>
 
 </Project>

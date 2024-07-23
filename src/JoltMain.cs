@@ -1,6 +1,9 @@
 ﻿using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
+using Nixill.Streaming.JoltBot.OBS;
+using Nixill.Streaming.JoltBot.Pipes;
+using Nixill.Streaming.JoltBot.Scheduled;
 using Nixill.Streaming.JoltBot.Twitch;
 using TwitchLib.Api;
 using TwitchLib.Client;
@@ -19,7 +22,11 @@ class JoltMain
   static async Task MainAsync()
   {
     Logger.LogInformation("Jolt server initializing.");
-    var setupTask = JoltTwitchMain.SetUpTwitchConnections();
+    var twitchSetupTask = JoltTwitchMain.SetUpTwitchConnections();
+    var obsSetupTask = OBSClient.SetUp();
+
+    PipeRunner.SetUp();
+    ScheduledActions.RunAll();
 
     await Task.Delay(-1);
   }
