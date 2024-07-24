@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Nixill.Streaming.JoltBot.JSON;
 using NodaTime;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelInformation;
 using TwitchLib.EventSub.Core.SubscriptionTypes.Channel;
@@ -32,11 +33,11 @@ public static class JoltCache
     Logger.LogInformation("Refreshing channel information...");
     var response = await JoltApiClient.WithToken(
           api => api.Helix.Channels.GetChannelInformationAsync(
-            JoltTwitchMain.Channel.UserId
+            TwitchJson.Channel.UserId
           )
         );
 
-    _OwnChannelInfo = response.Data.Where(i => i.BroadcasterId == JoltTwitchMain.Channel.UserId).First();
+    _OwnChannelInfo = response.Data.Where(i => i.BroadcasterId == TwitchJson.Channel.UserId).First();
     _Update_OwnChannelInfo = Now;
   }
 }

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Nixill.Streaming.JoltBot.JSON;
 using TwitchLib.Api;
 using TwitchLib.Api.Auth;
 using TwitchLib.Api.Core.Exceptions;
@@ -61,9 +62,9 @@ public static class JoltApiClient
   static async Task RefreshToken()
   {
     Logger.LogWarning("Client API key expired, refreshing...");
-    RefreshResponse answer = await Api.Auth.RefreshAuthTokenAsync(ClientInfo.Refresh, JoltTwitchMain.ClientSecret);
+    RefreshResponse answer = await Api.Auth.RefreshAuthTokenAsync(ClientInfo.Refresh, TwitchJson.Secret);
     ClientInfo.Token = Api.Settings.AccessToken = answer.AccessToken;
     ClientInfo.Refresh = answer.RefreshToken;
-    JoltTwitchMain.SaveTwitchData();
+    TwitchJson.Save();
   }
 }

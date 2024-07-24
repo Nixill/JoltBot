@@ -1,3 +1,4 @@
+#pragma warning disable CA1416
 using System.IO.Pipes;
 using System.Text.Json.Nodes;
 
@@ -11,7 +12,8 @@ public static class PipeServer
   {
     while (true)
     {
-      NamedPipeServerStream server = new NamedPipeServerStream("NixJoltBot", PipeDirection.In, 1, PipeTransmissionMode.Byte, PipeOptions.CurrentUserOnly);
+      NamedPipeServerStream server = new NamedPipeServerStream("NixJoltBot", PipeDirection.In, 1,
+        PipeTransmissionMode.Byte, PipeOptions.CurrentUserOnly);
 
       server.WaitForConnection();
 

@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Nixill.Streaming.JoltBot.JSON;
 using NReco.Logging.File;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -57,4 +58,7 @@ public static class JoltChatBot
     Logger.LogTrace($"{ev.Direction} {ev.Data}");
     return Task.CompletedTask;
   }
+
+  public static async Task Chat(string message) =>
+    await Client.SendMessageAsync(TwitchJson.Channel.Name, message);
 }

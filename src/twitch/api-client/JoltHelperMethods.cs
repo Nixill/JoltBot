@@ -15,7 +15,4 @@ public static class JoltHelperMethods
     else
       return null;
   }
-
-  public static string GetOwnUserId()
-    => JoltTwitchMain.Channel.UserId;
 }

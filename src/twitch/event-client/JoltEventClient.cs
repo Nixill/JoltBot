@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -12,7 +13,7 @@ public static class JoltEventClient
 {
   static ILogger Logger = Log.Factory.CreateLogger(typeof(JoltEventClient));
 
-  public static void SetUp()
+  public static Task SetUp()
   {
     Host.CreateDefaultBuilder()
       .ConfigureServices((hostContext, services) =>
@@ -20,5 +21,6 @@ public static class JoltEventClient
         services.AddTwitchLibEventSubWebsockets()
           .AddHostedService<JoltEventService>();
       }).Build().Run();
+    return Task.CompletedTask;
   }
 }

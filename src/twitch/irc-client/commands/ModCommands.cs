@@ -1,3 +1,4 @@
+using Nixill.Streaming.JoltBot.JSON;
 using Nixill.Streaming.JoltBot.Twitch.Api;
 using TwitchLib.Api.Helix.Models.Chat.ChatSettings;
 using Args = TwitchLib.Client.Events.OnChatCommandReceivedArgs;
@@ -11,8 +12,8 @@ public static class ModCommands
   public static async Task CloseChatCommand(Args ev)
   {
     await JoltApiClient.WithToken(api => api.Helix.Chat.UpdateChatSettingsAsync(
-      JoltTwitchMain.Channel.UserId,
-      JoltTwitchMain.Channel.UserId,
+      TwitchJson.Channel.UserId,
+      TwitchJson.Channel.UserId,
       new ChatSettings
       {
         EmoteMode = true,
@@ -29,8 +30,8 @@ public static class ModCommands
   public static async Task OpenChatCommand(Args ev)
   {
     await JoltApiClient.WithToken(api => api.Helix.Chat.UpdateChatSettingsAsync(
-      JoltTwitchMain.Channel.UserId,
-      JoltTwitchMain.Channel.UserId,
+      TwitchJson.Channel.UserId,
+      TwitchJson.Channel.UserId,
       new ChatSettings
       {
         EmoteMode = false,

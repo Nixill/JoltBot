@@ -1,5 +1,6 @@
 using System.Reflection;
 using Microsoft.Extensions.Logging;
+using Nixill.Streaming.JoltBot.JSON;
 using Nixill.Streaming.JoltBot.Twitch.Api;
 using Nixill.Utils;
 using TwitchLib.Api;
@@ -242,8 +243,8 @@ public static class CommandExtensions
     Task<GetChannelEditorsResponse> getEditors = null;
     Task<GetChannelFollowersResponse> getFollowers = null;
 
-    if (checkEditor) getEditors = JoltApiClient.WithToken(api => api.Helix.Channels.GetChannelEditorsAsync(JoltTwitchMain.Channel.UserId));
-    if (checkFollower) getFollowers = JoltApiClient.WithToken(api => api.Helix.Channels.GetChannelFollowersAsync(JoltTwitchMain.Channel.UserId, msg.UserId));
+    if (checkEditor) getEditors = JoltApiClient.WithToken(api => api.Helix.Channels.GetChannelEditorsAsync(TwitchJson.Channel.UserId));
+    if (checkFollower) getFollowers = JoltApiClient.WithToken(api => api.Helix.Channels.GetChannelFollowersAsync(TwitchJson.Channel.UserId, msg.UserId));
 
     bool isBroadcaster = (msg.Channel == msg.Username);
 

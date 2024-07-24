@@ -36,6 +36,9 @@ public class JoltEventService : IHostedService
     // https://dev.twitch.tv/docs/eventsub/eventsub-subscription-types/
     EventsToSubscribe.Add(("channel.update", "2", EventCondition.Broadcaster));
     Client.ChannelUpdate += OnChannelUpdate;
+
+    EventsToSubscribe.Add(("channel.channel_points_custom_reward_redemption.add", "1", EventCondition.Broadcaster));
+    Client.ChannelPointsCustomRewardRedemptionAdd += JoltRewards.Redemption;
   }
 
   private async Task OnChannelUpdate(object sender, ChannelUpdateArgs ev)
