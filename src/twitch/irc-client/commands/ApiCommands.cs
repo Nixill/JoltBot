@@ -34,8 +34,8 @@ public static class ApiCommands
       return;
     }
 
-    Task sendShoutout = JoltApiClient.WithToken(api =>
-      api.Helix.Chat.SendShoutoutAsync(TwitchJson.Channel.UserId, userId, TwitchJson.Channel.UserId));
+    Task sendShoutout = JoltApiClient.WithToken((api, id) =>
+      api.Helix.Chat.SendShoutoutAsync(id, userId, id));
 
     var userInfo = (await JoltApiClient.WithToken(api => api.Helix.Channels.GetChannelInformationAsync(userId)))
       .Data.Where(ui => ui.BroadcasterId == userId).First();

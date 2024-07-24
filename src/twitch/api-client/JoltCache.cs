@@ -32,9 +32,7 @@ public static class JoltCache
   {
     Logger.LogInformation("Refreshing channel information...");
     var response = await JoltApiClient.WithToken(
-          api => api.Helix.Channels.GetChannelInformationAsync(
-            TwitchJson.Channel.UserId
-          )
+          (api, id) => api.Helix.Channels.GetChannelInformationAsync(id)
         );
 
     _OwnChannelInfo = response.Data.Where(i => i.BroadcasterId == TwitchJson.Channel.UserId).First();

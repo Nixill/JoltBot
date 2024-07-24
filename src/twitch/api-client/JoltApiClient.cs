@@ -23,39 +23,41 @@ public static class JoltApiClient
     return Task.CompletedTask;
   }
 
-  internal static async Task<T> WithToken<T>(Func<TwitchAPI, Task<T>> call)
+  internal static Task<T> WithToken<T>(Func<TwitchAPI, Task<T>> call) => WithToken((api, _) => call(api));
+  internal static async Task<T> WithToken<T>(Func<TwitchAPI, string, Task<T>> call)
   {
     try
     {
-      return await call(Api);
+      return await call(Api, TwitchJson.Channel.UserId);
     }
     catch (TokenExpiredException)
     {
       await RefreshToken();
-      return await call(Api);
+      return await call(Api, TwitchJson.Channel.UserId);
     }
     catch (BadScopeException)
     {
       await RefreshToken();
-      return await call(Api);
+      return await call(Api, TwitchJson.Channel.UserId);
     }
   }
 
-  internal static async Task WithToken(Func<TwitchAPI, Task> call)
+  internal static Task WithToken<T>(Func<TwitchAPI, Task> call) => WithToken((api, _) => call(api));
+  internal static async Task WithToken(Func<TwitchAPI, string, Task> call)
   {
     try
     {
-      await call(Api);
+      await call(Api, TwitchJson.Channel.UserId);
     }
     catch (TokenExpiredException)
     {
       await RefreshToken();
-      await call(Api);
+      await call(Api, TwitchJson.Channel.UserId);
     }
     catch (BadScopeException)
     {
       await RefreshToken();
-      await call(Api);
+      await call(Api, TwitchJson.Channel.UserId);
     }
   }
 

@@ -243,8 +243,8 @@ public static class CommandExtensions
     Task<GetChannelEditorsResponse> getEditors = null;
     Task<GetChannelFollowersResponse> getFollowers = null;
 
-    if (checkEditor) getEditors = JoltApiClient.WithToken(api => api.Helix.Channels.GetChannelEditorsAsync(TwitchJson.Channel.UserId));
-    if (checkFollower) getFollowers = JoltApiClient.WithToken(api => api.Helix.Channels.GetChannelFollowersAsync(TwitchJson.Channel.UserId, msg.UserId));
+    if (checkEditor) getEditors = JoltApiClient.WithToken((api, id) => api.Helix.Channels.GetChannelEditorsAsync(id));
+    if (checkFollower) getFollowers = JoltApiClient.WithToken((api, id) => api.Helix.Channels.GetChannelFollowersAsync(id, msg.UserId));
 
     bool isBroadcaster = (msg.Channel == msg.Username);
 

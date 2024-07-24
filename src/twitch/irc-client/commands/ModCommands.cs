@@ -11,9 +11,9 @@ public static class ModCommands
   [Command("closechat")]
   public static async Task CloseChatCommand(Args ev)
   {
-    await JoltApiClient.WithToken(api => api.Helix.Chat.UpdateChatSettingsAsync(
-      TwitchJson.Channel.UserId,
-      TwitchJson.Channel.UserId,
+    await JoltApiClient.WithToken((api, id) => api.Helix.Chat.UpdateChatSettingsAsync(
+      id,
+      id,
       new ChatSettings
       {
         EmoteMode = true,
@@ -29,9 +29,9 @@ public static class ModCommands
   [Command("openchat")]
   public static async Task OpenChatCommand(Args ev)
   {
-    await JoltApiClient.WithToken(api => api.Helix.Chat.UpdateChatSettingsAsync(
-      TwitchJson.Channel.UserId,
-      TwitchJson.Channel.UserId,
+    await JoltApiClient.WithToken((api, id) => api.Helix.Chat.UpdateChatSettingsAsync(
+      id,
+      id,
       new ChatSettings
       {
         EmoteMode = false,
