@@ -23,7 +23,7 @@ class JoltMain
   {
     Logger.LogInformation("Jolt server initializing.");
     var twitchSetupTask = JoltTwitchMain.SetUpTwitchConnections();
-    var obsSetupTask = OBSClient.SetUp();
+    var obsSetupTask = JoltOBSClient.SetUp();
 
     PipeRunner.SetUp();
     ScheduledActions.RunAll();

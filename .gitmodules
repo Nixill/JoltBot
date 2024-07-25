@@ -1,0 +1,3 @@
+[submodule "CSharp.Nixill.OBSWS"]
+	path = CSharp.Nixill.OBSWS
+	url = https://github.com/StevenH237/CSharp.Nixill.OBSWS

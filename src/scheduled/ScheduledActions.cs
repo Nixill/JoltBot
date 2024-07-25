@@ -22,12 +22,12 @@ public class ScheduledActions
 
     while (true)
     {
-      if (OBSClient.IsConnected)
+      if (JoltOBSClient.IsConnected)
       {
         string timeNow = pattern.Format(SystemClock.Instance.GetCurrentInstant().InZone(defaultZone));
         if (timeNow != lastTimeUpdate)
         {
-          OBSClient.SendRequest("SetInputSettings", new JsonObject
+          JoltOBSClient.Client.SendRequest("SetInputSettings", new JsonObject
           {
             ["inputName"] = "txt_Clock",
             ["inputSettings"] = new JsonObject

@@ -28,25 +28,4 @@ public static class BasicCommands
 
   static ZonedDateTimePattern ZDTPattern = ZonedDateTimePattern.CreateWithInvariantCulture("ddd HH:mm:ss", null);
   static DateTimeZone DefaultZone = BclDateTimeZone.ForSystemDefault();
-
-  [Command("time")]
-  public static async Task TimeCommand(Args ev)
-  {
-    try
-    {
-      var response = await OBSClient.SendRequest("SetInputSettings", new JsonObject
-      {
-        ["inputName"] = "txt_Clock",
-        ["inputSettings"] = new JsonObject
-        {
-          ["text"] = ZDTPattern.Format(SystemClock.Instance.GetCurrentInstant().InZone(DefaultZone))
-        }
-      });
-      await ev.ReplyAsync("Success!");
-    }
-    catch (Exception e)
-    {
-      await ev.ReplyAsync($"Failed: {e.GetType().Name} thrown");
-    }
-  }
 }

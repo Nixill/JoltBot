@@ -1,0 +1,2 @@
+[CSharp.Nixill.OBSWS/Program/*.cs]
+dotnet_diagnostic.CS8632.severity=none
