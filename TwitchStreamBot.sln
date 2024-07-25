@@ -1,25 +1,28 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.5.002.0
+VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TwitchStreamBot", "TwitchStreamBot.csproj", "{CF0EE200-4F3E-45F4-AE5F-CB6C1919DF34}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp.Nixill.OBSWS", "CSharp.Nixill.OBSWS\CSharp.Nixill.OBSWS.csproj", "{DC2BEF1F-7631-4DB4-ABB6-C847DA99B5DE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchStreamBot", "TwitchStreamBot\TwitchStreamBot.csproj", "{E8DE3A82-489B-47B3-A43E-35D234B32C6D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CF0EE200-4F3E-45F4-AE5F-CB6C1919DF34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF0EE200-4F3E-45F4-AE5F-CB6C1919DF34}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF0EE200-4F3E-45F4-AE5F-CB6C1919DF34}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF0EE200-4F3E-45F4-AE5F-CB6C1919DF34}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {25BBACE3-684B-40FB-A937-D48BCFD761BC}
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DC2BEF1F-7631-4DB4-ABB6-C847DA99B5DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DC2BEF1F-7631-4DB4-ABB6-C847DA99B5DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DC2BEF1F-7631-4DB4-ABB6-C847DA99B5DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DC2BEF1F-7631-4DB4-ABB6-C847DA99B5DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8DE3A82-489B-47B3-A43E-35D234B32C6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8DE3A82-489B-47B3-A43E-35D234B32C6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8DE3A82-489B-47B3-A43E-35D234B32C6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8DE3A82-489B-47B3-A43E-35D234B32C6D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -20,8 +20,8 @@
     <PackageReference Include="Quartz" Version="3.11.0" />
     <PackageReference Include="Websocket.Client" Version="5.1.2" />
   </ItemGroup>
-  <!-- <ItemGroup>
-    <ProjectReference Include="CSharp.Nixill.OBSWS\CSharp.Nixill.OBSWS.csproj" />
-  </ItemGroup> -->
+  <ItemGroup>
+    <ProjectReference Include="..\CSharp.Nixill.OBSWS\CSharp.Nixill.OBSWS.csproj" />
+  </ItemGroup>
 
 </Project>

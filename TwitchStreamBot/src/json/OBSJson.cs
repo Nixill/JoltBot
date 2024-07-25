@@ -13,8 +13,8 @@ public static class OBSJson
 
   public static class Server
   {
-    public static string IP = (string)Root["ip"];
-    public static int Port = (int)Root["port"];
-    public static string Password = (string)Root["password"];
+    public static string IP = (string)Root["server"]["ip"];
+    public static int Port = (int)Root["server"]["port"];
+    public static string Password = (string)Root["server"]["password"];
   }
 }
