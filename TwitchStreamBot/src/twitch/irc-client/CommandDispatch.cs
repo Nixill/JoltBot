@@ -63,7 +63,13 @@ public static class CommandDispatch
           if (p.CustomAttributes.Any(a => a.AttributeType == typeof(ParamArrayAttribute)))
             return p.ParameterType.GetElementType();
           else
-            return p.ParameterType;
+          {
+            Type t = Nullable.GetUnderlyingType(p.ParameterType);
+            if (t != null)
+              return t;
+            else
+              return p.ParameterType;
+          }
         }).Where(t => !Deserializers.ContainsKey(t));
         if (unusableTypes.Any())
           throw new IllegalCommandException(m, $"No deserializer exists for type(s) {unusableTypes.SJoin(", ")}");
@@ -84,8 +90,9 @@ public static class CommandDispatch
             Name = p.Name,
             IsLongText = p.GetCustomAttribute(typeof(LongTextAttribute)) != null,
             IsVararg = isVararg,
-            Type = isVararg ? p.ParameterType.GetElementType() : p.ParameterType,
-            Optional = p.HasDefaultValue
+            Type = isVararg ? p.ParameterType.GetElementType() : Nullable.GetUnderlyingType(p.ParameterType) ?? p.ParameterType,
+            Optional = p.HasDefaultValue || Nullable.GetUnderlyingType(p.ParameterType) != null,
+            DefaultValue = (p.HasDefaultValue) ? p.DefaultValue : null
           });
         }
 
@@ -158,7 +165,11 @@ public static class CommandDispatch
           object input = par.Deserialize(words);
           pars.Add(input);
         }
-        else if (!par.Optional)
+        else if (par.Optional)
+        {
+          pars.Add(par.DefaultValue);
+        }
+        else
         {
           throw new NoValueException(par.Name);
         }
@@ -219,6 +230,7 @@ public class BotParam
   public bool IsLongText { get; init; }
   public bool IsVararg { get; init; }
   public bool Optional { get; init; }
+  public object DefaultValue { get; init; }
 
   public object Deserialize(IList<string> input) => CommandDispatch.Deserialize(Type, input, IsLongText);
 }

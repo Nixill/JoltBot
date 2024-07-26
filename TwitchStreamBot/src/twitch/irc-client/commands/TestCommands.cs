@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using Nixill.OBSWS;
 using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Utils;
 using NodaTime;
@@ -28,4 +29,43 @@ public static class BasicCommands
 
   static ZonedDateTimePattern ZDTPattern = ZonedDateTimePattern.CreateWithInvariantCulture("ddd HH:mm:ss", null);
   static DateTimeZone DefaultZone = BclDateTimeZone.ForSystemDefault();
+
+  [Command("time")]
+  public static async Task GetClockTime(Args ev)
+  {
+    OBSRequest<InputSettingsResponse> request = OBSRequests.Inputs.GetInputSettings("txt_Clock");
+    InputSettingsResponse response = await JoltOBSClient.Client.SendRequest(request);
+    string returnedTime = (string)(response.InputSettings["text"]);
+
+    await ev.ReplyAsync(returnedTime);
+  }
+
+  [Command("ad start")]
+  public static async Task RunAnAd(Args ev, int length = 180)
+  {
+    if (AdManager.TryStartAd(length) == true)
+    {
+      await ev.ReplyAsync("Ads will run in one minute!");
+      return;
+    }
+
+    Task _ = AdManager.RunAdAfterCountdown();
+    AdManager.NextAdDuration = 180;
+
+    await ev.ReplyAsync("Ads will run in one minute!");
+  }
+
+  [Command("ad stop", "ad cancel")]
+  public static async Task StopAnAd(Args ev)
+  {
+    if (AdManager.TryStopAd())
+    {
+      Task _ = AdManager.StopAdCountdown();
+      await ev.ReplyAsync("Stopped the upcoming ad break!");
+    }
+    else
+    {
+      await ev.ReplyAsync("There is no upcoming ad break! (Or it's already running; this cannot be cancelled.)");
+    }
+  }
 }

@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using Nixill.OBSWS;
 using Nixill.Streaming.JoltBot.OBS;
 using NodaTime;
 using NodaTime.Text;
@@ -22,21 +23,21 @@ public class ScheduledActions
 
     while (true)
     {
-      if (JoltOBSClient.IsConnected)
+      try
       {
-        string timeNow = pattern.Format(SystemClock.Instance.GetCurrentInstant().InZone(defaultZone));
-        if (timeNow != lastTimeUpdate)
+        if (JoltOBSClient.IsConnected)
         {
-          JoltOBSClient.Client.SendRequest("SetInputSettings", new JsonObject
+          string timeNow = pattern.Format(SystemClock.Instance.GetCurrentInstant().InZone(defaultZone));
+          if (timeNow != lastTimeUpdate)
           {
-            ["inputName"] = "txt_Clock",
-            ["inputSettings"] = new JsonObject
-            {
-              ["text"] = timeNow
-            }
-          });
-          lastTimeUpdate = timeNow;
+            JoltOBSClient.Client.SendRequest(OBSRequests.Inputs.Types.Text.SetInputText("txt_Clock", timeNow));
+            lastTimeUpdate = timeNow;
+          }
         }
+      }
+      catch (RequestTimedOutException)
+      {
+        // do nothing, just try again
       }
 
       Thread.Sleep(50);

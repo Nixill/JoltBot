@@ -15,6 +15,22 @@ public static class JoltOBSClient
   {
     Client = new(OBSJson.Server.IP, OBSJson.Server.Port, OBSJson.Server.Password, loggerFactory: Log.Factory);
 
+    Client.Events.Outputs.VirtualcamStarted += AdsAtStartOfStream;
+
     await Client.Connect();
   }
+
+  private static void AdsAtStartOfStream(object sender, OutputStateChanged e)
+  {
+    if (!AdManager.CountdownRunning) { Task _ = AdManager.RunAdAfterCountdown(); }
+  }
+
+  public static Task<T> Send<T>(this OBSRequest<T> request, int timeout = 300) where T : OBSRequestResult
+  => Client.SendRequest(request);
+
+  public static Task Send(this OBSVoidRequest request, int timeout = 300)
+    => Client.SendRequest(request);
+
+  public static void SendWithoutWaiting(this OBSRequest request)
+    => Client.SendRequestWithoutWaiting(request);
 }
