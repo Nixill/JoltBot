@@ -1,6 +1,6 @@
 .vscode/
 bin/
-/TwitchStreamBot/data/*
+data/*
 !data/get-tokens.bat
 obj/
 logs/
