@@ -25,7 +25,7 @@ public class ScheduledActions
     {
       try
       {
-        if (JoltOBSClient.IsConnected)
+        if (JoltOBSClient.IsIdentified)
         {
           string timeNow = pattern.Format(SystemClock.Instance.GetCurrentInstant().InZone(defaultZone));
           if (timeNow != lastTimeUpdate)

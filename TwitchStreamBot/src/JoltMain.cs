@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
+using Nixill.Streaming.JoltBot.Discord;
 using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Streaming.JoltBot.Pipes;
 using Nixill.Streaming.JoltBot.Scheduled;
@@ -24,10 +25,22 @@ class JoltMain
     Logger.LogInformation("Jolt server initializing.");
     var twitchSetupTask = JoltTwitchMain.SetUpTwitchConnections();
     var obsSetupTask = JoltOBSClient.SetUp();
+    var discordSetupTask = WebhookClient.SetUp();
 
     PipeRunner.SetUp();
     ScheduledActions.RunAll();
 
+    await twitchSetupTask;
+    await obsSetupTask;
+    await discordSetupTask;
+
+    await MiscStartupActions();
+
     await Task.Delay(-1);
+  }
+
+  static async Task MiscStartupActions()
+  {
+    await StreamStopper.CheckUpdatedOnStartup();
   }
 }

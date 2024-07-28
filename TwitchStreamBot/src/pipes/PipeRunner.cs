@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging;
 using Nixill.Streaming.JoltBot.OBS;
@@ -19,13 +20,44 @@ public static class PipeRunner
 
       string req = (string)data["request"];
 
-      switch (req)
+      try
       {
-        case null: break;
-        case "Ad.Start":
-          AdManager.TryStartAd((int?)data["length"] ?? 180);
-          break;
-        case "Ad.Stop": AdManager.TryStopAd(); break;
+        Task _;
+        switch (req)
+        {
+          case null: break;
+          case "Ad.Start":
+            AdManager.TryStartAd((int?)data["length"] ?? 180);
+            break;
+          case "Ad.Stop": AdManager.TryStopAd(); break;
+          case "Markers.Place":
+            _ = MarkerButton.Place();
+            break;
+          case "Scenes.Switch":
+            string scene = (string)data["scene"];
+            string[] show = JsonSerializer.Deserialize<string[]>(data["show"]);
+            _ = SceneSwitcher.SwitchTo(scene, show);
+            break;
+          case "Screenshot.Send":
+            string format = (string)data["format"] ?? "png";
+            string source, sourceType;
+            if (data["source"] != null)
+            {
+              source = (string)data["source"];
+              sourceType = "source";
+            }
+            else
+            {
+              source = (string)data["special"] ?? "gameSources";
+              sourceType = "special";
+            }
+            _ = ScreenshotButton.Press(format, source, sourceType);
+            break;
+        }
+      }
+      catch (Exception ex)
+      {
+        Logger.LogError(ex, "Exception while running piped command");
       }
     };
   }

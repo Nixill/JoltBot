@@ -17,4 +17,12 @@ public static class OBSJson
     public static int Port = (int)Root["server"]["port"];
     public static string Password = (string)Root["server"]["password"];
   }
+
+  public static Dictionary<string, string[]> SceneSwitcher = ((JsonObject)Root["sceneSwitcher"])
+    .Select(kvp => (
+      kvp.Key,
+      ((JsonArray)kvp.Value)
+        .Select(s => (string)s)
+        .ToArray()))
+    .ToDictionary();
 }

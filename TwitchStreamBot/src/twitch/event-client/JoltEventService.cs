@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Streaming.JoltBot.Twitch.Api;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelInformation;
 using TwitchLib.Client.Events;
@@ -44,6 +45,7 @@ public class JoltEventService : IHostedService
   private async Task OnChannelUpdate(object sender, ChannelUpdateArgs ev)
   {
     await JoltCache.UpdateOwnChannelInfo();
+    await StreamStopper.HandleStreamUpdate(await JoltCache.GetOwnChannelInfo());
   }
 
   private async Task WebsocketConnected(object sender, WebsocketConnectedArgs ev)
