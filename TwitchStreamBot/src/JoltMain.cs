@@ -25,14 +25,14 @@ class JoltMain
     Logger.LogInformation("Jolt server initializing.");
     var twitchSetupTask = JoltTwitchMain.SetUpTwitchConnections();
     var obsSetupTask = JoltOBSClient.SetUp();
-    var discordSetupTask = WebhookClient.SetUp();
+    // var discordSetupTask = WebhookClient.SetUp();
 
     PipeRunner.SetUp();
     ScheduledActions.RunAll();
 
     await twitchSetupTask;
     await obsSetupTask;
-    await discordSetupTask;
+    // await discordSetupTask;
 
     await MiscStartupActions();
 

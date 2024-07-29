@@ -7,20 +7,19 @@ namespace Nixill.Streaming.JoltBot.Discord;
 public static class WebhookClient
 {
   static DiscordWebhookClient Client;
+  static Dictionary<string, DiscordWebhook> WebhookChannels = new();
 
   public static async Task SetUp()
   {
     Client = new();
-    foreach (var value in DiscordJson.Webhooks)
+    foreach (var kvp in DiscordJson.Webhooks)
     {
-      await Client.AddWebhookAsync(value.Value.ID, value.Value.Secret);
+      WebhookChannels[kvp.Key] = await Client.AddWebhookAsync(kvp.Value.ID, kvp.Value.Secret);
     }
   }
 
   static DiscordWebhook GetWebhook(string channelName)
-    => Client.Webhooks
-      .Where(x => x.ChannelId == DiscordJson.Webhooks[channelName].ID)
-      .First();
+    => WebhookChannels[channelName];
 
   public static async Task SendMessage(string channelName, string text)
     => await GetWebhook(channelName)

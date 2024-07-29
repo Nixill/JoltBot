@@ -30,7 +30,7 @@ Parameters:
 - `show` (string[]): Which sources within that scene to show, hiding the rest (out of an arbitrarily selected set of elements on that scene)
 
 
-# `Screenshot.Save`
+# `Screenshots.Save`
 Saves a screenshot of active sources, and sends it over discord.
 
 Parameters:

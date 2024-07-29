@@ -33,8 +33,8 @@ public static class BasicCommands
   [Command("time")]
   public static async Task GetClockTime(Args ev)
   {
-    OBSRequest<InputSettingsResponse> request = OBSRequests.Inputs.GetInputSettings("txt_Clock");
-    InputSettingsResponse response = await JoltOBSClient.Client.SendRequest(request);
+    OBSRequest<InputSettingsResult> request = OBSRequests.Inputs.GetInputSettings("txt_Clock");
+    InputSettingsResult response = await JoltOBSClient.Client.SendRequest(request);
     string returnedTime = (string)(response.InputSettings["text"]);
 
     await ev.ReplyAsync(returnedTime);

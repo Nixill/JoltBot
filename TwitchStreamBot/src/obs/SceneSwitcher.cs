@@ -34,11 +34,13 @@ public static class SceneSwitcher
         (si, sts) => si.SceneItemID
       );
 
-    idsToHide
+    // TODO restore this to the sendwithoutwaiting command.
+    await new OBSRequestBatch(idsToHide
       .Select(id => (OBSRequest)OBSRequests.SceneItems.SetSceneItemEnabled(sceneName, id, false))
       .Concat(idsToShow
         .Select(id => (OBSRequest)OBSRequests.SceneItems.SetSceneItemEnabled(sceneName, id, true)))
-      .Append(OBSRequests.Scenes.SetCurrentProgramScene(sceneName))
-      .SendWithoutWaiting();
+      .Append(OBSRequests.Scenes.SetCurrentProgramScene(sceneName)))
+      .Send();
+    // .SendWithoutWaiting();
   }
 }

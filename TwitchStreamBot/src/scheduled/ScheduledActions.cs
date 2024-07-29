@@ -11,11 +11,14 @@ public class ScheduledActions
 {
   public static void RunAll()
   {
-    Task _ = ClockTick();
+    Task.Run(ClockTick);
+    Task.Run(AudioMonitoring.Tick);
   }
 
-  public static Task ClockTick()
+  public static async Task ClockTick()
   {
+    await Task.Delay(0);
+
     ZonedDateTimePattern pattern = ZonedDateTimePattern.CreateWithInvariantCulture("ddd HH:mm:ss", null);
     BclDateTimeZone defaultZone = BclDateTimeZone.ForSystemDefault();
 
@@ -30,7 +33,7 @@ public class ScheduledActions
           string timeNow = pattern.Format(SystemClock.Instance.GetCurrentInstant().InZone(defaultZone));
           if (timeNow != lastTimeUpdate)
           {
-            JoltOBSClient.Client.SendRequest(OBSRequests.Inputs.Types.Text.SetInputText("txt_Clock", timeNow));
+            Task _ = JoltOBSClient.Client.SendRequestWithoutWaiting(OBSRequests.Inputs.Types.Text.SetInputText("txt_Clock", timeNow));
             lastTimeUpdate = timeNow;
           }
         }

@@ -38,7 +38,7 @@ public static class PipeRunner
             string[] show = JsonSerializer.Deserialize<string[]>(data["show"]);
             _ = SceneSwitcher.SwitchTo(scene, show);
             break;
-          case "Screenshot.Send":
+          case "Screenshots.Save":
             string format = (string)data["format"] ?? "png";
             string source, sourceType;
             if (data["source"] != null)

@@ -12,7 +12,7 @@ public static class MemoryJson
 
   public static void Save()
   {
-    File.WriteAllText(Root.ToString(), "data/memory.json");
+    File.WriteAllText("data/memory.json", Root.ToString());
   }
 
   public static class EmoteMode

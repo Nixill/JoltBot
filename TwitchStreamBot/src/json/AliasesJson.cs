@@ -26,7 +26,7 @@ public static class AliasesJson
   {
     JsonNode node = Root[gameName.ToLower()];
     if (node != null && node.GetValueKind() == System.Text.Json.JsonValueKind.Array)
-      return ((JsonArray)node).Cast<string>().ToArray();
+      return ((JsonArray)node).Select(x => (string)x).ToArray();
     return new string[] { };
   }
 
