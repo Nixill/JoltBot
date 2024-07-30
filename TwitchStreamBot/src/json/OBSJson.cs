@@ -25,4 +25,6 @@ public static class OBSJson
         .Select(s => (string)s)
         .ToArray()))
     .ToDictionary();
+
+  public static string ScreenshotFolder = (string)Root["screenshotFolder"];
 }

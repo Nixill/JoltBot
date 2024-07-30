@@ -2,6 +2,8 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging;
 using Nixill.Streaming.JoltBot.OBS;
+using NodaTime;
+using NodaTime.Text;
 
 namespace Nixill.Streaming.JoltBot.Pipes;
 
@@ -31,12 +33,12 @@ public static class PipeRunner
             break;
           case "Ad.Stop": AdManager.TryStopAd(); break;
           case "Markers.Place":
-            _ = MarkerButton.Place();
+            _ = Task.Run(() => MarkerButton.Place());
             break;
           case "Scenes.Switch":
             string scene = (string)data["scene"];
             string[] show = JsonSerializer.Deserialize<string[]>(data["show"]);
-            _ = SceneSwitcher.SwitchTo(scene, show);
+            _ = Task.Run(() => SceneSwitcher.SwitchTo(scene, show));
             break;
           case "Screenshots.Save":
             string format = (string)data["format"] ?? "png";
@@ -51,7 +53,15 @@ public static class PipeRunner
               source = (string)data["special"] ?? "gameSources";
               sourceType = "special";
             }
-            _ = ScreenshotButton.Press(format, source, sourceType);
+            _ = Task.Run(() => ScreenshotButton.Press(format, source, sourceType));
+            break;
+          case "Upcoming.Read":
+            LocalDate? date = null;
+            if (data.ContainsKey("date")) date = LocalDatePattern.Iso.Parse((string)data["date"]).Value;
+            _ = Task.Run(() => EndScreenManager.UpdateStreamData(date));
+            break;
+          case "Upcoming.Write":
+            _ = Task.Run(() => EndScreenManager.UpdateStreamScene());
             break;
         }
       }

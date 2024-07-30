@@ -1,5 +1,6 @@
 using Nixill.OBSWS;
 using Nixill.Streaming.JoltBot.Discord;
+using Nixill.Streaming.JoltBot.JSON;
 using Nixill.Streaming.JoltBot.OBS;
 using NodaTime;
 using NodaTime.Text;
@@ -9,7 +10,7 @@ namespace Nixill.Streaming.JoltBot.Pipes;
 
 public static class ScreenshotButton
 {
-  const string ScreenshotFolder = @"C:\Users\Nixill\Documents\Streaming-2024\Screenshots\";
+  static readonly string ScreenshotFolder = OBSJson.ScreenshotFolder;
   static readonly ZonedDateTimePattern TimePattern = ZonedDateTimePattern.CreateWithInvariantCulture("uuuuMMdd'-'HHmmssfff", null);
   static readonly BclDateTimeZone CurrentZone = BclDateTimeZone.ForSystemDefault();
   static ZonedDateTime Now => SystemClock.Instance.GetCurrentInstant().InZone(CurrentZone);

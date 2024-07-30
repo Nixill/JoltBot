@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Nixill.Streaming.JoltBot.JSON;
+using Nixill.Streaming.JoltBot.OBS;
 using NReco.Logging.File;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -30,9 +31,16 @@ public static class JoltChatBot
     Client.OnSendReceiveData += DataHandler;
     Client.OnChatCommandReceived += CommandDispatch.Dispatch;
 
+    Client.OnUnraidNotification += RaidEnded;
+
     Logger.LogInformation("Attempting to connect...");
     Client.Initialize(credentials, channelName);
     await Client.ConnectAsync();
+  }
+
+  private static async Task RaidEnded(object sender, OnUnraidNotificationArgs e)
+  {
+    await EndScreenManager.OnCancelRaid(e);
   }
 
   public static Task ConnectHandler(object sender, OnConnectedEventArgs ev)

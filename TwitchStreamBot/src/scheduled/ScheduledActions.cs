@@ -33,7 +33,7 @@ public class ScheduledActions
           string timeNow = pattern.Format(SystemClock.Instance.GetCurrentInstant().InZone(defaultZone));
           if (timeNow != lastTimeUpdate)
           {
-            Task _ = JoltOBSClient.Client.SendRequestWithoutWaiting(OBSRequests.Inputs.Types.Text.SetInputText("txt_Clock", timeNow));
+            Task _ = JoltOBSClient.Client.SendRequestWithoutWaiting(OBSExtraRequests.Inputs.Text.SetInputText("txt_Clock", timeNow));
             lastTimeUpdate = timeNow;
           }
         }

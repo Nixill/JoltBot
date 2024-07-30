@@ -79,17 +79,17 @@ public static class AdManager
 
     var task_adBreakInfo = GetInfo();
 
-    OBSRequests.Inputs.Types.Text.SetInputText("txt_AdCountdown", "60").SendWithoutWaiting();
-    OBSRequests.Inputs.Types.Text.SetInputText("txt_AdSeconds", "seconds.").SendWithoutWaiting();
+    OBSExtraRequests.Inputs.Text.SetInputText("txt_AdCountdown", "60").SendWithoutWaiting();
+    OBSExtraRequests.Inputs.Text.SetInputText("txt_AdSeconds", "seconds.").SendWithoutWaiting();
     await OBSRequests.SceneItems.SetSceneItemEnabled(currentSceneID, adGroupID, true).Send();
 
     for (int i = 59; i >= 0; i--)
     {
       await Task.Delay(1000);
       if (!CountdownRunning) return;
-      OBSRequests.Inputs.Types.Text.SetInputText("txt_AdCountdown", i.ToString()).SendWithoutWaiting();
-      if (i == 1) OBSRequests.Inputs.Types.Text.SetInputText("txt_AdSeconds", "second.").SendWithoutWaiting();
-      else if (i == 0) OBSRequests.Inputs.Types.Text.SetInputText("txt_AdSeconds", "seconds.").SendWithoutWaiting();
+      OBSExtraRequests.Inputs.Text.SetInputText("txt_AdCountdown", i.ToString()).SendWithoutWaiting();
+      if (i == 1) OBSExtraRequests.Inputs.Text.SetInputText("txt_AdSeconds", "second.").SendWithoutWaiting();
+      else if (i == 0) OBSExtraRequests.Inputs.Text.SetInputText("txt_AdSeconds", "seconds.").SendWithoutWaiting();
     }
 
     OBSRequests.SceneItems.SetSceneItemEnabled(currentSceneID, adGroupID, false).SendWithoutWaiting();

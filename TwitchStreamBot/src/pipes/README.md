@@ -40,3 +40,14 @@ Parameters:
   - `gameSources`: Any sources which are active out of an arbitrary list of "game sources" defined within the code.
   - `activeScene`: The entire active scene.
   - `previewScene`: If OBS Studio is in Studio Mode, the entire preview scene. Otherwise, nothing happens.
+
+
+# `Upcoming.Read`
+Reads upcoming streams from the calendar on file and writes them to the local json file.
+
+Parameters:
+- `date` (string in `yyyy-MM-dd` format): The date to get streams relative to (for testing only!).
+
+
+# `Upcoming.Write`
+Writes upcoming streams from the local json file to the stream scene.
