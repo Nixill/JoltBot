@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp.Nixill.OBSWS", "CSha
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchStreamBot", "TwitchStreamBot\TwitchStreamBot.csproj", "{E8DE3A82-489B-47B3-A43E-35D234B32C6D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TwitchLib.EventSub.Websockets", "TwitchLib.EventSub.Websockets", "{E393FBC8-EFC9-40B0-9F0B-3925AE13D9FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchLib.EventSub.Websockets", "TwitchLib.EventSub.Websockets\TwitchLib.EventSub.Websockets\TwitchLib.EventSub.Websockets.csproj", "{35F93C8B-180F-42EF-B154-9B6210496061}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,12 @@ Global
 		{E8DE3A82-489B-47B3-A43E-35D234B32C6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E8DE3A82-489B-47B3-A43E-35D234B32C6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E8DE3A82-489B-47B3-A43E-35D234B32C6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35F93C8B-180F-42EF-B154-9B6210496061}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35F93C8B-180F-42EF-B154-9B6210496061}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35F93C8B-180F-42EF-B154-9B6210496061}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35F93C8B-180F-42EF-B154-9B6210496061}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{35F93C8B-180F-42EF-B154-9B6210496061} = {E393FBC8-EFC9-40B0-9F0B-3925AE13D9FF}
 	EndGlobalSection
 EndGlobal

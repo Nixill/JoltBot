@@ -1,4 +1,5 @@
 using TwitchLib.Client.Events;
+using Args = Nixill.Streaming.JoltBot.Twitch.CommandContext;
 
 namespace Nixill.Streaming.JoltBot.Twitch.Commands;
 
@@ -6,18 +7,18 @@ namespace Nixill.Streaming.JoltBot.Twitch.Commands;
 public static class SillyCommands
 {
   [Command("ban")]
-  public static async Task BanCommand(OnChatCommandReceivedArgs ev, [LongText] string name)
+  public static async Task BanCommand(Args ev, [LongText] string name)
   {
-    if (await ev.GetUserGroup() < TwitchUserGroup.Moderator && Random.Shared.NextDouble() < 0.05)
+    if (await ev.ChatCommandArgs.GetUserGroup() < TwitchUserGroup.Moderator && Random.Shared.NextDouble() < 0.05)
     {
-      name = ev.ChatMessage.DisplayName;
+      name = ev.ChatCommandArgs.ChatMessage.DisplayName;
     }
 
     await ev.ReplyAsync($"You're banned, {name}!");
   }
 
   [Command("coinflip", "coin")]
-  public static async Task CoinFlipCommand(OnChatCommandReceivedArgs ev)
+  public static async Task CoinFlipCommand(Args ev)
   {
     await ev.ReplyAsync("Flipping a coin...");
     await Task.Delay(1000);
@@ -25,7 +26,7 @@ public static class SillyCommands
   }
 
   [Command("countdown")]
-  public static async Task CountdownCommand(OnChatCommandReceivedArgs ev)
+  public static async Task CountdownCommand(Args ev)
   {
     await ev.ReplyAsync("Ready?");
     await Task.Delay(1000);

@@ -18,6 +18,13 @@ Parameters:
 Stops a running countdown to an advertisement. (Cannot stop an ad break already in progress!)
 
 
+# `Commands.Run`
+Runs a command as if it was posted in chat (but without actually posting the command to chat).
+
+Parameters:
+- `commandText` (string): The command text that should be interpreted by the command dispatcher. Excludes the initial `!`, but includes the command name and any parameters.
+
+
 # `Markers.Place`
 Places a stream and recording marker.
 

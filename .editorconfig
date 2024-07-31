@@ -1,2 +1,31 @@
-[CSharp.Nixill.OBSWS/Program/*.cs]
-dotnet_diagnostic.CS8632.severity=none
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+[*]
+indent_style = space
+indent_size = 2
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = false
+insert_final_newline = false
+
+[TwitchLib.EventSub.Websockets/**.cs]
+indent_style = space
+indent_size = 4
+dotnet_diagnostic.CA1001.severity = none
+dotnet_diagnostic.CA1003.severity = none
+dotnet_diagnostic.CA1031.severity = none
+dotnet_diagnostic.CA1056.severity = none
+dotnet_diagnostic.CA1062.severity = none
+dotnet_diagnostic.CA1063.severity = none
+dotnet_diagnostic.CA1710.severity = none
+dotnet_diagnostic.CA1819.severity = none
+dotnet_diagnostic.CA1849.severity = none
+dotnet_diagnostic.CA1852.severity = none
+dotnet_diagnostic.CA2000.severity = none
+dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CA2208.severity = none
+dotnet_diagnostic.CS0067.severity = none
+dotnet_diagnostic.CS1591.severity = none

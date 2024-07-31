@@ -1,8 +1,6 @@
-using Nixill.Streaming.JoltBot.JSON;
-using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Streaming.JoltBot.Twitch.Api;
 using TwitchLib.Api.Helix.Models.Chat.ChatSettings;
-using Args = TwitchLib.Client.Events.OnChatCommandReceivedArgs;
+using Args = Nixill.Streaming.JoltBot.Twitch.CommandContext;
 
 namespace Nixill.Streaming.JoltBot.Twitch.Commands;
 
@@ -43,25 +41,5 @@ public static class ModCommands
         SubscriberMode = false
       }
     ));
-  }
-
-  [Command("raid")]
-  [AllowedGroups(TwitchUserGroup.Moderator)]
-  public static async Task RaidCommand(Args ev, string user)
-  {
-    var targetInfo = (await
-      JoltApiClient.WithToken((api, id) => api
-        .Helix
-        .Users
-        .GetUsersAsync(logins: new List<string> { user })))
-      .Users
-      .First(ui => ui.Login.ToLower() == user.ToLower());
-
-    var targetId = targetInfo.Id;
-    var targetPfp = targetInfo.ProfileImageUrl;
-
-    await JoltApiClient.WithToken((api, id) => api.Helix.Raids.StartRaidAsync(id, targetId));
-
-    await EndScreenManager.PrepareRaid(user, targetPfp);
   }
 }

@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging;
 using Nixill.Streaming.JoltBot.OBS;
+using Nixill.Streaming.JoltBot.Twitch;
 using NodaTime;
 using NodaTime.Text;
 
@@ -31,7 +32,12 @@ public static class PipeRunner
           case "Ad.Start":
             AdManager.TryStartAd((int?)data["length"] ?? 180);
             break;
-          case "Ad.Stop": AdManager.TryStopAd(); break;
+          case "Ad.Stop":
+            AdManager.TryStopAd();
+            break;
+          case "Commands.Run":
+            _ = Task.Run(() => CommandDispatch.Dispatch(((string)data["commandText"]).Split(" ").ToList()));
+            break;
           case "Markers.Place":
             _ = Task.Run(() => MarkerButton.Place());
             break;

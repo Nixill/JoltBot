@@ -1,3 +1,6 @@
 [submodule "CSharp.Nixill.OBSWS"]
 	path = CSharp.Nixill.OBSWS
 	url = https://github.com/StevenH237/CSharp.Nixill.OBSWS
+[submodule "TwitchLib.EventSub.Websockets"]
+	path = TwitchLib.EventSub.Websockets
+	url = https://github.com/Nixill/TwitchLib.EventSub.Websockets

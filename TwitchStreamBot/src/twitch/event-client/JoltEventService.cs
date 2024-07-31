@@ -1,12 +1,8 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Streaming.JoltBot.Twitch.Api;
-using TwitchLib.Api.Helix.Models.Channels.GetChannelInformation;
-using TwitchLib.Client.Events;
 using TwitchLib.EventSub.Websockets;
-using TwitchLib.EventSub.Websockets.Client;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 
@@ -43,6 +39,9 @@ public class JoltEventService : IHostedService
 
     EventsToSubscribe.Add(("channel.raid", "1", EventCondition.FromBroadcaster));
     Client.ChannelRaid += OnCompleteRaid;
+
+    EventsToSubscribe.Add(("channel.moderate", "2", EventCondition.Broadcaster, EventCondition.Moderator));
+    Client.ChannelModerate += OnChannelModerate;
   }
 
   private async Task OnCompleteRaid(object sender, ChannelRaidArgs args)
@@ -52,6 +51,12 @@ public class JoltEventService : IHostedService
   {
     await JoltCache.UpdateOwnChannelInfo();
     await StreamStopper.HandleStreamUpdate(await JoltCache.GetOwnChannelInfo());
+  }
+
+  private async Task OnChannelModerate(object sender, ChannelModerateArgs ev)
+  {
+    if (ev.Notification.Payload.Event.Action == "raid")
+      await EndScreenManager.OnCreateRaid(ev.Notification.Payload.Event);
   }
 
   private async Task WebsocketConnected(object sender, WebsocketConnectedArgs ev)

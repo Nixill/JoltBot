@@ -4,7 +4,7 @@ using NodaTime;
 using NodaTime.Text;
 using NodaTime.TimeZones;
 using TwitchLib.Client.Events;
-using Args = TwitchLib.Client.Events.OnChatCommandReceivedArgs;
+using Args = Nixill.Streaming.JoltBot.Twitch.CommandContext;
 
 namespace Nixill.Streaming.JoltBot.Twitch.Commands;
 
@@ -52,8 +52,8 @@ public static class InfoCommands
   [Command("pronouns")]
   public static Task PronounsCommand(Args ev)
     => ev.ReplyAsync("Nixill's pronouns are they/she (or anything except he or it)! If you visit"
-      + "https://pronouns.alejo.io/, you can get an extension to view people's pronouns or set them for other users of"
-      + "the extension.");
+      + " https://pronouns.alejo.io/, you can get an extension to view people's pronouns or set them for other users of"
+      + " the extension.");
 
   // [Command("song")]
   // public static Task SongCommand

@@ -7,10 +7,12 @@ using Ical.Net.DataTypes;
 using Microsoft.Extensions.Logging;
 using Nixill.OBSWS;
 using Nixill.Streaming.JoltBot.JSON;
+using Nixill.Streaming.JoltBot.Twitch.Api;
 using NodaTime;
 using NodaTime.Text;
 using TwitchLib.Client.Events;
 using TwitchLib.EventSub.Websockets.Core.EventArgs;
+using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;
 
 namespace Nixill.Streaming.JoltBot.OBS;
 
@@ -214,5 +216,14 @@ public static class EndScreenManager
   public static async Task OnCompleteRaid()
   {
     await OBSRequests.Stream.StopStream().Send();
+  }
+
+  internal static async Task OnCreateRaid(TwitchLib.EventSub.Core.SubscriptionTypes.Channel.ChannelModerate ev)
+  {
+    var pfp = (await JoltApiClient.WithToken((api, id) =>
+      api.Helix.Users.GetUsersAsync(ids: new List<string> { ev.Raid.UserId })))
+      .Users.First().ProfileImageUrl;
+
+    await PrepareRaid(ev.Raid.UserName, pfp);
   }
 }

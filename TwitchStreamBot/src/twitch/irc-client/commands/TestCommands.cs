@@ -6,7 +6,7 @@ using NodaTime;
 using NodaTime.Text;
 using NodaTime.TimeZones;
 using TwitchLib.Client.Events;
-using Args = TwitchLib.Client.Events.OnChatCommandReceivedArgs;
+using Args = Nixill.Streaming.JoltBot.Twitch.CommandContext;
 
 namespace Nixill.Streaming.JoltBot.Twitch.Commands;
 
@@ -25,7 +25,7 @@ public static class BasicCommands
 
   [Command("group")]
   public static async Task GroupCommand(Args ev)
-    => await ev.ReplyAsync((await ev.GetUserGroup(true, true)).ToString());
+    => await ev.ReplyAsync((await ev.ChatCommandArgs.GetUserGroup(true, true)).ToString());
 
   static ZonedDateTimePattern ZDTPattern = ZonedDateTimePattern.CreateWithInvariantCulture("ddd HH:mm:ss", null);
   static DateTimeZone DefaultZone = BclDateTimeZone.ForSystemDefault();
@@ -41,6 +41,7 @@ public static class BasicCommands
   }
 
   [Command("ad start")]
+  [AllowedGroups(TwitchUserGroup.Moderator)]
   public static async Task RunAnAd(Args ev, int length = 180)
   {
     if (AdManager.TryStartAd(length) == true)
@@ -56,6 +57,7 @@ public static class BasicCommands
   }
 
   [Command("ad stop", "ad cancel")]
+  [AllowedGroups(TwitchUserGroup.Moderator)]
   public static async Task StopAnAd(Args ev)
   {
     if (AdManager.TryStopAd())

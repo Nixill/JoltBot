@@ -1,8 +1,5 @@
-using Nixill.Streaming.JoltBot.JSON;
 using Nixill.Streaming.JoltBot.Twitch.Api;
-using Nixill.Utils;
-using TwitchLib.Client.Events;
-using Args = TwitchLib.Client.Events.OnChatCommandReceivedArgs;
+using Args = Nixill.Streaming.JoltBot.Twitch.CommandContext;
 
 namespace Nixill.Streaming.JoltBot.Twitch.Commands;
 
@@ -10,6 +7,7 @@ namespace Nixill.Streaming.JoltBot.Twitch.Commands;
 public static class ApiCommands
 {
   [Command("id")]
+  [AllowedGroups(TwitchUserGroup.Moderator)]
   public static async Task IdCommand(Args ev, string username)
   {
     username = username.ToLowerInvariant();

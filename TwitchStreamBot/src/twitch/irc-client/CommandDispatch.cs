@@ -12,7 +12,7 @@ namespace Nixill.Streaming.JoltBot.Twitch;
 
 public static class CommandDispatch
 {
-  static ILogger logger = Log.Factory.CreateLogger(typeof(CommandDispatch));
+  static readonly ILogger logger = Log.Factory.CreateLogger(typeof(CommandDispatch));
   static Dictionary<string, BotCommand> Commands;
   static Dictionary<Type, Func<IList<string>, bool, object>> Deserializers;
 
@@ -56,8 +56,8 @@ public static class CommandDispatch
         if (!m.IsStatic) throw new IllegalCommandException(m, "It must be a static method.");
         if (pars.Length == 0) throw new IllegalCommandException(m, "It must have at least one parameter.");
         if (m.ReturnType != typeof(Task)) throw new IllegalCommandException(m, "It must return Task.");
-        if (!pars[0].ParameterType.IsAssignableTo(typeof(OnChatCommandReceivedArgs)))
-          throw new IllegalCommandException(m, "The first parameter must be OnChatCommandReceivedArgs.");
+        if (!pars[0].ParameterType.IsAssignableTo(typeof(CommandContext)))
+          throw new IllegalCommandException(m, "The first parameter must be CommandContext.");
         var unusableTypes = pars.Skip(1).Select(p =>
         {
           if (p.CustomAttributes.Any(a => a.AttributeType == typeof(ParamArrayAttribute)))
@@ -122,6 +122,11 @@ public static class CommandDispatch
   public static async Task Dispatch(object sender, OnChatCommandReceivedArgs ev)
   {
     List<string> words = ev.Command.ArgumentsAsList.Prepend(ev.Command.Name).ToList();
+    await Dispatch(words, ev);
+  }
+
+  public static async Task Dispatch(List<string> words, OnChatCommandReceivedArgs ev = null)
+  {
     string commandName = "";
 
     while (true)
@@ -134,13 +139,14 @@ public static class CommandDispatch
 
     BotCommand cmd = Commands[commandName];
 
-    if (cmd.Access != null && !cmd.Access.IsAllowed(await ev.GetUserGroup(checkFollower: cmd.Access.CheckFollower, checkEditor: cmd.Access.CheckEditor)))
+    if (ev != null && cmd.Access != null && !cmd.Access.IsAllowed(await ev.GetUserGroup(checkFollower: cmd.Access.CheckFollower, checkEditor: cmd.Access.CheckEditor)))
     {
       await ev.ReplyAsync("You are not allowed to use this command!");
       return;
     }
 
-    List<object> pars = new() { ev };
+    CommandContext ctx = (ev != null) ? new CommandContext(ev) : new CommandContext();
+    List<object> pars = [ctx];
 
     try
     {
@@ -182,24 +188,24 @@ public static class CommandDispatch
       string usage = $"Usage: !{commandName}" + cmd.Parameters
         .Select(p => p.IsVararg ? $" [{p.Name} ...]" : p.Optional ? $" [{p.Name}]" : $" <{p.Name}>")
         .SJoin("");
-      await ev.ReplyAsync(usage);
+      await ctx.ReplyAsync(usage);
     }
     catch (TargetInvocationException e) when (e.InnerException is NoValueException)
     {
       string usage = $"Usage: !{commandName}" + cmd.Parameters
         .Select(p => p.IsVararg ? $" [{p.Name} ...]" : p.Optional ? $" [{p.Name}]" : $" <{p.Name}>")
         .SJoin("");
-      await ev.ReplyAsync(usage);
+      await ctx.ReplyAsync(usage);
     }
     catch (TargetInvocationException e) when (e.InnerException is InvalidDeserializeException ide)
     {
       string error = $"Error: {ide.Value} is not a valid {ide.HumanReadableType}"
         + ((ide.CustomMessage != null) ? $" {ide.CustomMessage}." : ".");
-      await ev.ReplyAsync(error);
+      await ctx.ReplyAsync(error);
     }
     catch (TargetInvocationException e)
     {
-      await ev.ReplyAsync($"Error: {e.InnerException.GetType().Name}: {e.InnerException.Message}");
+      await ctx.ReplyAsync($"Error: {e.InnerException.GetType().Name}: {e.InnerException.Message}");
       logger.LogError(e, "Error in command execution");
     }
   }

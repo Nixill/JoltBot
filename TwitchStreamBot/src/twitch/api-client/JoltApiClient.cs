@@ -28,7 +28,17 @@ public static class JoltApiClient
   {
     try
     {
-      return await call(Api, TwitchJson.Channel.UserId);
+      int i = 0;
+      while (true)
+        try
+        {
+          return await call(Api, TwitchJson.Channel.UserId);
+        }
+        catch (InternalServerErrorException) when (i < 5)
+        {
+          await Task.Delay(5);
+          i++;
+        }
     }
     catch (TokenExpiredException)
     {
