@@ -14,6 +14,7 @@ public static class CommandDispatch
 {
   static readonly ILogger logger = Log.Factory.CreateLogger(typeof(CommandDispatch));
   static Dictionary<string, BotCommand> Commands;
+  static int LongestCommandName;
   static Dictionary<Type, Func<IList<string>, bool, object>> Deserializers;
 
   public static void Register()
@@ -105,6 +106,9 @@ public static class CommandDispatch
           Parameters = botParams.ToArray()
         };
 
+        LongestCommandName = Math.Max(LongestCommandName,
+          attr.Aliases.Prepend(attr.Name).Max(x => x.Count(c => c == ' ') + 1));
+
         Commands[attr.Name] = cmd;
 
         foreach (string alias in attr.Aliases)
@@ -128,12 +132,19 @@ public static class CommandDispatch
   public static async Task Dispatch(List<string> words, OnChatCommandReceivedArgs ev = null)
   {
     string commandName = "";
+    List<string> commandNameWords = words[0..Math.Min(words.Count, LongestCommandName)];
+    words = words[Math.Min(words.Count, LongestCommandName)..];
 
     while (true)
     {
-      commandName += (commandName.Length == 0 ? "" : " ") + words.Pop().ToLower();
+      commandName = commandNameWords.SJoin(" ");
 
       if (Commands.ContainsKey(commandName)) break;
+
+      string word = commandNameWords[^1];
+      commandNameWords.RemoveAt(commandNameWords.Count - 1);
+      words.Insert(0, word);
+
       if (words.Count == 0) return; // No error if no such command
     }
 

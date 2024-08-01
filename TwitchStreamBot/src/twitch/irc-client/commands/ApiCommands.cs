@@ -44,4 +44,8 @@ public static class ApiCommands
     await sendShoutout;
     await sendMessage;
   }
+
+  [Command("shoutout nixillshadowfox", "so nixillshadowfox")]
+  public static async Task ShoutoutMyself(Args ev)
+    => await ev.ReplyAsync("Of course you should check out my streams!");
 }

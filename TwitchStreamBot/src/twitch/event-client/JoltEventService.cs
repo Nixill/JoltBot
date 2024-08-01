@@ -34,8 +34,8 @@ public class JoltEventService : IHostedService
     EventsToSubscribe.Add(("channel.update", "2", EventCondition.Broadcaster));
     Client.ChannelUpdate += OnChannelUpdate;
 
-    // EventsToSubscribe.Add(("channel.channel_points_custom_reward_redemption.add", "1", EventCondition.Broadcaster));
-    // Client.ChannelPointsCustomRewardRedemptionAdd += JoltRewards.Redemption;
+    EventsToSubscribe.Add(("channel.channel_points_custom_reward_redemption.add", "1", EventCondition.Broadcaster));
+    Client.ChannelPointsCustomRewardRedemptionAdd += JoltRewards.Redemption;
 
     EventsToSubscribe.Add(("channel.raid", "1", EventCondition.FromBroadcaster));
     Client.ChannelRaid += OnCompleteRaid;

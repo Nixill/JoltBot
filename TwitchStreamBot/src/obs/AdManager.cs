@@ -97,13 +97,13 @@ public static class AdManager
     await task_adBreakInfo;
 
     // TODO REMEMBER TO SWITCH THIS BACK IN PRODUCTION
-    await JoltChatBot.Chat($"Showing this message instead of running an ad for {Math.Min(NextAdDuration,
-      MaximumAdDuration())} seconds!");
-    // _ = JoltApiClient.WithToken((api, id) => api.Helix.Channels.StartCommercialAsync(new StartCommercialRequest
-    // {
-    //   BroadcasterId = id,
-    //   Length = Math.Min(NextAdDuration, MaximumAdDuration())
-    // }));
+    // await JoltChatBot.Chat($"Showing this message instead of running an ad for {Math.Min(NextAdDuration,
+    //   MaximumAdDuration())} seconds!");
+    _ = JoltApiClient.WithToken((api, id) => api.Helix.Channels.StartCommercialAsync(new StartCommercialRequest
+    {
+      BroadcasterId = id,
+      Length = Math.Min(NextAdDuration, MaximumAdDuration())
+    }));
 
     CountdownRunning = false;
   }

@@ -13,6 +13,7 @@ public class ScheduledActions
   {
     Task.Run(ClockTick);
     Task.Run(AudioMonitoring.Tick);
+    Task.Run(TextScroll.Tick);
   }
 
   public static async Task ClockTick()
