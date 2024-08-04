@@ -46,6 +46,9 @@ public static class ApiCommands
   }
 
   [Command("shoutout nixillshadowfox", "so nixillshadowfox")]
+  // When I implement an integrated commands list, this command should be
+  // hidden from it.
+  // [HideFromList]
   public static async Task ShoutoutMyself(Args ev)
     => await ev.ReplyAsync("Of course you should check out my streams!");
 }

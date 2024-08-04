@@ -9,6 +9,10 @@ public static class SillyCommands
   [Command("ban")]
   public static async Task BanCommand(Args ev, [LongText] string name)
   {
+    // The less-than in the following if condition is unorthodox, and is a
+    // holdover from when a user could only have one group, but I guess
+    // it's valid now anyway - basically saying that the user's *highest*
+    // group is less than the Moderator level.
     if (await ev.ChatCommandArgs.GetUserGroup() < TwitchUserGroup.Moderator && Random.Shared.NextDouble() < 0.05)
     {
       name = ev.ChatCommandArgs.ChatMessage.DisplayName;
@@ -26,6 +30,7 @@ public static class SillyCommands
   }
 
   [Command("countdown")]
+  [AllowedGroups(TwitchUserGroup.Moderator)]
   public static async Task CountdownCommand(Args ev)
   {
     await ev.ReplyAsync("Ready?");
