@@ -116,7 +116,7 @@ public static class EndScreenManager
 
   public static async Task UpdateHalfStreamScene(int i, UpcomingStream? stream)
   {
-    var inputIDsRequest = new OBSRequestBatch(new string[] { $"cln_grp_UpcomingGame{i}", $"txt_UpcomingDate{i}", $"txt_ChannelUrl{i}" }
+    var inputIDsRequest = new OBSRequestBatch(new string[] { $"grp_UpcomingGame{i}", $"txt_UpcomingGame{i}", $"txt_UpcomingDate{i}", $"txt_ChannelUrl{i}" }
       .Select(name => OBSRequests.SceneItems.GetSceneItemId("sc_Raiding Screen", name)));
     if (stream == null)
     {
