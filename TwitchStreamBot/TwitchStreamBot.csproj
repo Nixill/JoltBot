@@ -16,7 +16,7 @@
     <PackageReference Include="NReco.Logging.File" Version="1.2.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageReference Include="Quartz" Version="3.11.0" />
+    <!-- <PackageReference Include="Quartz" Version="3.11.0" /> -->
     <PackageReference Include="Websocket.Client" Version="5.1.2" />
     <PackageReference Include="DSharpPlus" Version="5.0.0-nightly-02339" />
     <PackageReference Include="Ical.Net" Version="4.2.0" />

@@ -13,6 +13,8 @@ Starts a one-minute countdown to an advertisement.
 Parameters:
 - `length` (int): The length of the ad in seconds, which must be 30, 60, 90, 120, 150, or 180. Other numbers will be clamped to these values and reduced to the next-nearest below. Additionally, the number will be reduced if a shorter ad break would maximize pre-roll-free time.
 
+Remarks: If a countdown is already in progress, it is not restarted, but the time for which the ads should run is updated.
+
 
 # `Ad.Stop`
 Stops a running countdown to an advertisement. (Cannot stop an ad break already in progress!)
