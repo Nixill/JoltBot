@@ -41,7 +41,7 @@ public static class MarkerButton
       // recording directory and just find the most recently modified
       // file.
       string dir = await OBSRequests.Config.GetRecordDirectory().Send();
-      Logger.LogTrace($"Directory: {dir}");
+      Logger.LogTrace("Directory: {dir}", dir);
 
       var dirInfo = new DirectoryInfo(dir);
 
@@ -50,11 +50,11 @@ public static class MarkerButton
           .OrderByDescending(f => f.LastWriteTimeUtc)
           .First();
       string filename = file.Name;
-      Logger.LogTrace($"Filename: {filename}");
+      Logger.LogTrace("Filename: {filename}", filename);
 
       // Now translate it to a marker filename:
-      string markerFilename = dir + "\\" + filename.Substring(0, filename.LastIndexOf('.')) + ".markers.txt";
-      Logger.LogTrace($"Marker filename: {markerFilename}");
+      string markerFilename = dir + "\\" + filename[..filename.LastIndexOf('.')] + ".markers.txt";
+      Logger.LogTrace("Marker filename: {markerFilename}", markerFilename);
 
       // Get the current timestamp to write to marker file:
       string time = recordStatus.Timecode;

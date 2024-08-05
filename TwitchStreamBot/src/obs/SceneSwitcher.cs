@@ -39,6 +39,7 @@ public static class SceneSwitcher
       .Select(id => (OBSRequest)OBSRequests.SceneItems.SetSceneItemEnabled(sceneName, id, false))
       .Concat(idsToShow
         .Select(id => (OBSRequest)OBSRequests.SceneItems.SetSceneItemEnabled(sceneName, id, true)))
+      .Append(OBSRequests.General.Sleep(millis: 500))
       .Append(OBSRequests.Scenes.SetCurrentProgramScene(sceneName)))
       .Send();
     // .SendWithoutWaiting();

@@ -18,6 +18,7 @@ public static class JoltOBSClient
     Client = new(OBSJson.Server.IP, OBSJson.Server.Port, OBSJson.Server.Password, loggerFactory: Log.Factory);
 
     Client.Events.Outputs.StreamStarted += (s, e) => Task.Run(() => JoltOBSEventHandlers.StreamStarted(s, e));
+    Client.Events.Outputs.StreamStopped += (s, e) => Task.Run(() => JoltOBSEventHandlers.StreamStopped(s, e));
 
     await Client.Connect();
   }

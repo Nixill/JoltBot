@@ -6,6 +6,7 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Microsoft.Extensions.Logging;
 using Nixill.OBSWS;
+using Nixill.OBSWS.BatchExtensions;
 using Nixill.Streaming.JoltBot.JSON;
 using Nixill.Streaming.JoltBot.Twitch.Api;
 using NodaTime;
@@ -116,19 +117,23 @@ public static class EndScreenManager
 
   public static async Task UpdateHalfStreamScene(int i, UpcomingStream? stream)
   {
-    var inputIDsRequest = new OBSRequestBatch(new string[] { $"grp_UpcomingGame{i}", $"txt_UpcomingGame{i}", $"txt_UpcomingDate{i}", $"txt_ChannelUrl{i}" }
-      .Select(name => OBSRequests.SceneItems.GetSceneItemId("sc_Raiding Screen", name)));
+    // var inputIDsRequest = new OBSRequestBatch(new string[] { $"grp_UpcomingGame{i}", $"txt_UpcomingGame{i}", $"txt_UpcomingDate{i}", $"txt_ChannelUrl{i}" }
+    //   .Select(name => OBSRequests.SceneItems.GetSceneItemId("sc_Raiding Screen", name)));
+    var inputIDs = await new string[] {
+      $"grp_UpcomingGame{i}", $"txt_UpcomingGame{i}", $"txt_UpcomingDate{i}", $"txt_ChannelUrl{i}"
+    }.SelectOBSResults(JoltOBSClient.Client,
+      s => OBSRequests.SceneItems.GetSceneItemId("sc_Raiding Screen", s),
+      r => (int)(OBSSingleValueResult<int>)r.RequestResult);
+
     if (stream == null)
     {
-      new OBSRequestBatch((await inputIDsRequest.Send())
-        .Select(resp => (int)(OBSSingleValueResult<int>)resp.RequestResult)
+      new OBSRequestBatch(inputIDs.Values
         .Select(siid => OBSRequests.SceneItems.SetSceneItemEnabled("sc_Raiding Screen", siid, false)))
       .SendWithoutWaiting();
     }
     else
     {
-      new OBSRequestBatch((await inputIDsRequest.Send())
-        .Select(resp => (int)(OBSSingleValueResult<int>)resp.RequestResult)
+      new OBSRequestBatch(inputIDs.Values
         .Select(siid => OBSRequests.SceneItems.SetSceneItemEnabled("sc_Raiding Screen", siid, true)))
       .SendWithoutWaiting();
 
@@ -151,7 +156,7 @@ public static class EndScreenManager
           _ => "th"
         });
 
-      new OBSRequestBatch(new OBSRequest[] {
+      new OBSRequestBatch(
         OBSExtraRequests.Inputs.Text.SetInputText($"txt_UpcomingGame{i}", stream.Value.Name),
         OBSExtraRequests.Inputs.Image.SetInputImage($"img_UpcomingGame{i}", $"{GameIconFolder}{gameIcon}.png"),
         OBSExtraRequests.Inputs.Text.SetInputText($"txt_UpcomingDate{i}", dateStr),
@@ -162,7 +167,7 @@ public static class EndScreenManager
           _ => true
         }),
         OBSRequests.SceneItems.SetSceneItemEnabled($"grp_UpcomingGame{i}", andMoreID, stream.Value.AndMore)
-      }).SendWithoutWaiting();
+      ).SendWithoutWaiting();
     }
   }
 

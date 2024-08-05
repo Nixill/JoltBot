@@ -6,6 +6,9 @@ Jolt is a custom-built livestream bot for NixillShadosFox's Twitch streams. It i
 
 It is coded in C# as a console app. While the source code is available here, it is not in a state anywhere near "plug-and-play" for other setups. Pieces of it may be made available for general use in the future, however.
 
+# Commands
+If you're looking for a list of commands usable in Nixill's streams, click [here](https://github.com/Nixill/JoltBot/blob/main/TwitchStreamBot/src/twitch/irc-client/commands/README.md).
+
 # Code of interest
 The parts of the code that I think are the most interesting (and are most likely to receive separate releases for general use) are:
 - the [End Screen Manager](https://github.com/Nixill/JoltBot/blob/main/TwitchStreamBot/src/obs/EndScreenManager.cs), which updates a list of upcoming streams as well as automatically showing an upcoming raid target

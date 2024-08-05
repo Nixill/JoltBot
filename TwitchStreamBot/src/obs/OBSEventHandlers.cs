@@ -14,7 +14,7 @@ public static class JoltOBSEventHandlers
     await StreamStopper.HandleStreamStart();
   }
 
-  public static async Task StreamStopped(Object sender, OutputStateChanged e)
+  public static async Task StreamStopped(object sender, OutputStateChanged e)
   {
     await Task.Delay(0);
     if (!StreamStopper.EndingForStreamTitle)
