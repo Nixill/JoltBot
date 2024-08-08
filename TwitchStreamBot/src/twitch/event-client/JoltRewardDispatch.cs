@@ -51,7 +51,13 @@ public static class JoltRewardDispatch
 
   internal static async Task Dispatch(object sender, ChannelPointsCustomRewardRedemptionArgs args)
   {
+    // Let's make sure it's a reward we're actually in charge of first
+    var evt = args.Notification.Payload.Event;
+    var reward = Redemptions.GetValueOrDefault(evt.Reward.Id);
+    if (reward == null) return;
+    
     RewardContext ctx = new RewardContext(args);
+    
 
   }
 }
