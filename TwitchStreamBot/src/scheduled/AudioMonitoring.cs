@@ -1,6 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Nixill.OBSWS;
-using Nixill.OBSWS.BatchExtensions;
+using Nixill.OBSWS.Extensions;
 using Nixill.Streaming.JoltBot.OBS;
 
 namespace Nixill.Streaming.JoltBot.Scheduled;

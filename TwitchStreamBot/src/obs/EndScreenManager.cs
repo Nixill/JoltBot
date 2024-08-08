@@ -6,7 +6,7 @@ using Ical.Net.CalendarComponents;
 using Ical.Net.DataTypes;
 using Microsoft.Extensions.Logging;
 using Nixill.OBSWS;
-using Nixill.OBSWS.BatchExtensions;
+using Nixill.OBSWS.Extensions;
 using Nixill.Streaming.JoltBot.JSON;
 using Nixill.Streaming.JoltBot.Twitch.Api;
 using NodaTime;

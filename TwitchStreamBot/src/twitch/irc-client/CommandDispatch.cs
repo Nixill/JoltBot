@@ -57,8 +57,8 @@ public static class CommandDispatch
         if (!m.IsStatic) throw new IllegalCommandException(m, "It must be a static method.");
         if (pars.Length == 0) throw new IllegalCommandException(m, "It must have at least one parameter.");
         if (m.ReturnType != typeof(Task)) throw new IllegalCommandException(m, "It must return Task.");
-        if (!pars[0].ParameterType.IsAssignableTo(typeof(CommandContext)))
-          throw new IllegalCommandException(m, "The first parameter must be CommandContext.");
+        if (!pars[0].ParameterType.IsAssignableFrom(typeof(CommandContext)))
+          throw new IllegalCommandException(m, "The first parameter must be CommandContext (or a less derived type).");
         var unusableTypes = pars.Skip(1).Select(p =>
         {
           if (p.CustomAttributes.Any(a => a.AttributeType == typeof(ParamArrayAttribute)))
@@ -131,6 +131,7 @@ public static class CommandDispatch
 
   public static async Task Dispatch(List<string> words, OnChatCommandReceivedArgs ev = null)
   {
+    string message = words.SJoin(" ");
     string commandName = "";
     List<string> commandNameWords = words[0..Math.Min(words.Count, LongestCommandName)];
     words = words[Math.Min(words.Count, LongestCommandName)..];
@@ -156,7 +157,7 @@ public static class CommandDispatch
       return;
     }
 
-    CommandContext ctx = (ev != null) ? new CommandContext(ev) : new CommandContext();
+    BaseContext ctx = (ev != null) ? new CommandContext(ev) : new StreamDeckContext(message);
     List<object> pars = [ctx];
 
     try

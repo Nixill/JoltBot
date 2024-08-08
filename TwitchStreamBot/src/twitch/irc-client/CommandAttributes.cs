@@ -82,7 +82,7 @@ public static class AllowedGroupsAttributeExtension
   public static bool IsAllowed(this AllowedGroupsAttribute attr, TwitchUserGroup group)
     => attr == null ||
     ((attr.AllowList.Length == 0 || attr.AllowList.Any(g => (g & group) == g))
-    && !(attr.DenyList.Any(g => (g & group) == g)));
+    && !attr.DenyList.Any(g => (g & group) == g));
 
   public static bool CheckEditor(this AllowedGroupsAttribute attr)
     => attr != null && attr.CheckEditor;
