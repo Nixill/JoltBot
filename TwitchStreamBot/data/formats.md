@@ -1,6 +1,6 @@
-The json files hidden from this folder (and `ext-data`) follow the following format:
+The files hidden from this folder (and `ext-data`) follow the following formats:
 
-discord.json:
+# discord.json
 ```json
 {
   "ownerID": 1234567890,
@@ -13,23 +13,14 @@ discord.json:
 }
 ```
 
-games.json:
-```json
-{
-  "Game Name on Twitch": {
-    "aliases": [
-      "Shortened Name"
-    ],
-    "color": "b42b42"
-  },
-  "A Different Game on Twitch": {
-    "titleIgnored": true,
-    "color": "42b42b"
-  }
-}
+# games.csv
+All fields except `gameName` are optional.
+```csv
+gameName,color,aliases,ignoreTitle
+My Amazing Game,b42b42,Amazing Game,false
 ```
 
-memory.json:
+# memory.json
 ```json
 {
   "streamStopper": {
@@ -41,7 +32,7 @@ memory.json:
 }
 ```
 
-obs.json:
+# obs.json
 ```json
 {
   "server": {
@@ -59,7 +50,7 @@ obs.json:
 }
 ```
 
-twitch.json:
+# twitch.json
 ```json
 {
   "id": "abcdefghijklmnopqrstuvwxyz",
@@ -82,7 +73,7 @@ twitch.json:
 }
 ```
 
-upcoming.json:
+# upcoming.json
 ```json
 {
   "calendarLink": "https://example.com/path/to/calendar.ics",
@@ -104,8 +95,11 @@ upcoming.json:
     }
   ]
 }
+```
 
-ext-data/pretzel.json:
+# ext-data/pretzel.json
+This is the last known file format of the Pretzel Rocks json output.
+
 ```json
 {
   "track": {
