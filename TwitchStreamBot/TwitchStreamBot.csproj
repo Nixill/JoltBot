@@ -22,6 +22,7 @@
     <PackageReference Include="Ical.Net" Version="4.2.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CSharp.Nixill.Color\CSharp.Nixill.Color\CSharp.Nixill.Color.csproj" />
     <ProjectReference Include="..\CSharp.Nixill.OBSWS\CSharp.Nixill.OBSWS.csproj" />
     <ProjectReference Include="..\TwitchLib.EventSub.Websockets\TwitchLib.EventSub.Websockets\TwitchLib.EventSub.Websockets.csproj" />
   </ItemGroup>

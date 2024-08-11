@@ -4,3 +4,6 @@
 [submodule "TwitchLib.EventSub.Websockets"]
 	path = TwitchLib.EventSub.Websockets
 	url = https://github.com/Nixill/TwitchLib.EventSub.Websockets
+[submodule "CSharp.Nixill.Color"]
+	path = CSharp.Nixill.Color
+	url = https://github.com/Nixill/CSharp.Nixill.Color

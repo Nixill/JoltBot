@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TwitchLib.EventSub.Websocke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchLib.EventSub.Websockets", "TwitchLib.EventSub.Websockets\TwitchLib.EventSub.Websockets\TwitchLib.EventSub.Websockets.csproj", "{35F93C8B-180F-42EF-B154-9B6210496061}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp.Nixill.Color", "CSharp.Nixill.Color", "{612E5769-1C3F-4D64-8A49-EC07D4773F3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp.Nixill.Color", "CSharp.Nixill.Color\CSharp.Nixill.Color\CSharp.Nixill.Color.csproj", "{08A7F221-B19F-4730-A309-A7A654C7511E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,8 +36,13 @@ Global
 		{35F93C8B-180F-42EF-B154-9B6210496061}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35F93C8B-180F-42EF-B154-9B6210496061}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35F93C8B-180F-42EF-B154-9B6210496061}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08A7F221-B19F-4730-A309-A7A654C7511E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08A7F221-B19F-4730-A309-A7A654C7511E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08A7F221-B19F-4730-A309-A7A654C7511E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08A7F221-B19F-4730-A309-A7A654C7511E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{35F93C8B-180F-42EF-B154-9B6210496061} = {E393FBC8-EFC9-40B0-9F0B-3925AE13D9FF}
+		{08A7F221-B19F-4730-A309-A7A654C7511E} = {612E5769-1C3F-4D64-8A49-EC07D4773F3F}
 	EndGlobalSection
 EndGlobal
