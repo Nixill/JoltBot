@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using Nixill.Colors;
 
 namespace Nixill.Streaming.JoltBot.JSON;
 
@@ -8,6 +9,11 @@ public static class GamesJson
   public static JsonObject Root
   {
     get => _root ??= (JsonObject)JsonNode.Parse(File.ReadAllText("data/games.json"));
+  }
+
+  public static void Save()
+  {
+    File.WriteAllText("data/games.json", Root.ToString());
   }
 
   public static JsonObject GameObject(string gameName)
@@ -27,10 +33,18 @@ public static class GamesJson
     return [];
   }
 
-  public static string GetGameColor(string gameName)
+  public static Color GetGameColor(string gameName)
   {
-    JsonNode node = GameObject(gameName)?["color"];
-    return (string)node ?? "b42b42";
+    string str = (string)GameObject(gameName)?["color"];
+    if (str != null) return Color.FromRGBA(str);
+    return Color.FromRGBA("b42b42");
+  }
+
+  public static void SetGameColor(string gameName, Color color)
+  {
+    JsonObject obj = GameObject(gameName);
+    if (obj != null) obj["color"] = color.ToRGBHex();
+    Save();
   }
 
   public static bool IsValidTitle(string gameName, string streamTitle)

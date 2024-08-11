@@ -16,7 +16,7 @@ public static class TextScroll
   static string Text = "";
   static int DelayFrames = 0;
 
-  const int FramesPerAnim = 1;
+  const int FramesPerAnim = 6;
 
   #region Tick function
   public static async Task Tick()

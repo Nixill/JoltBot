@@ -52,6 +52,7 @@ public class JoltEventService : IHostedService
     JoltCache.UpdateOwnChannelInfo();
     await JoltRewardDispatch.Modify();
     await StreamStopper.HandleStreamUpdate(await JoltCache.GetOwnChannelInfo());
+    await GameScreen.SetColor();
   }
 
   private async Task OnChannelModerate(object sender, ChannelModerateArgs ev)
