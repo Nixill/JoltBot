@@ -2,38 +2,39 @@ using System.Text.Json.Nodes;
 
 namespace Nixill.Streaming.JoltBot.JSON;
 
-public static class AliasesJson
+public static class GamesJson
 {
   static JsonObject _root;
   public static JsonObject Root
   {
-    get =>
-      _root ?? (_root = (JsonObject)JsonNode.Parse(File.ReadAllText("data/aliases.json")));
+    get => _root ??= (JsonObject)JsonNode.Parse(File.ReadAllText("data/games.json"));
   }
 
-  public static void ReadAliases()
-  {
-    _root = (JsonObject)JsonNode.Parse(File.ReadAllText("data/aliases.json").ToLower());
-  }
+  public static JsonObject GameObject(string gameName)
+    => (JsonObject)Root.FirstOrDefault(kvp => kvp.Key.Equals(gameName, StringComparison.CurrentCultureIgnoreCase)).Value;
 
   public static bool IsTitleIgnored(string gameName)
   {
-    JsonNode node = Root[gameName.ToLower()];
-    return (node != null && node.GetValueKind() == System.Text.Json.JsonValueKind.False);
+    JsonNode node = GameObject(gameName)?["titleIgnored"];
+    return (node != null && node.GetValueKind() == System.Text.Json.JsonValueKind.True);
   }
 
   public static string[] GetAliases(string gameName)
   {
-    JsonNode node = Root[gameName.ToLower()];
+    JsonNode node = GameObject(gameName)?["aliases"];
     if (node != null && node.GetValueKind() == System.Text.Json.JsonValueKind.Array)
       return ((JsonArray)node).Select(x => (string)x).ToArray();
-    return new string[] { };
+    return [];
+  }
+
+  public static string GetGameColor(string gameName)
+  {
+    JsonNode node = GameObject(gameName)?["color"];
+    return (string)node ?? "b42b42";
   }
 
   public static bool IsValidTitle(string gameName, string streamTitle)
   {
-    ReadAliases();
-
     streamTitle = streamTitle.ToLower();
     gameName = gameName.ToLower();
 

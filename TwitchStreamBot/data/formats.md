@@ -1,14 +1,5 @@
 The json files hidden from this folder (and `ext-data`) follow the following format:
 
-games.json:
-```json
-{
-  "Game Name on Twitch": [
-    "Shortened Name"
-  ]
-}
-```
-
 discord.json:
 ```json
 {
@@ -18,6 +9,22 @@ discord.json:
       "channelID": 1234567890,
       "channelSecret": "abcdefghijklmnopqrstuvwxyz"
     }
+  }
+}
+```
+
+games.json:
+```json
+{
+  "Game Name on Twitch": {
+    "aliases": [
+      "Shortened Name"
+    ],
+    "color": "b42b42"
+  },
+  "A Different Game on Twitch": {
+    "titleIgnored": true,
+    "color": "42b42b"
   }
 }
 ```
