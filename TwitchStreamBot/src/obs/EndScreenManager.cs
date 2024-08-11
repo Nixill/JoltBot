@@ -140,8 +140,11 @@ public static class EndScreenManager
       int andMoreID = await OBSRequests.SceneItems.GetSceneItemId($"grp_UpcomingGame{i}", "img_AndMore").Send();
       int channelID = await OBSRequests.SceneItems.GetSceneItemId($"sc_Raiding Screen", $"txt_ChannelUrl{i}").Send();
 
-      var gameIcon = GenerateSlug(stream.Value.Game);
-      if (!File.Exists($"{GameIconFolder}{gameIcon}.png")) gameIcon = "unknown";
+      var gameSlug = GenerateSlug(stream.Value.Game);
+      var gameImage = new string[] { $".png", $".jpg" }
+        .Select(s => $"{GameIconFolder}{gameSlug}{s}")
+        .Where(s => File.Exists($"{GameIconFolder}{gameSlug}{s}"))
+        .FirstOrDefault($"{GameIconFolder}unknown.png");
 
       bool isToday = stream.Value.Date == LocalDate.FromDateTime(DateTime.Today);
       string dateStr;
@@ -158,7 +161,7 @@ public static class EndScreenManager
 
       new OBSRequestBatch(
         OBSExtraRequests.Inputs.Text.SetInputText($"txt_UpcomingGame{i}", stream.Value.Name),
-        OBSExtraRequests.Inputs.Image.SetInputImage($"img_UpcomingGame{i}", $"{GameIconFolder}{gameIcon}.png"),
+        OBSExtraRequests.Inputs.Image.SetInputImage($"img_UpcomingGame{i}", gameImage),
         OBSExtraRequests.Inputs.Text.SetInputText($"txt_UpcomingDate{i}", dateStr),
         OBSExtraRequests.Inputs.Text.SetInputText($"txt_ChannelUrl{i}", stream.Value.Channel),
         OBSRequests.SceneItems.SetSceneItemEnabled("sc_Raiding Screen", channelID, stream.Value.Channel.ToLowerInvariant() switch
