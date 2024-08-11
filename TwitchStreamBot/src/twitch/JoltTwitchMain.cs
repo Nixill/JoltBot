@@ -27,6 +27,7 @@ public static class JoltTwitchMain
     Task botSetup = JoltChatBot.SetUp(TwitchJson.Bot, TwitchJson.Channel.Name);
     Task clientSetup = JoltApiClient.SetUp(TwitchJson.Channel, api);
     Task eventSetup = Task.Run(JoltEventClient.SetUp);
+    Task rewardSetup = JoltRewardDispatch.Register();
   }
 
   public static async Task<string> GetToken(AuthInfo which, TwitchAPI api)

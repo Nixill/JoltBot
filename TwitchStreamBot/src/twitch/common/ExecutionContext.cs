@@ -28,8 +28,8 @@ public class CommandContext : BaseContext
   {
     ChatCommandArgs = commandArgs;
 
-    ReplyAsync = commandArgs.ReplyAsync;
-    MessageAsync = commandArgs.MessageAsync;
+    ReplyAsync = msg => JoltChatBot.Client.SendReplyAsync(TwitchJson.Channel.Name, commandArgs.ChatMessage.Id, msg);
+    MessageAsync = msg => JoltChatBot.Client.SendMessageAsync(TwitchJson.Channel.Name, msg);
 
     UserName = commandArgs.ChatMessage.DisplayName;
     UserLogin = commandArgs.ChatMessage.Username;
@@ -55,10 +55,10 @@ public class RewardContext : BaseContext
 
     Message = RedemptionArgs.UserInput;
 
-    LimitedAs = LimitTarget.Reward;
+    LimitedAs = LimitTarget.RewardUsage;
 
-    ReplyAsync = msg => JoltChatBot.Client.SendMessageAsync(TwitchJson.Channel.Name, msg);
-    MessageAsync = ReplyAsync;
+    ReplyAsync = msg => JoltChatBot.Client.SendMessageAsync(TwitchJson.Channel.Name, $"@{UserLogin} {msg}");
+    MessageAsync = msg => JoltChatBot.Client.SendMessageAsync(TwitchJson.Channel.Name, msg);
   }
 }
 
@@ -74,4 +74,36 @@ public class StreamDeckContext : BaseContext
     ReplyAsync = msg => JoltChatBot.Client.SendMessageAsync(TwitchJson.Channel.Name, msg);
     MessageAsync = ReplyAsync;
   }
+}
+
+public class RewardPrecheckContext : BaseContext
+{
+  private RewardPrecheckContext()
+  {
+    UserName = "";
+    UserId = "";
+    UserLogin = "";
+    Message = "";
+    LimitedAs = LimitTarget.RewardPrecheck;
+    ReplyAsync = msg => Task.CompletedTask;
+    MessageAsync = ReplyAsync;
+  }
+
+  public static readonly RewardPrecheckContext Instance = new();
+}
+
+public class TickerTextCheckContext : BaseContext
+{
+  private TickerTextCheckContext()
+  {
+    UserName = "";
+    UserId = "";
+    UserLogin = "";
+    Message = "";
+    LimitedAs = LimitTarget.TickerMessage;
+    ReplyAsync = msg => Task.CompletedTask;
+    MessageAsync = ReplyAsync;
+  }
+
+  public static readonly TickerTextCheckContext Instance = new();
 }

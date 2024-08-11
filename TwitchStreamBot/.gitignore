@@ -1,7 +1,8 @@
-.vscode/
 bin/
 data/*
 !data/get-tokens.bat
+!data/formats.md
+ext-data/*
 obj/
 logs/
 

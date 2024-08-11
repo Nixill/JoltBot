@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualBasic;
 using Nixill.Streaming.JoltBot.Discord;
+using Nixill.Streaming.JoltBot.Files;
 using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Streaming.JoltBot.Pipes;
 using Nixill.Streaming.JoltBot.Scheduled;
@@ -33,6 +34,8 @@ class JoltMain
     await twitchSetupTask;
     await obsSetupTask;
     await discordSetupTask;
+
+    await PretzelFileWatcher.SetUp();
 
     await MiscStartupActions();
 

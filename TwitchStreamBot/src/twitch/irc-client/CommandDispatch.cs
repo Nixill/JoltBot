@@ -93,7 +93,7 @@ public static class CommandDispatch
             IsVararg = isVararg,
             Type = isVararg ? p.ParameterType.GetElementType() : Nullable.GetUnderlyingType(p.ParameterType) ?? p.ParameterType,
             Optional = p.HasDefaultValue || Nullable.GetUnderlyingType(p.ParameterType) != null,
-            DefaultValue = (p.HasDefaultValue) ? p.DefaultValue : null
+            DefaultValue = p.HasDefaultValue ? p.DefaultValue : null
           });
         }
 
@@ -102,8 +102,8 @@ public static class CommandDispatch
           Name = attr.Name,
           Aliases = attr.Aliases,
           Method = m,
-          Access = m.GetCustomAttribute<AllowedGroupsAttribute>(),
-          Parameters = botParams.ToArray()
+          Restrictions = m.GetCustomAttributes<LimitAttribute>(),
+          Parameters = [.. botParams]
         };
 
         LongestCommandName = Math.Max(LongestCommandName,
@@ -150,14 +150,33 @@ public static class CommandDispatch
     }
 
     BotCommand cmd = Commands[commandName];
+    BaseContext ctx = (ev != null) ? new CommandContext(ev) : new StreamDeckContext(message);
+    bool allowed = true;
+    string failMessage = null;
 
-    if (ev != null && cmd.Access != null && !cmd.Access.IsAllowed(await ev.GetUserGroup(checkFollower: cmd.Access.CheckFollower, checkEditor: cmd.Access.CheckEditor)))
+    foreach (var limit in cmd.Restrictions)
     {
-      await ev.ReplyAsync("You are not allowed to use this command!");
+      bool? result = await limit.PassesCondition(ctx, await JoltCache.GetOwnChannelInfo());
+      if (result == true)
+      {
+        allowed = true;
+        failMessage = null;
+        if (limit.StopOnAllow) break;
+      }
+      else if (result == false)
+      {
+        allowed = false;
+        failMessage = limit.FailWarning;
+        if (limit.StopOnDeny) break;
+      }
+    }
+
+    if (!allowed)
+    {
+      if (failMessage != null) await ctx.ReplyAsync($"Execution failed: {failMessage}");
       return;
     }
 
-    BaseContext ctx = (ev != null) ? new CommandContext(ev) : new StreamDeckContext(message);
     List<object> pars = [ctx];
 
     try
@@ -237,7 +256,7 @@ public class BotCommand
   public string Name { get; init; }
   public string[] Aliases { get; init; }
   public BotParam[] Parameters { get; init; }
-  public AllowedGroupsAttribute Access { get; init; }
+  public IEnumerable<LimitAttribute> Restrictions { get; init; }
   public MethodInfo Method { get; init; }
 }
 
@@ -251,44 +270,6 @@ public class BotParam
   public object DefaultValue { get; init; }
 
   public object Deserialize(IList<string> input) => CommandDispatch.Deserialize(Type, input, IsLongText);
-}
-
-public static class CommandExtensions
-{
-  public static Task ReplyAsync(this OnChatCommandReceivedArgs ev, string message)
-    => JoltChatBot.Client.SendReplyAsync(ev.ChatMessage.Channel, ev.ChatMessage.Id, message);
-
-  public static Task MessageAsync(this OnChatCommandReceivedArgs ev, string message)
-    => JoltChatBot.Client.SendMessageAsync(ev.ChatMessage.Channel, message);
-
-  public static async Task<TwitchUserGroup> GetUserGroup(this OnChatCommandReceivedArgs ev, bool checkEditor = false, bool checkFollower = false)
-  {
-    await Task.Delay(0);
-
-    TwitchUserGroup ret = 0;
-
-    var msg = ev.ChatMessage;
-    var detail = msg.UserDetail;
-
-    Task<GetChannelEditorsResponse> getEditors = null;
-    Task<GetChannelFollowersResponse> getFollowers = null;
-
-    if (checkEditor) getEditors = JoltApiClient.WithToken((api, id) => api.Helix.Channels.GetChannelEditorsAsync(id));
-    if (checkFollower) getFollowers = JoltApiClient.WithToken((api, id) => api.Helix.Channels.GetChannelFollowersAsync(id, msg.UserId));
-
-    bool isBroadcaster = (msg.Channel == msg.Username);
-
-    if (msg.Channel == msg.Username) ret |= TwitchUserGroup.Broadcaster;
-    if (checkEditor && (isBroadcaster || (await getEditors).Data.Any(x => x.UserId == msg.UserId))) ret |= TwitchUserGroup.Editor;
-    if (isBroadcaster || detail.IsModerator) ret |= TwitchUserGroup.Moderator;
-    if (isBroadcaster || detail.IsModerator || detail.IsVip) ret |= TwitchUserGroup.VIP;
-    if (detail.IsSubscriber) ret |= TwitchUserGroup.Subscriber;
-    // TODO add a way to get a regular
-    if (checkFollower && (isBroadcaster || (await getFollowers).Data.Any(x => x.UserId == msg.UserId))) ret |= TwitchUserGroup.Follower;
-    if (ret == 0) ret = TwitchUserGroup.Anyone;
-
-    return ret;
-  }
 }
 
 public static class ArrayDeserializer

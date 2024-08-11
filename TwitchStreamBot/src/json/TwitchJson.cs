@@ -26,6 +26,13 @@ public static class TwitchJson
   {
     File.WriteAllText("data/twitch.json", Root.ToString());
   }
+
+  public static void AddReward(string name, string uuid)
+  {
+    RewardKeys[name] = uuid;
+    RewardsByKey[uuid] = name;
+    Root["rewards"][name] = uuid;
+  }
 }
 
 public class AuthInfo

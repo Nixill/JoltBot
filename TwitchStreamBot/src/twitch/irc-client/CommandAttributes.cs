@@ -34,75 +34,34 @@ public enum TwitchUserGroup
 
   // The broadcaster, i.e. the owner of the channel in which the command
   // is run.
-  Broadcaster = 128,
+  Broadcaster = 256,
   // Any "Editor" of the channel in which the command is run (if such
   // information is known). The Broadcaster is automatically an Editor.
-  Editor = 64,
+  Editor = 128,
   // Any Moderator of the channel in which the command is run. The
   // Broadcaster is automatically a Moderator.
-  Moderator = 32,
+  Moderator = 64,
   // Any VIP of the channel in which the command is run. The Broadcaster
   // and any Moderator is automatically a VIP, even if the user has not
   // unlocked VIP Badges yet.
-  VIP = 16,
+  VIP = 32,
   // Any subscriber of the channel in which the command is run. The
-  // Broadcaster is automatically a Subscriber IFF the channel has
+  // Broadcaster is automatically a Tier 3 Subscriber IFF the channel has
   // Affiliate or Partner.
-  Subscriber = 8,
+  Tier3Subscriber = 16,
+  Tier2Subscriber = 8,
+  Tier1Subscriber = 4,
   // A regular of the channel in which the command is run (which has an
   // arbitrary and as-of-yet-undecided definition; will probably be
   // something that can be assigned or taken away within the bot).
-  Regular = 4,
-  // A follower of the channel (if such information is known). The
-  // Broadcaster is automatically a Follower.
-  Follower = 2,
-  // Anyone who does not fit into an above category. 
-  Anyone = 1
-}
-
-[AttributeUsage(AttributeTargets.Method)]
-public class AllowedGroupsAttribute : Attribute
-{
-  public readonly TwitchUserGroup[] AllowList;
-  public readonly TwitchUserGroup[] DenyList;
-
-  public AllowedGroupsAttribute(params TwitchUserGroup[] groups) : this(groups.Select(g => (true, g)).ToArray()) { }
-  public AllowedGroupsAttribute(params (bool Allowed, TwitchUserGroup Group)[] groups)
-  {
-    AllowList = groups.Where(g => g.Allowed).Select(g => g.Group).ToArray();
-    DenyList = groups.Where(g => !g.Allowed).Select(g => g.Group).ToArray();
-  }
-
-  public bool CheckEditor => AllowList.Concat(DenyList).Any(x => (x & TwitchUserGroup.Editor) == TwitchUserGroup.Editor);
-  public bool CheckFollower => AllowList.Concat(DenyList).Any(x => (x & TwitchUserGroup.Follower) == TwitchUserGroup.Follower);
-}
-
-public static class AllowedGroupsAttributeExtension
-{
-  public static bool IsAllowed(this AllowedGroupsAttribute attr, TwitchUserGroup group)
-    => attr == null ||
-    ((attr.AllowList.Length == 0 || attr.AllowList.Any(g => (g & group) == g))
-    && !attr.DenyList.Any(g => (g & group) == g));
-
-  public static bool CheckEditor(this AllowedGroupsAttribute attr)
-    => attr != null && attr.CheckEditor;
-
-  public static bool CheckFollower(this AllowedGroupsAttribute attr)
-    => attr != null && attr.CheckFollower;
-}
-
-[AttributeUsage(AttributeTargets.Method)]
-public class AllowAtLeastAttribute : AllowedGroupsAttribute
-{
-  public AllowAtLeastAttribute(TwitchUserGroup group)
-    : base(Enum.GetValues<TwitchUserGroup>().Where(g => g >= group).ToArray()) { }
-}
-
-[AttributeUsage(AttributeTargets.Method)]
-public class AllowAtMostAttribute : AllowedGroupsAttribute
-{
-  public AllowAtMostAttribute(TwitchUserGroup group)
-    : base(Enum.GetValues<TwitchUserGroup>().Where(g => g <= group).ToArray()) { }
+  Regular = 2,
+  // Anyone, whether or not they fit into an above category.
+  Anyone = 1,
+  // Some convenience values for ASSIGNING ROLES TO USERS.
+  Tier2AndBelow = Tier1Subscriber | Tier2Subscriber,
+  Tier3AndBelow = Tier2AndBelow | Tier3Subscriber,
+  AllBroadcasterRoles = Broadcaster | Editor | Moderator | VIP | Tier3AndBelow,
+  AllModeratorRoles = Moderator | VIP
 }
 
 [AttributeUsage(AttributeTargets.Class)]

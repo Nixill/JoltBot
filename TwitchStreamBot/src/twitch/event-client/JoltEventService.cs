@@ -49,7 +49,8 @@ public class JoltEventService : IHostedService
 
   private async Task OnChannelUpdate(object sender, ChannelUpdateArgs ev)
   {
-    await JoltCache.UpdateOwnChannelInfo();
+    JoltCache.UpdateOwnChannelInfo();
+    await JoltRewardDispatch.Modify();
     await StreamStopper.HandleStreamUpdate(await JoltCache.GetOwnChannelInfo());
   }
 

@@ -1,6 +1,5 @@
 using Nixill.Streaming.JoltBot.Twitch.Api;
 using TwitchLib.Api.Helix.Models.Chat.ChatSettings;
-using Args = Nixill.Streaming.JoltBot.Twitch.CommandContext;
 
 namespace Nixill.Streaming.JoltBot.Twitch.Commands;
 
@@ -8,8 +7,8 @@ namespace Nixill.Streaming.JoltBot.Twitch.Commands;
 public static class ModCommands
 {
   [Command("closechat")]
-  [AllowedGroups(TwitchUserGroup.Moderator)]
-  public static async Task CloseChatCommand(Args ev)
+  [AllowedUserGroups(TwitchUserGroup.Moderator)]
+  public static async Task CloseChatCommand(BaseContext _)
   {
     await JoltApiClient.WithToken((api, id) => api.Helix.Chat.UpdateChatSettingsAsync(
       id,
@@ -27,8 +26,8 @@ public static class ModCommands
   }
 
   [Command("openchat")]
-  [AllowedGroups(TwitchUserGroup.Moderator)]
-  public static async Task OpenChatCommand(Args ev)
+  [AllowedUserGroups(TwitchUserGroup.Moderator)]
+  public static async Task OpenChatCommand(BaseContext _)
   {
     await JoltApiClient.WithToken((api, id) => api.Helix.Chat.UpdateChatSettingsAsync(
       id,
