@@ -44,6 +44,8 @@ public static class AudioMonitoring
         var disableMonitoringResults = await disableMonitoringRequests.Send();
         Logger.LogDebug("Disabled audio monitoring.");
 
+        await Task.Delay(0);
+
         var enableMonitoringRequests = new OBSRequestBatch(monitorsToReset
           .Select(mtr => OBSRequests.Inputs.SetInputAudioMonitorType(mtr.Key, mtr.Value)),
           executionType: RequestBatchExecutionType.SerialRealtime);
