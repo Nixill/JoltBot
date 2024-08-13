@@ -143,7 +143,7 @@ public static class EndScreenManager
       var gameSlug = GenerateSlug(stream.Value.Game);
       var gameImage = new string[] { $".png", $".jpg" }
         .Select(s => $"{GameIconFolder}{gameSlug}{s}")
-        .Where(s => File.Exists($"{GameIconFolder}{gameSlug}{s}"))
+        .Where(File.Exists)
         .FirstOrDefault($"{GameIconFolder}unknown.png");
 
       bool isToday = stream.Value.Date == LocalDate.FromDateTime(DateTime.Today);
