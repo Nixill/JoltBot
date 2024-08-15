@@ -3,9 +3,15 @@
   "customizations": {
     "codespaces": {
       "repositories": {
-        "Nixill/CSharp.Nixill.Color": "write-all",
-        "Nixill/CSharp.Nixill.OBSWS": "write-all",
-        "Nixill/TwitchLib.EventSub.Websockets": "write-all"
+        "Nixill/CSharp.Nixill.Color": {
+          "permissions": "write-all"
+        },
+        "Nixill/CSharp.Nixill.OBSWS": {
+          "permissions": "write-all"
+        },
+        "Nixill/TwitchLib.EventSub.Websockets": {
+          "permissions": "write-all"
+        }
       }
     }
   }
