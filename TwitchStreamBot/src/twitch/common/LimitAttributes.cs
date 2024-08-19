@@ -110,3 +110,14 @@ public class ChanceToAppear : LimitAttribute
     return Task.FromResult(Random.Shared.NextDouble() < Chance);
   }
 }
+
+public class DisableTemporarily : LimitAttribute
+{
+  public DisableTemporarily()
+  {
+    StopOnDeny = true;
+  }
+
+  protected override Task<bool> ConditionCheck(BaseContext ctx, ChannelInformation info)
+    => Task.FromResult(false);
+}

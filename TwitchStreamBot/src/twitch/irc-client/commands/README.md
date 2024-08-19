@@ -16,7 +16,7 @@ Adds one or more integers. Decimal numbers aren't allowed, but negative numbers 
 
 Sends a message pretending that the named noun is now banned from chat.
 
-*^(This command does not apply any actual moderation to the target, nor does it even check if the target is a valid Twitch user.)*
+*<sub>(This command does not apply any actual moderation to the target, nor does it even check if the target is a valid Twitch user.)</sub>*
 
 
 ## `!coinflip`
