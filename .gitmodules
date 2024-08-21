@@ -7,3 +7,6 @@
 [submodule "CSharp.Nixill.Color"]
 	path = CSharp.Nixill.Color
 	url = https://github.com/Nixill/CSharp.Nixill.Color
+[submodule "CSharp.Nixill"]
+	path = CSharp.Nixill
+	url = https://github.com/Nixill/CSharp.Nixill/
