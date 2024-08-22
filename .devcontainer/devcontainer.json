@@ -11,6 +11,9 @@
         },
         "Nixill/TwitchLib.EventSub.Websockets": {
           "permissions": "write-all"
+        },
+        "Nixill/CSharp.Nixill": {
+          "permissions": "write-all"
         }
       }
     }
