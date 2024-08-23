@@ -23,6 +23,7 @@ public static class EndScreenManager
 
   public static readonly string GameIconFolder = UpcomingJson.GameIconFolder;
   static readonly LocalDatePattern FormatPattern = LocalDatePattern.CreateWithInvariantCulture("ddd., MMM. d");
+  private static readonly string[] FileFormats = [".png", ".jpg", ".webp"];
 
   public static async Task UpdateOnStartup()
   {
@@ -141,7 +142,7 @@ public static class EndScreenManager
       int channelID = await OBSRequests.SceneItems.GetSceneItemId($"sc_Raiding Screen", $"txt_ChannelUrl{i}").Send();
 
       var gameSlug = GenerateSlug(stream.Value.Game);
-      var gameImage = new string[] { $".png", $".jpg" }
+      var gameImage = FileFormats
         .Select(s => $"{GameIconFolder}{gameSlug}{s}")
         .Where(File.Exists)
         .FirstOrDefault($"{GameIconFolder}unknown.png");

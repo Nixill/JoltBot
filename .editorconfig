@@ -11,6 +11,7 @@ charset = utf-8
 trim_trailing_whitespace = false
 insert_final_newline = false
 dotnet_diagnostic.IDE0090.severity = none
+dotnet_diagnostic.IDE0130.severity = none
 
 [TwitchLib.EventSub.Websockets/**.cs]
 indent_style = space
@@ -30,3 +31,6 @@ dotnet_diagnostic.CA2007.severity = none
 dotnet_diagnostic.CA2208.severity = none
 dotnet_diagnostic.CS0067.severity = none
 dotnet_diagnostic.CS1591.severity = none
+
+[CSharp.Nixill/**.cs]
+dotnet_diagnostic.IDE0028.severity = none
