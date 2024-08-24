@@ -1,5 +1,5 @@
 
-using Nixill.Streaming.JoltBot.JSON;
+using Nixill.Streaming.JoltBot.Data;
 using Nixill.Streaming.JoltBot.Scheduled;
 
 namespace Nixill.Streaming.JoltBot.Files;

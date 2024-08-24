@@ -2,7 +2,7 @@ using System.Text.Json.Nodes;
 using NodaTime;
 using NodaTime.Text;
 
-namespace Nixill.Streaming.JoltBot.JSON;
+namespace Nixill.Streaming.JoltBot.Data;
 
 public static class UpcomingJson
 {

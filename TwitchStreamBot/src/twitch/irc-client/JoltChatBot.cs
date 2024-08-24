@@ -1,5 +1,5 @@
 using Microsoft.Extensions.Logging;
-using Nixill.Streaming.JoltBot.JSON;
+using Nixill.Streaming.JoltBot.Data;
 using Nixill.Streaming.JoltBot.OBS;
 using NReco.Logging.File;
 using TwitchLib.Client;

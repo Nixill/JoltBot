@@ -1,6 +1,6 @@
 using DSharpPlus;
 using DSharpPlus.Entities;
-using Nixill.Streaming.JoltBot.JSON;
+using Nixill.Streaming.JoltBot.Data;
 
 namespace Nixill.Streaming.JoltBot.Discord;
 

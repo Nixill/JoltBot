@@ -1,5 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
-using Nixill.Streaming.JoltBot.JSON;
+using Nixill.Streaming.JoltBot.Data;
 using TwitchLib.Client.Events;
 using TwitchLib.EventSub.Core.SubscriptionTypes.Channel;
 using TwitchLib.EventSub.Websockets.Core.EventArgs.Channel;

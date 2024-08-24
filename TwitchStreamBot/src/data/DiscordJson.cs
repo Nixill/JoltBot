@@ -3,7 +3,7 @@ using Nixill.Utils;
 using NodaTime;
 using NodaTime.Text;
 
-namespace Nixill.Streaming.JoltBot.JSON;
+namespace Nixill.Streaming.JoltBot.Data;
 
 public static class DiscordJson
 {

@@ -1,7 +1,7 @@
 using System.Text.Json.Nodes;
 using Nixill.Colors;
 
-namespace Nixill.Streaming.JoltBot.JSON;
+namespace Nixill.Streaming.JoltBot.Data;
 
 public static class GamesJson
 {

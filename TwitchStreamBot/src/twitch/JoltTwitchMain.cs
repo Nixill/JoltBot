@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging;
-using Nixill.Streaming.JoltBot.JSON;
+using Nixill.Streaming.JoltBot.Data;
 using Nixill.Streaming.JoltBot.Twitch.Api;
 using Nixill.Streaming.JoltBot.Twitch.Events;
 using TwitchLib.Api;

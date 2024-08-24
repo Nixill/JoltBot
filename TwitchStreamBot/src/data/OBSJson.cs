@@ -1,6 +1,6 @@
 using System.Text.Json.Nodes;
 
-namespace Nixill.Streaming.JoltBot.JSON;
+namespace Nixill.Streaming.JoltBot.Data;
 
 public static class OBSJson
 {

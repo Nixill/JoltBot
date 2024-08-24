@@ -1,5 +1,5 @@
 using Nixill.OBSWS;
-using Nixill.Streaming.JoltBot.JSON;
+using Nixill.Streaming.JoltBot.Data;
 
 namespace Nixill.Streaming.JoltBot.OBS;
 
