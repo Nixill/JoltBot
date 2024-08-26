@@ -11,16 +11,17 @@ public class ScheduledActions
 {
   public static void RunAll()
   {
-    Task.Run(ClockTick);
+    Task.Run(ClockTicks);
     Task.Run(AudioMonitoring.Tick);
-    Task.Run(TextScroll.Tick);
+    Task.Run(TextScrolls.Tick);
   }
 
-  public static async Task ClockTick()
+  public static async Task ClockTicks()
   {
     await Task.Delay(0);
 
-    ZonedDateTimePattern pattern = ZonedDateTimePattern.CreateWithInvariantCulture("ddd HH:mm:ss", null);
+    ZonedDateTimePattern pattern1 = ZonedDateTimePattern.CreateWithInvariantCulture("ddd HH:mm:ss", null);
+    ZonedDateTimePattern pattern2 = ZonedDateTimePattern.CreateWithInvariantCulture("ddd uuuu-MM-dd HH:mm:ss", null);
     BclDateTimeZone defaultZone = BclDateTimeZone.ForSystemDefault();
 
     string lastTimeUpdate = "";
@@ -31,10 +32,14 @@ public class ScheduledActions
       {
         if (JoltOBSClient.IsIdentified)
         {
-          string timeNow = pattern.Format(SystemClock.Instance.GetCurrentInstant().InZone(defaultZone));
+          var now = SystemClock.Instance.GetCurrentInstant().InZone(defaultZone);
+          string timeNow = pattern1.Format(now);
           if (timeNow != lastTimeUpdate)
           {
-            Task _ = JoltOBSClient.Client.SendRequestWithoutWaiting(OBSExtraRequests.Inputs.Text.SetInputText("txt_Clock", timeNow));
+            JoltOBSClient.Client.SendBatchRequestWithoutWaiting(new OBSRequestBatch(
+              OBSExtraRequests.Inputs.Text.SetInputText("txt_Clock", timeNow),
+              OBSExtraRequests.Inputs.Text.SetInputText("txt_ClockWithDate", pattern2.Format(now))
+            ), executionType: RequestBatchExecutionType.Parallel);
             lastTimeUpdate = timeNow;
           }
         }

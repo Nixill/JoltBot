@@ -1,6 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Nixill.OBSWS;
+using Nixill.Streaming.JoltBot.Data;
 using Nixill.Streaming.JoltBot.Files;
 using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Streaming.JoltBot.Twitch;
@@ -9,9 +10,9 @@ using Nixill.Utils;
 
 namespace Nixill.Streaming.JoltBot.Scheduled;
 
-public static class TextScroll
+public static class TextScrolls
 {
-  static readonly ILogger Logger = Log.Factory.CreateLogger(typeof(TextScroll));
+  static readonly ILogger Logger = Log.Factory.CreateLogger(typeof(TextScrolls));
 
   static string Text = "";
   static int DelayFrames = 0;
@@ -32,8 +33,10 @@ public static class TextScroll
       (Text, DelayFrames) = await GetNextTextToShow(Texts);
 
       #region Bring text onscreen
-      string preSpacedText = $"{new string(' ', 36)}{Text}{(Text.Length < 36 ? new string(' ', 36 - Text.Length) : "")}";
-      var enterTransition = Enumerable.Range(1, 36).Select(i => preSpacedText[i..(i + 36)]);
+      string sceneName = await GetCurrentScene();
+      int width = OBSJson.BottomTextLengths.GetValueOrDefault(sceneName, 50);
+      string preSpacedText = $"{new string(' ', width)}{Text}{(Text.Length < width ? new string(' ', width - Text.Length) : "")}";
+      var enterTransition = Enumerable.Range(1, width).Select(i => preSpacedText[i..(i + width)]);
       await new OBSRequestBatch(enterTransition.SelectMany(t => new OBSRequest[] {
         OBSExtraRequests.Inputs.Text.SetInputText("txt_BottomText", " " + t),
         OBSRequests.General.Sleep(frames: FramesPerAnim)
@@ -42,7 +45,7 @@ public static class TextScroll
       #endregion
 
       #region Await text timer
-      var widths = Enumerable.Range(1, DelayFrames).Select(i => i * 1880 / DelayFrames);
+      var widths = Enumerable.Range(1, DelayFrames).Select(i => i * 4996 / DelayFrames);
       await new OBSRequestBatch(widths.SelectMany(w => new OBSRequest[] {
         OBSExtraRequests.Inputs.Color.SetSize("clr_TimerLine", w, 2),
         OBSRequests.General.Sleep(frames: 1)
@@ -50,8 +53,10 @@ public static class TextScroll
       #endregion
 
       #region Send text offscreen
-      string postSpacedText = $"{Text}{new string(' ', 36)}";
-      var exitTransition = Enumerable.Range(1, Text.Length).Select(i => postSpacedText[i..(i + 36)]);
+      sceneName = await GetCurrentScene();
+      width = OBSJson.BottomTextLengths.GetValueOrDefault(sceneName, 50);
+      string postSpacedText = $"{Text}{new string(' ', width)}";
+      var exitTransition = Enumerable.Range(1, Text.Length).Select(i => postSpacedText[i..(i + width)]);
       await new OBSRequestBatch(exitTransition.SelectMany(t => new OBSRequest[] {
         OBSExtraRequests.Inputs.Text.SetInputText("txt_BottomText", " " + t),
         OBSRequests.General.Sleep(frames: FramesPerAnim)
@@ -130,6 +135,8 @@ public static class TextScroll
   static List<MemberInfo> LoadTexts()
     => typeof(TextsToShow).GetMembers().Where(m => m.GetCustomAttribute<TickerTextAttribute>() != null)
       .OrderByAttribute().ToList();
+
+  static async Task<string> GetCurrentScene() => (await OBSRequests.Scenes.GetCurrentProgramScene().Send()).Name;
 }
 
 [AttributeUsage(AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field)]

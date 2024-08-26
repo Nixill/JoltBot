@@ -12,7 +12,7 @@ public static class GameScreen
   internal static async Task SetColor()
   {
     ChannelInformation info = await JoltCache.GetOwnChannelInfo();
-    Color color = GamesJson.GetGameColor(info.GameName);
+    Color color = GamesCsv.GetGameColor(info.GameName);
     await OBSExtraRequests.Inputs.Color.SetColor("clr_BottomFilter", color).Send();
   }
 }

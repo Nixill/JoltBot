@@ -7,18 +7,23 @@ public static class OBSJson
   static JsonObject _root;
   public static JsonObject Root
   {
-    get =>
-      _root ?? (_root = (JsonObject)JsonNode.Parse(File.ReadAllText("data/obs.json")));
+    get => _root ??= (JsonObject)JsonNode.Parse(File.ReadAllText("data/obs.json"));
   }
 
   public static class Server
   {
-    public static string IP = (string)Root["server"]["ip"];
-    public static int Port = (int)Root["server"]["port"];
-    public static string Password = (string)Root["server"]["password"];
+    public static readonly string IP = (string)Root["server"]["ip"];
+    public static readonly int Port = (int)Root["server"]["port"];
+    public static readonly string Password = (string)Root["server"]["password"];
   }
 
-  public static Dictionary<string, string[]> SceneSwitcher = ((JsonObject)Root["sceneSwitcher"])
+  public static readonly Dictionary<string, int> BottomTextLengths = ((JsonObject)Root["bottomText"])
+    .Select(kvp => (
+      kvp.Key,
+      (int)kvp.Value))
+    .ToDictionary();
+
+  public static readonly Dictionary<string, string[]> SceneSwitcher = ((JsonObject)Root["sceneSwitcher"])
     .Select(kvp => (
       kvp.Key,
       ((JsonArray)kvp.Value)
@@ -26,5 +31,5 @@ public static class OBSJson
         .ToArray()))
     .ToDictionary();
 
-  public static string ScreenshotFolder = (string)Root["screenshotFolder"];
+  public static readonly string ScreenshotFolder = (string)Root["screenshotFolder"];
 }

@@ -46,7 +46,7 @@ public static class StreamStopper
     LastWarning = now;
 
     // Check stream title validity
-    if (!GamesJson.IsValidTitle(info.GameName, info.Title))
+    if (!GamesCsv.IsValidTitle(info.GameName, info.Title))
     {
       await WarnInvalidTitle();
     }

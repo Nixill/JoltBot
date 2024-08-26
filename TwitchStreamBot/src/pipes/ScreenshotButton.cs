@@ -17,29 +17,29 @@ public static class ScreenshotButton
 
   public static async Task Press(string format, string source, string sourceType)
   {
-    string[] sources = new string[] { };
+    string[] sources = [];
 
     if (sourceType == "source")
-      sources = new string[] { source };
+      sources = [source];
     else if (sourceType == "special")
       switch (source)
       {
         case "gameSources":
-          sources = new string[] { "vcd_GameStick", "gc_Primary" };
+          sources = ["vcd_GameStick", "gc_Primary", "dc_TopScreen", "gc_MelonDS"];
           break;
         case "activeScene":
-          sources = new string[] { (await OBSRequests.Scenes.GetCurrentProgramScene().Send()).Name };
+          sources = [(await OBSRequests.Scenes.GetCurrentProgramScene().Send()).Name];
           break;
         case "previewScene":
           if (await OBSRequests.UI.GetStudioModeEnabled().Send())
-            sources = new string[] { (await OBSRequests.Scenes.GetCurrentPreviewScene().Send()).Name };
+            sources = [(await OBSRequests.Scenes.GetCurrentPreviewScene().Send()).Name];
           else return;
           break;
       }
 
     foreach (var src in sources)
     {
-      Task saveScreenshot = SaveOneScreenshot(format, src);
+      Task _ = SaveOneScreenshot(format, src);
     }
   }
 
