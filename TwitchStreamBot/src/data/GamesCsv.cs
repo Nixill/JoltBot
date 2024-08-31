@@ -14,7 +14,7 @@ public static class GamesCsv
   {
     get => _table ??= DataTableCSVParser.FileToDataTable("data/games.csv",
       [
-        new DataColumn("gameName", typeof(string)) { Unique = true, AllowDBNull = false },
+        new DataColumn("gameName", typeof(string)),
         new DataColumn("color", typeof(Color)) { DefaultValue = Color.FromRGBA("#b42b42") },
         new DataColumn("aliases", typeof(string[])) { DefaultValue = Array.Empty<string>() },
         new DataColumn("ignoreTitle", typeof(bool)) { DefaultValue = false }

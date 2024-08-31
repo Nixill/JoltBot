@@ -1,3 +1,7 @@
+using System.Numerics;
+using System.Text.RegularExpressions;
+using Nixill.Utils;
+using NodaTime;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelInformation;
 
 namespace Nixill.Streaming.JoltBot.Twitch.Events.Rewards;
@@ -74,4 +78,81 @@ public class SuperHexagonAttribute(string lvl, params string[] prereqs) : LimitA
 
     return Task.FromResult(true);
   }
+}
+
+public readonly partial struct SuperHexagonScore : IComparable<SuperHexagonScore>,
+  IComparisonOperators<SuperHexagonScore, SuperHexagonScore, bool>,
+  IComparisonOperators<SuperHexagonScore, Duration, bool>,
+  IComparisonOperators<SuperHexagonScore, double, bool>,
+  IAdditionOperators<SuperHexagonScore, SuperHexagonScore, SuperHexagonScore>
+{
+  public int Frames { get; init; }
+
+  public int Seconds => Frames / 60;
+  public int PartialFrames => Frames % 60;
+
+  public decimal DecimalSeconds => Frames / 60m;
+  public double DoubleSeconds => Frames / 60d;
+
+  public Duration Duration => Duration.FromSeconds(DoubleSeconds);
+
+  static readonly Regex TimeFormat = TimeFormatGenerator();
+
+  public static SuperHexagonScore Parse(string input)
+  {
+    if (!TimeFormat.TryMatch(input, out Match match))
+    {
+      throw new FormatException("Not a valid Super Hexagon runtime.");
+    }
+
+    int frames = int.Parse(match.Groups[2].Value);
+    if (match.Groups[1].Success) frames += int.Parse(match.Groups[1].Value) * 60;
+
+    return new SuperHexagonScore { Frames = frames };
+  }
+
+  [GeneratedRegex(@"(?:(\d+):)?(\d\d?)")]
+  private static partial Regex TimeFormatGenerator();
+
+  public int CompareTo(SuperHexagonScore other)
+    => Frames.CompareTo(other.Frames);
+
+  public static bool operator >(SuperHexagonScore left, SuperHexagonScore right) => left.Frames > right.Frames;
+  public static bool operator >=(SuperHexagonScore left, SuperHexagonScore right) => left.Frames >= right.Frames;
+  public static bool operator <(SuperHexagonScore left, SuperHexagonScore right) => left.Frames < right.Frames;
+  public static bool operator <=(SuperHexagonScore left, SuperHexagonScore right) => left.Frames <= right.Frames;
+  public static bool operator ==(SuperHexagonScore left, SuperHexagonScore right) => left.Frames == right.Frames;
+  public static bool operator !=(SuperHexagonScore left, SuperHexagonScore right) => left.Frames != right.Frames;
+
+  public static bool operator >(SuperHexagonScore left, Duration right) => left.Duration > right;
+  public static bool operator >=(SuperHexagonScore left, Duration right) => left.Duration >= right;
+  public static bool operator <(SuperHexagonScore left, Duration right) => left.Duration < right;
+  public static bool operator <=(SuperHexagonScore left, Duration right) => left.Duration <= right;
+  public static bool operator ==(SuperHexagonScore left, Duration right) => left.Duration == right;
+  public static bool operator !=(SuperHexagonScore left, Duration right) => left.Duration != right;
+
+  public static bool operator >(SuperHexagonScore left, double right) => left.DoubleSeconds > right;
+  public static bool operator >=(SuperHexagonScore left, double right) => left.DoubleSeconds >= right;
+  public static bool operator <(SuperHexagonScore left, double right) => left.DoubleSeconds < right;
+  public static bool operator <=(SuperHexagonScore left, double right) => left.DoubleSeconds <= right;
+  public static bool operator ==(SuperHexagonScore left, double right) => left.DoubleSeconds == right;
+  public static bool operator !=(SuperHexagonScore left, double right) => left.DoubleSeconds != right;
+
+  public static SuperHexagonScore operator +(SuperHexagonScore left, SuperHexagonScore right) => new SuperHexagonScore { Frames = left.Frames + right.Frames };
+
+  public override bool Equals(object obj)
+    => Frames == (obj as SuperHexagonScore?)?.Frames;
+
+  public override int GetHashCode()
+    => Frames.GetHashCode();
+}
+
+public enum SuperHexagonLevel
+{
+  Hexagon = 1,
+  Hexagoner = 2,
+  Hexagonest = 3,
+  HyperHexagon = 4,
+  HyperHexagoner = 5,
+  HyperHexagonest = 6
 }

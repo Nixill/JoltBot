@@ -40,6 +40,9 @@ My Amazing Game,b42b42,Amazing Game,false
     "port": 1234,
     "password": "abcdefghijklmnopqrstuvwxyz"
   },
+  "bottomText": {
+    "sc_SceneName": 36,
+  },
   "sceneSwitcher": {
     "sc_SceneName": [
       "itm_ItemToHide1",
@@ -95,6 +98,22 @@ My Amazing Game,b42b42,Amazing Game,false
     }
   ]
 }
+```
+
+# SuperHexagon/attempts.csv
+This file may be made publicly accessible in the future. The example row is an actual row of the data.
+
+```csv
+attempt_num,redemption_num,score,highlight,notes
+109,84,326:59,https://www.twitch.tv/videos/1857653340,All-time PB of Hexagon difficulty
+```
+
+# SuperHexagon/redemptions.csv
+This file may be made publicly accessible in the future. The example row is an actual row of the data.
+
+```csv
+redemption_id,date,redeemer,redeemer_id,level
+84,2023-06-21,LevelUpLeo,28552907,Hexagon
 ```
 
 # ext-data/pretzel.json
