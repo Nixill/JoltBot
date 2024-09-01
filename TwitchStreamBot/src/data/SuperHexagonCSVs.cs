@@ -1,59 +1,43 @@
 using System.Data;
 using System.Data.Common;
+using CommunityToolkit.HighPerformance.Helpers;
 using Nixill.Collections.Grid.CSV;
 using Nixill.Streaming.JoltBot.Twitch.Events.Rewards;
 using NodaTime;
+using NodaTime.Text;
 
 namespace Nixill.Streaming.JoltBot.Data;
 
 public static class SuperHexagonCSVs
 {
-  static readonly DataTable AttemptsTable = DataTableCSVParser.FileToDataTable("data/SuperHexagon/attempts.csv",
-      [
-        new DataColumn("attempt_num", typeof(int)),
-        new DataColumn("redemption_num", typeof(int)) { AllowDBNull = false },
-        new DataColumn("score", typeof(SuperHexagonScore)) { AllowDBNull = false },
-        new DataColumn("highlight", typeof(Uri)),
-        new DataColumn("notes", typeof(string))
-      ], primaryKey: ["attempt_num"]
-    );
-  static IEnumerable<SuperHexagonAttempt> Attempts => AttemptsTable.AsEnumerable()
-    .Select(r => new SuperHexagonAttempt
+  static readonly CSVObjectCollection<SuperHexagonAttempt> Attempts
+    = CSVObjectCollection.ParseObjectsFromFile("data/SuperHexagon/attempts.csv", dict => new SuperHexagonAttempt
     {
-      AttemptNum = (int)r["attempt_num"],
-      RedemptionNum = (int)r["redemption_num"],
-      Score = (SuperHexagonScore)r["score"],
-      Highlight = (Uri)r["highlight"],
-      Notes = (string)r["notes"]
+      AttemptId = int.Parse(dict["attempt_id"]),
+      RedemptionId = int.Parse(dict["redemption_id"]),
+      Score = SuperHexagonScore.Parse(dict["score"]),
+      Highlight = dict.TryGetValue("highlight", out string highlight) ? new Uri(highlight) : null,
+      Notes = dict["notes"]
     });
 
-  static readonly DataTable RedemptionsTable = DataTableCSVParser.FileToDataTable("data/SuperHexagon/redemptions.csv",
-      [
-        new DataColumn("redemption_num", typeof(int)),
-        new DataColumn("date", typeof(LocalDate)) { AllowDBNull = false },
-        new DataColumn("redeemer", typeof(string)) { AllowDBNull = false },
-        new DataColumn("redeemer_id", typeof(string)),
-        new DataColumn("level", typeof(SuperHexagonLevel)) { AllowDBNull = false }
-      ], primaryKey: ["redemption_num"]
-    );
-  static IEnumerable<SuperHexagonRedemption> Redemptions => RedemptionsTable.AsEnumerable()
-    .Select(r => new SuperHexagonRedemption
+  static readonly CSVObjectCollection<SuperHexagonRedemption> Redemptions
+    = CSVObjectCollection.ParseObjectsFromFile("data/SuperHexagon/redemptions.csv", dict => new SuperHexagonRedemption
     {
-      RedemptionNum = (int)r["redemption_num"],
-      Date = (LocalDate)r["date"],
-      RedeemerUsername = (string)r["redeemer"],
-      RedeemerID = (string)r["redeemer_id"],
-      Level = (SuperHexagonLevel)r["level"]
+      RedemptionId = int.Parse(dict["redemption_id"]),
+      Date = LocalDatePattern.Iso.Parse(dict["date"]).Value,
+      RedeemerUsername = dict["redeemer"],
+      RedeemerID = dict["redeemer_id"],
+      Level = Enum.Parse<SuperHexagonLevel>(dict["level"])
     });
 
-  public static int GetLastAttemptNum() => Attempts.Last().AttemptNum;
-  public static int GetLastRedemptionNum() => Redemptions.Last().RedemptionNum;
+  public static int GetLastAttemptId() => Attempts.Last().AttemptId;
+  public static int GetLastRedemptionId() => Redemptions.Last().RedemptionId;
 }
 
 public readonly struct SuperHexagonAttempt
 {
-  public required int AttemptNum { get; init; }
-  public required int RedemptionNum { get; init; }
+  public required int AttemptId { get; init; }
+  public required int RedemptionId { get; init; }
   public required SuperHexagonScore Score { get; init; }
   public Uri Highlight { get; init; }
   public string Notes { get; init; }
@@ -61,7 +45,7 @@ public readonly struct SuperHexagonAttempt
 
 public readonly struct SuperHexagonRedemption
 {
-  public required int RedemptionNum { get; init; }
+  public required int RedemptionId { get; init; }
   public required LocalDate Date { get; init; }
   public required string RedeemerUsername { get; init; }
   public string RedeemerID { get; init; }

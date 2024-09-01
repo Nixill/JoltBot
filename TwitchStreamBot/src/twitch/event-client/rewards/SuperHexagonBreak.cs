@@ -9,12 +9,12 @@ namespace Nixill.Streaming.JoltBot.Twitch.Events.Rewards;
 [CommandContainer]
 public static class SuperHexagonController
 {
-  internal static HashSet<string> PlayedRounds = [];
-  internal static HashSet<string> WonRounds = [];
+  internal static HashSet<SuperHexagonLevel> PlayedRounds = [];
+  internal static HashSet<SuperHexagonLevel> WonRounds = [];
 
-  internal static string CurrentRound = null;
+  internal static SuperHexagonLevel CurrentRound = SuperHexagonLevel.None;
 
-  public static async Task SuperHexagonBreak(RewardContext ctx, string level)
+  public static async Task SuperHexagonBreak(RewardContext ctx, SuperHexagonLevel level)
   {
     await ctx.MessageAsync("⚠️ Super Hexagon contains spinning and "
       + "flashing lights that may be problematic for some viewers. ⚠️");
@@ -30,45 +30,45 @@ public static class SuperHexagonRewards
 {
   [ChannelPointsReward("SuperHexagon")]
   [DisableTemporarily]
-  [SuperHexagon("hexagon")]
+  [SuperHexagon(SuperHexagonLevel.Hexagon)]
   public static async Task SuperHexagonBreakHexagon(RewardContext ctx)
-    => await SuperHexagonController.SuperHexagonBreak(ctx, "hexagon");
+    => await SuperHexagonController.SuperHexagonBreak(ctx, SuperHexagonLevel.Hexagon);
 
   [ChannelPointsReward("SuperHexagoner")]
   [DisableTemporarily]
-  [SuperHexagon("hexagoner", "hexagon")]
+  [SuperHexagon(SuperHexagonLevel.Hexagoner, SuperHexagonLevel.Hexagon)]
   public static async Task SuperHexagonBreakHexagoner(RewardContext ctx)
-    => await SuperHexagonController.SuperHexagonBreak(ctx, "hexagoner");
+    => await SuperHexagonController.SuperHexagonBreak(ctx, SuperHexagonLevel.Hexagoner);
 
   [ChannelPointsReward("SuperHexagonest")]
   [DisableTemporarily]
-  [SuperHexagon("hexagonest", "hexagoner")]
+  [SuperHexagon(SuperHexagonLevel.Hexagonest, SuperHexagonLevel.Hexagoner)]
   public static async Task SuperHexagonBreakHexagonest(RewardContext ctx)
-    => await SuperHexagonController.SuperHexagonBreak(ctx, "hexagonest");
+    => await SuperHexagonController.SuperHexagonBreak(ctx, SuperHexagonLevel.Hexagonest);
 
   [ChannelPointsReward("SuperHexagonHyper")]
   [DisableTemporarily]
-  [SuperHexagon("hyper-hexagon", "hexagon")]
+  [SuperHexagon(SuperHexagonLevel.HyperHexagon, SuperHexagonLevel.Hexagon)]
   public static async Task SuperHexagonBreakHyperHexagon(RewardContext ctx)
-    => await SuperHexagonController.SuperHexagonBreak(ctx, "hyper-hexagon");
+    => await SuperHexagonController.SuperHexagonBreak(ctx, SuperHexagonLevel.HyperHexagon);
 
   [ChannelPointsReward("SuperHexagonerHyper")]
   [DisableTemporarily]
-  [SuperHexagon("hyper-hexagoner", "hexagoner", "hyper-hexagon")]
+  [SuperHexagon(SuperHexagonLevel.HyperHexagoner, SuperHexagonLevel.Hexagoner, SuperHexagonLevel.HyperHexagon)]
   public static async Task SuperHexagonBreakHyperHexagoner(RewardContext ctx)
-    => await SuperHexagonController.SuperHexagonBreak(ctx, "hyper-hexagoner");
+    => await SuperHexagonController.SuperHexagonBreak(ctx, SuperHexagonLevel.HyperHexagoner);
 
   [ChannelPointsReward("SuperHexagonestHyper")]
   [DisableTemporarily]
-  [SuperHexagon("hyper-hexagonest", "hexagonest", "hyper-hexagoner")]
+  [SuperHexagon(SuperHexagonLevel.HyperHexagonest, SuperHexagonLevel.Hexagonest, SuperHexagonLevel.HyperHexagoner)]
   public static async Task SuperHexagonBreakHyperHexagonest(RewardContext ctx)
-    => await SuperHexagonController.SuperHexagonBreak(ctx, "hyper-hexagonest");
+    => await SuperHexagonController.SuperHexagonBreak(ctx, SuperHexagonLevel.HyperHexagonest);
 }
 
-public class SuperHexagonAttribute(string lvl, params string[] prereqs) : LimitAttribute
+public class SuperHexagonAttribute(SuperHexagonLevel lvl, params SuperHexagonLevel[] prereqs) : LimitAttribute
 {
-  public string Level = lvl;
-  public string[] Prerequisites = prereqs;
+  public SuperHexagonLevel Level = lvl;
+  public SuperHexagonLevel[] Prerequisites = prereqs;
 
   protected override Task<bool> ConditionCheck(BaseContext ctx, ChannelInformation info)
   {
@@ -149,6 +149,7 @@ public readonly partial struct SuperHexagonScore : IComparable<SuperHexagonScore
 
 public enum SuperHexagonLevel
 {
+  None = 0,
   Hexagon = 1,
   Hexagoner = 2,
   Hexagonest = 3,
