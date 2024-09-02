@@ -8,28 +8,37 @@ namespace Nixill.Streaming.JoltBot.Data;
 public static class MemoryJson
 {
   static JsonObject _root;
-  public static JsonObject Root => _root ?? (_root = (JsonObject)JsonNode.Parse(File.ReadAllText("data/memory.json")));
+  public static JsonObject Root => _root ??= (JsonObject)JsonNode.Parse(File.ReadAllText("data/memory.json"));
 
   public static void Save()
   {
     File.WriteAllText("data/memory.json", Root.ToString());
   }
 
-  public static class EmoteMode
+  public static class Clock
   {
-    public static Instant ExpiresAt
+    public static Instant LastKnownTime
     {
-      get
-      {
-        var result = InstantPattern.General.Parse((string)Root.ReadPath("emoteMode", "expiresAt"));
-        if (result.Success) return result.Value;
-        else return Instant.MinValue;
-      }
-      set
-      {
-        Root.WritePath(InstantPattern.General.Format(value), "emoteMode", "expiresAt");
-        Save();
-      }
+      get => InstantPattern.General.Parse((string)Root["streamClock"]["lastKnownTime"]).Value;
+      set => Root["streamClock"]["lastKnownTime"] = InstantPattern.General.Format(value);
+    }
+
+    public static bool LastKnownState
+    {
+      get => (bool)Root["streamClock"]["lastKnownState"];
+      set => Root["streamClock"]["lastKnownState"] = value;
+    }
+
+    public static Instant LastStartTime
+    {
+      get => InstantPattern.General.Parse((string)Root["streamClock"]["lastStartTime"]).Value;
+      set => Root["streamClock"]["lastStartTime"] = InstantPattern.General.Format(value);
+    }
+
+    public static Instant LastEndTime
+    {
+      get => InstantPattern.General.Parse((string)Root["streamClock"]["lastEndTime"]).Value;
+      set => Root["streamClock"]["lastEndTime"] = InstantPattern.General.Format(value);
     }
   }
 
@@ -100,7 +109,7 @@ public static class MemoryJson
       }
     }
 
-    public static Dictionary<string, string[]> Aliases = ((JsonObject)Root)
+    public static Dictionary<string, string[]> Aliases = Root
       .Where(kvp => kvp.Value.GetValueKind() == System.Text.Json.JsonValueKind.Array)
       .Select(kvp => (
         kvp.Key,
@@ -109,7 +118,7 @@ public static class MemoryJson
         ).ToArray()
       )).ToDictionary();
 
-    public static string[] GameTitlesToIgnore = ((JsonObject)Root)
+    public static string[] GameTitlesToIgnore = Root
       .Where(kvp => kvp.Value.GetValueKind() == System.Text.Json.JsonValueKind.False)
       .Select(kvp => kvp.Key)
       .ToArray();

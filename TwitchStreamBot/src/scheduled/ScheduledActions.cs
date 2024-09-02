@@ -14,6 +14,7 @@ public class ScheduledActions
     Task.Run(ClockTicks);
     Task.Run(AudioMonitoring.Tick);
     Task.Run(TextScrolls.Tick);
+    Task.Run(StreamMemoryClock.Tick);
   }
 
   public static async Task ClockTicks()
