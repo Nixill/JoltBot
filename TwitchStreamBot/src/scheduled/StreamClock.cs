@@ -30,8 +30,17 @@ public static class StreamMemoryClock
 
     MemoryJson.Clock.LastKnownState = isStreaming;
 
-    JoltOBSClient.Client.Events.Outputs.StreamStarted += (sender, args) => MemoryJson.Clock.LastStartTime = Now;
-    JoltOBSClient.Client.Events.Outputs.StreamStopped += (sender, args) => MemoryJson.Clock.LastEndTime = Now;
+    JoltOBSClient.Client.Events.Outputs.StreamStarted += (sender, args) =>
+    {
+      MemoryJson.Clock.LastStartTime = Now;
+      MemoryJson.Save();
+    };
+
+    JoltOBSClient.Client.Events.Outputs.StreamStopped += (sender, args) =>
+    {
+      MemoryJson.Clock.LastEndTime = Now;
+      MemoryJson.Save();
+    };
 
     while (true)
     {
