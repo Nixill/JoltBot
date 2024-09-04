@@ -198,6 +198,42 @@ redemption_id,date,redeemer,redeemer_id,level
   - `HyperHexagoner`
   - `HyperHexagonest`
 
+# SuperHexagon/status.json
+
+```json
+{
+  "lastActive": "2024-09-04T05:09:00Z",
+  "lastRedeem": "01234567-89ab-cdef-0123-456789abcdef",
+  "redeemNum": 237,
+  "streamDate": "2024-09-03",
+  "status": "Hexagoner",
+  "played": [
+    "Hexagon",
+    "HyperHexagon",
+    "Hexagoner"
+  ]
+}
+```
+
+- `lastActive`: The last time the Super Hexagon Break was active, which means any of the following occurred:
+  - The channel points reward was redeemed.
+  - A score was entered for a redemption (whether or not this closes the redemption).
+  - One hour passed with an open redemption but no activity.
+- `lastRedeem`: The ID of the most recent Super Hexagon Break redemption, if unfulfilled. Is automatically fulfilled when a redemption ends, or refunded if an hour has passed with no activity.
+- `redeemNum`: Which redemption number is active (used for filling `attempts.csv`)?
+- `streamDate`: What date, in the time zone specified in `memory.json`, did the current stream start?
+- `status`: Exactly one of the Super Hexagon levels defined below.
+- `played`: Which Super Hexagon levels have been played? Includes the one currently being played, if applicable. Possible values listed below, except "None".
+
+Super Hexagon levels:
+- `None`
+- `Hexagon`
+- `Hexagoner`
+- `Hexagonest`
+- `HyperHexagon`
+- `HyperHexagoner`
+- `HyperHexagonest`
+
 # ext-data/pretzel.json
 This is the last known file format of the Pretzel Rocks json output. Note that it's written in the file as collapsed JSON, not formatted JSON.
 
