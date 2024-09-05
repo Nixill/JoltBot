@@ -10,7 +10,7 @@ namespace Nixill.Streaming.JoltBot.Data;
 
 public static class SuperHexagonCSVs
 {
-  static readonly CSVObjectCollection<SuperHexagonAttempt> Attempts
+  internal static readonly CSVObjectCollection<SuperHexagonAttempt> Attempts
     = CSVObjectCollection.ParseObjectsFromFile("data/SuperHexagon/attempts.csv", dict => new SuperHexagonAttempt
     {
       AttemptId = int.Parse(dict["attempt_id"]),
@@ -20,7 +20,17 @@ public static class SuperHexagonCSVs
       Notes = dict["notes"]
     });
 
-  static readonly CSVObjectCollection<SuperHexagonRedemption> Redemptions
+  internal static IDictionary<string, string> FormatAttempt(SuperHexagonAttempt input)
+    => new Dictionary<string, string>
+    {
+      ["attempt_id"] = input.AttemptId.ToString(),
+      ["redemption_id"] = input.RedemptionId.ToString(),
+      ["score"] = input.Score.ToString(),
+      ["highlight"] = input.Highlight?.ToString() ?? "",
+      ["notes"] = input.Notes?.ToString() ?? ""
+    };
+
+  internal static readonly CSVObjectCollection<SuperHexagonRedemption> Redemptions
     = CSVObjectCollection.ParseObjectsFromFile("data/SuperHexagon/redemptions.csv", dict => new SuperHexagonRedemption
     {
       RedemptionId = int.Parse(dict["redemption_id"]),
@@ -30,8 +40,25 @@ public static class SuperHexagonCSVs
       Level = Enum.Parse<SuperHexagonLevel>(dict["level"])
     });
 
-  public static int GetLastAttemptId() => Attempts.Last().AttemptId;
-  public static int GetLastRedemptionId() => Redemptions.Last().RedemptionId;
+  internal static IDictionary<string, string> FormatRedemption(SuperHexagonRedemption input)
+    => new Dictionary<string, string>
+    {
+      ["redemption_id"] = input.RedemptionId.ToString(),
+      ["date"] = LocalDatePattern.Iso.Format(input.Date),
+      ["redeemer"] = input.RedeemerUsername,
+      ["redeemer_id"] = input.RedeemerID ?? "",
+      ["level"] = input.Level.ToString()
+    };
+
+  internal static void AddRedemption(SuperHexagonRedemption input)
+  {
+    File.AppendAllText("data/SuperHexagon/redemptions.csv", Redemptions.NewRow(input, FormatRedemption) + "\n");
+  }
+
+  internal static void AddAttempt(SuperHexagonAttempt input)
+  {
+    File.AppendAllText("data/SuperHexagon/attempts.csv", Attempts.NewRow(input, FormatAttempt));
+  }
 }
 
 public readonly struct SuperHexagonAttempt

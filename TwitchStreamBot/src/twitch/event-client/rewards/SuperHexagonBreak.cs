@@ -1,5 +1,6 @@
 using System.Numerics;
 using System.Text.RegularExpressions;
+using Nixill.Streaming.JoltBot.Data;
 using Nixill.Utils;
 using NodaTime;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelInformation;
@@ -9,10 +10,8 @@ namespace Nixill.Streaming.JoltBot.Twitch.Events.Rewards;
 [CommandContainer]
 public static class SuperHexagonController
 {
-  internal static HashSet<SuperHexagonLevel> PlayedRounds = [];
-  internal static HashSet<SuperHexagonLevel> WonRounds = [];
-
-  internal static SuperHexagonLevel CurrentRound = SuperHexagonLevel.None;
+  static Instant Now => SystemClock.Instance.GetCurrentInstant();
+  static CancellationTokenSource Timer = null;
 
   public static async Task SuperHexagonBreak(RewardContext ctx, SuperHexagonLevel level)
   {
@@ -21,7 +20,55 @@ public static class SuperHexagonController
     await ctx.MessageAsync("It usually lasts about 3 minutes. Nix's PB "
       + "is just under 5½ minutes.");
 
-    CurrentRound = level;
+    Instant now = Now;
+
+    SuperHexagonJson.Status = level;
+    SuperHexagonJson.LastActivity = now;
+    SuperHexagonJson.RedeemNum++;
+
+    Timer?.Cancel();
+    Timer = new();
+    Task _ = CancelRedemptionAfterOneHour(ctx.RedemptionArgs.Id, now, Timer.Token);
+  }
+
+  static async Task CancelRedemptionAfterOneHour(string redemptionId, Instant startTime, CancellationToken token)
+  {
+    Instant now = Now;
+    Instant halfHour = startTime + Duration.FromMinutes(30);
+    Instant tenMinutes = halfHour + Duration.FromMinutes(20);
+    Instant twoMinutes = tenMinutes + Duration.FromMinutes(8);
+    Instant endOfTimer = twoMinutes + Duration.FromMinutes(2);
+
+    try
+    {
+      if (now < halfHour)
+      {
+        await Task.Delay(Duration.Min(halfHour - now, Duration.FromMinutes(30)).ToTimeSpan(), token);
+        await JoltChatBot.Chat("Hey, Nix! Did you forget about the Super Hexagon Break?");
+      }
+
+      if (now < tenMinutes)
+      {
+        await Task.Delay(Duration.Min(tenMinutes - now, Duration.FromMinutes(10)).ToTimeSpan(), token);
+        await JoltChatBot.Chat("Nix, you've still got a Super Hexagon Break to do...");
+      }
+
+      if (now < twoMinutes)
+      {
+        await Task.Delay(Duration.Min(twoMinutes - now, Duration.FromMinutes(8)).ToTimeSpan(), token);
+        await JoltChatBot.Chat("Nix, two minute warning on that Super Hexagon Break.");
+      }
+
+      if (now < endOfTimer)
+      {
+        await Task.Delay(Duration.Min(endOfTimer - now, Duration.FromMinutes(2)).ToTimeSpan(), token);
+        await JoltChatBot.Chat("That's time! I'll just refund you that Super Hexagon Break redemption.");
+      }
+
+      // todo actually issue the refund and clean up the bot state (this
+      // involves things I'm too tired to think about right now)
+    }
+    catch (TaskCanceledException) { }
   }
 }
 
@@ -73,8 +120,8 @@ public class SuperHexagonAttribute(SuperHexagonLevel lvl, params SuperHexagonLev
   protected override Task<bool> ConditionCheck(BaseContext ctx, ChannelInformation info)
   {
     if (info.Tags.Any(t => t.Equals("speedrun", StringComparison.InvariantCultureIgnoreCase))) return Task.FromResult(false);
-    if (Prerequisites.Any(p => !SuperHexagonController.PlayedRounds.Contains(p))) return Task.FromResult(false);
-    if (SuperHexagonController.PlayedRounds.Contains(Level)) return Task.FromResult(false);
+    if (Prerequisites.Any(p => !SuperHexagonJson.Played.Contains(p))) return Task.FromResult(false);
+    if (SuperHexagonJson.Played.Contains(Level)) return Task.FromResult(false);
 
     return Task.FromResult(true);
   }
