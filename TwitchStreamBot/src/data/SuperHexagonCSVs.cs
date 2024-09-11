@@ -50,14 +50,14 @@ public static class SuperHexagonCSVs
       ["level"] = input.Level.ToString()
     };
 
-  internal static void AddRedemption(SuperHexagonRedemption input)
+  internal static async Task AddRedemption(SuperHexagonRedemption input)
   {
-    File.AppendAllText("data/SuperHexagon/redemptions.csv", Redemptions.NewRow(input, FormatRedemption) + "\n");
+    await File.AppendAllTextAsync("data/SuperHexagon/redemptions.csv", "\n" + Redemptions.NewRow(input, FormatRedemption));
   }
 
-  internal static void AddAttempt(SuperHexagonAttempt input)
+  internal static async Task AddAttempt(SuperHexagonAttempt input)
   {
-    File.AppendAllText("data/SuperHexagon/attempts.csv", Attempts.NewRow(input, FormatAttempt));
+    await File.AppendAllTextAsync("data/SuperHexagon/attempts.csv", "\n" + Attempts.NewRow(input, FormatAttempt));
   }
 }
 

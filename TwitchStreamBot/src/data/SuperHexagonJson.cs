@@ -16,16 +16,28 @@ public static class SuperHexagonJson
     File.WriteAllText("data/SuperHexagon/status.json", Root.ToString());
   }
 
-  public static Instant LastActivity
+  public static Instant LastActive
   {
     get => InstantPattern.General.Parse((string)Root["lastActive"]).Value;
     set => Root["lastActive"] = InstantPattern.General.Format(value);
   }
 
-  public static string LastRedeem
+  public static string LastRedeemID
   {
-    get => (string)Root["lastRedeem"];
-    set => Root["lastRedeem"] = value;
+    get => (string)Root["lastRedeemId"];
+    set => Root["lastRedeemId"] = value;
+  }
+
+  public static string LastRedeemerID
+  {
+    get => (string)Root["lastRedeemerId"];
+    set => Root["lastRedeemerId"] = value;
+  }
+
+  public static string LastRedeemerUsername
+  {
+    get => (string)Root["lastRedeemerUsername"];
+    set => Root["lastRedeemerUsername"] = value;
   }
 
   public static int RedeemNum
@@ -34,15 +46,33 @@ public static class SuperHexagonJson
     set => Root["redeemNum"] = value;
   }
 
+  public static bool RedeemPosted
+  {
+    get => (bool)Root["redeemPosted"];
+    set => Root["redeemPosted"] = value;
+  }
+
+  public static SuperHexagonScore RedeemScore
+  {
+    get => new SuperHexagonScore { Frames = (int)Root["redeemScore"] };
+    set => Root["redeemScore"] = value.Frames;
+  }
+
   public static LocalDate StreamDate
   {
     get => LocalDatePattern.Iso.Parse((string)Root["streamDate"]).Value;
     set => Root["streamDate"] = LocalDatePattern.Iso.Format(value);
   }
 
-  public static SuperHexagonLevel Status
+  public static SuperHexagonLevel Level
   {
-    get => Enum.Parse<SuperHexagonLevel>((string)Root["status"]);
+    get => Enum.Parse<SuperHexagonLevel>((string)Root["level"]);
+    set => Root["level"] = value.ToString();
+  }
+
+  public static SuperHexagonStatus Status
+  {
+    get => Enum.Parse<SuperHexagonStatus>((string)Root["status"]);
     set => Root["status"] = value.ToString();
   }
 

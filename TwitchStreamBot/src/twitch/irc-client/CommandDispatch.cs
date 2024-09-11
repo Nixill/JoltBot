@@ -146,7 +146,7 @@ public static class CommandDispatch
       commandNameWords.RemoveAt(commandNameWords.Count - 1);
       words.Insert(0, word);
 
-      if (words.Count == 0) return; // No error if no such command
+      if (commandNameWords.Count == 0) return; // No error if no such command
     }
 
     BotCommand cmd = Commands[commandName];
@@ -237,6 +237,11 @@ public static class CommandDispatch
     catch (TargetInvocationException e)
     {
       await ctx.ReplyAsync($"Error: {e.InnerException.GetType().Name}: {e.InnerException.Message}");
+      logger.LogError(e, "Error in command execution");
+    }
+    catch (Exception e)
+    {
+      await ctx.ReplyAsync($"Error: {e.GetType().Name}: {e.Message}");
       logger.LogError(e, "Error in command execution");
     }
   }

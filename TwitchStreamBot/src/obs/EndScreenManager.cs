@@ -27,9 +27,16 @@ public static class EndScreenManager
 
   public static async Task UpdateOnStartup()
   {
-    await UpdateStreamData(null);
-    while (!JoltOBSClient.IsConnected) await Task.Delay(5000);
-    await UpdateStreamScene();
+    try
+    {
+      await UpdateStreamData(null);
+      while (!JoltOBSClient.IsConnected) await Task.Delay(5000);
+      await UpdateStreamScene();
+    }
+    catch (HttpRequestException)
+    {
+      Logger.LogError("Failed to update calendar on startup.");
+    }
   }
 
   public static async Task UpdateStreamData(LocalDate? dat)
