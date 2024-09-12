@@ -3,6 +3,7 @@ using Nixill.Streaming.JoltBot.Data;
 using Nixill.Streaming.JoltBot.Twitch.Api;
 using Nixill.Utils;
 using NodaTime;
+using TwitchLib.Api.Core.Enums;
 using TwitchLib.Api.Helix.Models.ChannelPoints.UpdateCustomReward;
 using TwitchLib.Api.Helix.Models.ChannelPoints.UpdateCustomRewardRedemptionStatus;
 
@@ -31,9 +32,11 @@ public static class SuperHexagonController
     SuperHexagonJson.LastRedeemID = ctx.RedemptionArgs.Id;
     SuperHexagonJson.LastRedeemerID = ctx.RedemptionArgs.UserId;
     SuperHexagonJson.LastRedeemerUsername = ctx.RedemptionArgs.UserLogin;
+    SuperHexagonJson.Played = SuperHexagonJson.Played.Append(level).Distinct().ToArray();
     SuperHexagonJson.Save();
 
-    Task _ = SetSHBsPaused(true);
+    Task _ = JoltRewardDispatch.Modify();
+    _ = SetSHBsPaused(true);
 
     Timer?.Cancel();
     Timer = new();
@@ -85,6 +88,8 @@ public static class SuperHexagonController
       SuperHexagonScore previous = SuperHexagonJson.RedeemScore;
       SuperHexagonScore sum = score + previous;
 
+      SuperHexagonJson.RedeemScore = sum;
+
       int attempt = SuperHexagonCSVs.Attempts.Last().AttemptId + 1;
 
       await SuperHexagonCSVs.AddAttempt(new SuperHexagonAttempt
@@ -120,6 +125,10 @@ public static class SuperHexagonController
       if (fulfill)
       {
         Timer = new();
+        await JoltApiClient.WithToken((api, id) => api.Helix.ChannelPoints.UpdateRedemptionStatusAsync(id,
+          TwitchJson.RewardKeys[$"SuperHexagon.{SuperHexagonJson.Level}"], [SuperHexagonJson.LastRedeemID],
+          new UpdateCustomRewardRedemptionStatusRequest { Status = CustomRewardRedemptionStatus.FULFILLED }));
+
         SuperHexagonJson.LastRedeemID = null;
         SuperHexagonJson.LastRedeemerID = null;
         SuperHexagonJson.LastRedeemerUsername = null;
@@ -127,6 +136,8 @@ public static class SuperHexagonController
 
         Task _ = UnpauseRedemptionsAfterHalfHour(Now, Timer.Token);
       }
+
+      SuperHexagonJson.Save();
     }
   }
 

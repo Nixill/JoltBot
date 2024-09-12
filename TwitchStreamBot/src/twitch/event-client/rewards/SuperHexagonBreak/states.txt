@@ -1,0 +1,21 @@
+.None
+└╴Redeemed: .Waiting
+
+.Waiting
+├╴One hour: .None (refunded)
+├╴Scored (win): .Cooldown (fulfilled)
+├╴Scored (not win): .Active
+├╴Acknowledged: .Waiting (timer reset)
+└╴Cancelled: .None (refunded)
+
+.Active
+├╴Scored (win): .Cooldown (fulfilled)
+├╴Scored (loss): .Cooldown (fulfilled)
+├╴Scored (neither): .Active
+└╴Cancelled: .Cooldown (refunded)
+
+.Cooldown
+├╴Immediately if no redeems left: .None
+└╴Half hour: .None
+
+Special notes: 60 minutes where BOTH stream is offline and state is .None → Reset played list
