@@ -14,7 +14,7 @@ public static class PretzelJson
   public static JsonObject Load()
     => _root = (JsonObject)JsonNode.Parse(File.ReadAllText("ext-data/pretzel/pretzel.json"));
 
-  public static bool IsPlaying => (bool)Root["player"]["playing"];
+  public static bool IsPlaying => (bool?)Root["player"]["playing"] ?? false;
 
   public static string Title => (string)Root["track"]["title"];
   public static string Credit => (string)Root["track"]["artistsString"];

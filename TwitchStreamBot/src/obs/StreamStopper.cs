@@ -34,8 +34,10 @@ public static class StreamStopper
   public static async Task HandleStreamUpdate(ChannelInformation info)
   {
     await Task.Delay(0);
-
     Instant now = Now;
+
+    if (LastWarning >= now - HalfHour) return;
+
     MemoryJson.Stopper.AllInfo = (
       now,
       info.Title,

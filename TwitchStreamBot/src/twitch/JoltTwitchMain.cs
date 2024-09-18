@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Nixill.Streaming.JoltBot.Data;
 using Nixill.Streaming.JoltBot.Twitch.Api;
 using Nixill.Streaming.JoltBot.Twitch.Events;
+using Nixill.Streaming.JoltBot.Twitch.Events.Rewards;
 using TwitchLib.Api;
 using TwitchLib.Api.Auth;
 using TwitchLib.Api.Core.Exceptions;
@@ -28,6 +29,8 @@ public static class JoltTwitchMain
     Task clientSetup = JoltApiClient.SetUp(TwitchJson.Channel, api);
     Task eventSetup = Task.Run(JoltEventClient.SetUp);
     Task rewardSetup = JoltRewardDispatch.Register();
+
+    Task shSetup = SuperHexagonController.Startup();
   }
 
   public static async Task<string> GetToken(AuthInfo which, TwitchAPI api)

@@ -108,19 +108,7 @@ public static class MemoryJson
         Save();
       }
     }
-
-    public static Dictionary<string, string[]> Aliases = Root
-      .Where(kvp => kvp.Value.GetValueKind() == System.Text.Json.JsonValueKind.Array)
-      .Select(kvp => (
-        kvp.Key,
-        ((JsonArray)kvp.Value).Select(
-          n => n.ToString()
-        ).ToArray()
-      )).ToDictionary();
-
-    public static string[] GameTitlesToIgnore = Root
-      .Where(kvp => kvp.Value.GetValueKind() == System.Text.Json.JsonValueKind.False)
-      .Select(kvp => kvp.Key)
-      .ToArray();
   }
+
+  internal static readonly DateTimeZone TimeZone = DateTimeZoneProviders.Tzdb[(string)Root["timeZone"]];
 }
