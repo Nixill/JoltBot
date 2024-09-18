@@ -3,6 +3,7 @@ using System.Text.Json.Nodes;
 using Microsoft.Extensions.Logging;
 using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Streaming.JoltBot.Twitch;
+using Nixill.Streaming.JoltBot.Twitch.Events;
 using NodaTime;
 using NodaTime.Text;
 
@@ -40,6 +41,9 @@ public static class PipeRunner
             break;
           case "Markers.Place":
             _ = Task.Run(() => MarkerButton.Place());
+            break;
+          case "Rewards.Refresh":
+            _ = JoltRewardDispatch.Modify();
             break;
           case "Scenes.Switch":
             string scene = (string)data["scene"];

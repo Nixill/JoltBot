@@ -31,6 +31,10 @@ Parameters:
 Places a stream and recording marker.
 
 
+# `Rewards.Refresh`
+Refreshes channel point reward eligibility.
+
+
 # `Scenes.Switch`
 Uses the Advanced Scene Switcher functionality to switch to a specific scene with a specific element (or more) showing.
 
