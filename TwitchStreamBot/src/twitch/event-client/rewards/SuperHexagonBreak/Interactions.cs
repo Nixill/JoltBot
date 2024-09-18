@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Nixill.Streaming.JoltBot.Data;
 using Nixill.Utils;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelInformation;
