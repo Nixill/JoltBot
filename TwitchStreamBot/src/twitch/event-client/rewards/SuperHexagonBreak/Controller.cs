@@ -1,5 +1,7 @@
 #define SHB_DEBUG
+using Nixill.OBSWS;
 using Nixill.Streaming.JoltBot.Data;
+using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Streaming.JoltBot.Twitch.Api;
 using Nixill.Utils;
 using NodaTime;
@@ -13,6 +15,46 @@ public static class SuperHexagonController
 {
   static Instant Now => SystemClock.Instance.GetCurrentInstant();
   static CancellationTokenSource Timer = null;
+
+  private static void StreamStartedHandler(object sender, OutputStateChanged e)
+  {
+    if (SuperHexagonJson.Status == SuperHexagonStatus.None)
+      if (Timer != null)
+      {
+        Timer.Cancel();
+        Timer = null;
+      }
+      else
+      {
+        SuperHexagonJson.StreamDate = Now.InZone(MemoryJson.TimeZone).LocalDateTime.Date;
+      }
+  }
+
+  private static void StreamStoppedHandler(object sender, OutputStateChanged e)
+  {
+    if (SuperHexagonJson.Status == SuperHexagonStatus.None)
+    {
+      Timer = new();
+      Task _ = ResetLevelsAfterHalfHour(Now, Timer.Token);
+    }
+  }
+
+  public static async Task Startup()
+  {
+    await Task.Delay(TimeSpan.FromSeconds(20));
+
+    Timer?.Cancel(); // just in case
+
+    if (SuperHexagonJson.Status == SuperHexagonStatus.Waiting)
+      await CancelRedemptionAfterOneHour(SuperHexagonJson.LastRedeemID, SuperHexagonJson.Level, SuperHexagonJson.LastActive, (Timer = new()).Token);
+    else if (SuperHexagonJson.Status == SuperHexagonStatus.Cooldown)
+      await UnpauseRewardsAfterHalfHour(SuperHexagonJson.LastActive, (Timer = new()).Token);
+    else if (SuperHexagonJson.Status == SuperHexagonStatus.None && MemoryJson.Clock.LastKnownState == false)
+      await ResetLevelsAfterHalfHour(Instant.Max(SuperHexagonJson.LastActive, MemoryJson.Clock.LastEndTime), (Timer = new()).Token);
+
+    JoltOBSClient.Client.Events.Outputs.StreamStarted += StreamStartedHandler;
+    JoltOBSClient.Client.Events.Outputs.StreamStopped += StreamStoppedHandler;
+  }
 
   public static async Task SuperHexagonBreak(RewardContext ctx, SuperHexagonLevel level)
   {
@@ -134,7 +176,7 @@ public static class SuperHexagonController
         SuperHexagonJson.LastRedeemerUsername = null;
         SuperHexagonJson.Status = SuperHexagonStatus.Cooldown;
 
-        Task _ = UnpauseRedemptionsAfterHalfHour(Now, Timer.Token);
+        Task _ = UnpauseRewardsAfterHalfHour(Now, Timer.Token);
       }
 
       SuperHexagonJson.Save();
@@ -199,7 +241,7 @@ public static class SuperHexagonController
     catch (TaskCanceledException) { }
   }
 
-  static async Task UnpauseRedemptionsAfterHalfHour(Instant startTime, CancellationToken token)
+  static async Task UnpauseRewardsAfterHalfHour(Instant startTime, CancellationToken token)
   {
     try
     {
@@ -213,8 +255,25 @@ public static class SuperHexagonController
     catch (TaskCanceledException) { }
   }
 
+  static async Task ResetLevelsAfterHalfHour(Instant startTime, CancellationToken token)
+  {
+    try
+    {
+      Instant now = Now;
+      Instant halfHour = startTime + Duration.FromMinutes(30);
+
+      if (now < halfHour) await Task.Delay((halfHour - now).ToTimeSpan(), token);
+
+      SuperHexagonJson.Played = [];
+      SuperHexagonJson.Save();
+      await JoltRewardDispatch.Modify();
+    }
+    catch (TaskCanceledException) { }
+  }
+
   static async Task SetSHBsPaused(bool newPauseState)
     => await Enum.GetValues<SuperHexagonLevel>()
+      .Where(v => RewardsJson.RewardKeys.ContainsKey($"SuperHexagon.{v}"))
       .Select(v => RewardsJson.RewardKeys[$"SuperHexagon.{v}"])
       .Select(uuid => JoltApiClient.WithToken((api, id) => api.Helix.ChannelPoints.UpdateCustomRewardAsync(id, uuid,
         new UpdateCustomRewardRequest { IsPaused = newPauseState }))).WaitAllNoReturn();
