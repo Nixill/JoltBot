@@ -17,21 +17,9 @@ public static class TwitchJson
   public static readonly AuthInfo Bot = new AuthInfo(Root["bot"]);
   public static readonly AuthInfo Channel = new AuthInfo(Root["channel"]);
 
-  public static readonly Dictionary<string, string> RewardKeys = ((JsonObject)Root["rewards"])
-    .Select(kvp => (kvp.Key, (string)kvp.Value)).ToDictionary();
-  public static readonly Dictionary<string, string> RewardsByKey = ((JsonObject)Root["rewards"])
-    .Select(kvp => ((string)kvp.Value, kvp.Key)).ToDictionary();
-
   public static void Save()
   {
     File.WriteAllText("data/twitch.json", Root.ToString());
-  }
-
-  public static void AddReward(string name, string uuid)
-  {
-    RewardKeys[name] = uuid;
-    RewardsByKey[uuid] = name;
-    Root["rewards"][name] = uuid;
   }
 }
 

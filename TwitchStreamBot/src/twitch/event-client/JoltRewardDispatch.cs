@@ -34,7 +34,7 @@ public static class JoltRewardDispatch
         ChannelPointsRewardAttribute attr = m.GetCustomAttribute<ChannelPointsRewardAttribute>();
 
         // let's do automatic registration right now actually
-        string rewardUuid = TwitchJson.RewardKeys.GetValueOrDefault(attr.Name ?? "")
+        string rewardUuid = RewardsJson.RewardKeys.GetValueOrDefault(attr.Name ?? "")
           ?? await CreateNewReward(attr.Name);
 
         BotRedemption rdmp = new BotRedemption
@@ -172,7 +172,7 @@ public static class JoltRewardDispatch
     );
 
     string id = reward.Data.First().Id;
-    TwitchJson.AddReward(name, id);
+    RewardsJson.AddReward(name, id);
     TwitchJson.Save();
     return id;
   }

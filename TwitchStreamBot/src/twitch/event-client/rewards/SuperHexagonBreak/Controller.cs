@@ -126,7 +126,7 @@ public static class SuperHexagonController
       {
         Timer = new();
         await JoltApiClient.WithToken((api, id) => api.Helix.ChannelPoints.UpdateRedemptionStatusAsync(id,
-          TwitchJson.RewardKeys[$"SuperHexagon.{SuperHexagonJson.Level}"], [SuperHexagonJson.LastRedeemID],
+          RewardsJson.RewardKeys[$"SuperHexagon.{SuperHexagonJson.Level}"], [SuperHexagonJson.LastRedeemID],
           new UpdateCustomRewardRedemptionStatusRequest { Status = CustomRewardRedemptionStatus.FULFILLED }));
 
         SuperHexagonJson.LastRedeemID = null;
@@ -183,7 +183,7 @@ public static class SuperHexagonController
       }
 
       await JoltApiClient.WithToken((api, id) => api.Helix.ChannelPoints.UpdateRedemptionStatusAsync(id,
-        TwitchJson.RewardKeys[$"SuperHexagon.{level}"], [redemptionId], new UpdateCustomRewardRedemptionStatusRequest
+        RewardsJson.RewardKeys[$"SuperHexagon.{level}"], [redemptionId], new UpdateCustomRewardRedemptionStatusRequest
         {
           Status = TwitchLib.Api.Core.Enums.CustomRewardRedemptionStatus.CANCELED
         }
@@ -215,7 +215,7 @@ public static class SuperHexagonController
 
   static async Task SetSHBsPaused(bool newPauseState)
     => await Enum.GetValues<SuperHexagonLevel>()
-      .Select(v => TwitchJson.RewardKeys[$"SuperHexagon.{v}"])
+      .Select(v => RewardsJson.RewardKeys[$"SuperHexagon.{v}"])
       .Select(uuid => JoltApiClient.WithToken((api, id) => api.Helix.ChannelPoints.UpdateCustomRewardAsync(id, uuid,
         new UpdateCustomRewardRequest { IsPaused = newPauseState }))).WaitAllNoReturn();
 }

@@ -111,9 +111,6 @@ My Amazing Game,b42b42,Amazing Game,false
     "token": "abcdefghijklmnopqrstuvwxyz",
     "refresh": "abcdefghijklmnopqrstuvwxyz",
     "uid": "1234567890"
-  },
-  "rewards": {
-    "RewardName": "01234567-89ab-cdef-0123-456789abcdef"
   }
 }
 ```
@@ -125,9 +122,17 @@ My Amazing Game,b42b42,Amazing Game,false
   - `token`: An access token for the account.
   - `refresh`: The refresh token to create a new access token for the account.
   - `uid`: The user ID for the account.
-- `rewards`: Information on Twitch Channel Points Rewards managed by Jolt.
-  - *Key:* The name for that reward as used in source code.
-  - *Value:* The UUID for that reward as stored on Twitch.
+
+# twitch-rewards.json
+```json
+{
+  "RewardName": "01234567-89ab-cdef-0123-456789abcdef"
+}
+```
+
+Information on Twitch Channel Points Rewards managed by Jolt.
+- *Key:* The name for that reward as used in source code.
+- *Value:* The UUID for that reward as stored on Twitch.
 
 # upcoming.json
 ```json
