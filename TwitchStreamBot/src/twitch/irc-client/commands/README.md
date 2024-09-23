@@ -113,6 +113,15 @@ Opens chat to all users by removing the following settings:
 - Subscribers only mode
 
 
+## `!shb score`, `!hex score`
+```
+!shb score <amount>
+!hex score <amount>
+```
+
+Records a score in a Super Hexagon Break attempt. These will be available for lookup in the future.
+
+
 ## `!shoutout`, `!so`
 ```
 !so <username>

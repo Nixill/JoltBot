@@ -49,8 +49,6 @@ public static class SuperHexagonController
       await CancelRedemptionAfterOneHour(SuperHexagonJson.LastRedeemID, SuperHexagonJson.Level, SuperHexagonJson.LastActive, (Timer = new()).Token);
     else if (SuperHexagonJson.Status == SuperHexagonStatus.Cooldown)
       await UnpauseRewardsAfterHalfHour(SuperHexagonJson.LastActive, (Timer = new()).Token);
-    else if (SuperHexagonJson.Status == SuperHexagonStatus.None && MemoryJson.Clock.LastKnownState == false)
-      await ResetLevelsAfterHalfHour(Instant.Max(SuperHexagonJson.LastActive, MemoryJson.Clock.LastEndTime), (Timer = new()).Token);
 
     JoltOBSClient.Client.Events.Outputs.StreamStarted += StreamStartedHandler;
     JoltOBSClient.Client.Events.Outputs.StreamStopped += StreamStoppedHandler;
@@ -246,9 +244,9 @@ public static class SuperHexagonController
     try
     {
       Instant now = Now;
-      Instant halfHour = startTime + Duration.FromMinutes(30);
+      Instant minutes25 = startTime + Duration.FromMinutes(25);
 
-      if (now < halfHour) await Task.Delay((halfHour - now).ToTimeSpan(), token);
+      if (now < minutes25) await Task.Delay((minutes25 - now).ToTimeSpan(), token);
 
       Task _ = SetSHBsPaused(false);
     }
