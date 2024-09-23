@@ -20,7 +20,7 @@ public static class JoltOBSClient
     Client.Events.Outputs.StreamStarted += (s, e) => Task.Run(() => JoltOBSEventHandlers.StreamStarted(s, e));
     Client.Events.Outputs.StreamStopped += (s, e) => Task.Run(() => JoltOBSEventHandlers.StreamStopped(s, e));
 
-    await Client.Connect();
+    await Client.ConnectAsync();
   }
 
   public static Task<T> Send<T>(this OBSRequest<T> request, int timeout = GlobalTimeout) where T : OBSRequestResult
