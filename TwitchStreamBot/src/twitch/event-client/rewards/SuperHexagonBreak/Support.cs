@@ -80,6 +80,7 @@ public readonly partial struct SuperHexagonScore : IComparable<SuperHexagonScore
     => new SuperHexagonScore { Frames = left.Frames - right.Frames };
 
   public static readonly SuperHexagonScore Zero = new() { Frames = 0 };
+  public static readonly SuperHexagonScore MaxValue = new() { Frames = int.MaxValue };
   public static SuperHexagonScore AdditiveIdentity => Zero;
   public static readonly SuperHexagonScore Win = new() { Frames = 3600 };
   public static readonly SuperHexagonScore Lose = new() { Frames = 7200 };
