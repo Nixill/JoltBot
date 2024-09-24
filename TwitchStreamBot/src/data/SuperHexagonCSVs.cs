@@ -56,6 +56,10 @@ public static class SuperHexagonCSVs
   {
     await File.AppendAllTextAsync("data/SuperHexagon/attempts.csv", "\n" + Attempts.NewRow(input, FormatAttempt));
   }
+
+  internal static SuperHexagonRedemption GetRedemption(this SuperHexagonAttempt attempt) => Redemptions[attempt.RedemptionId];
+  internal static IEnumerable<SuperHexagonAttempt> GetAttempts(this SuperHexagonRedemption redemption) => Attempts.Where(a => a.RedemptionId == redemption.RedemptionId);
+  internal static IEnumerable<(SuperHexagonAttempt Attempt, SuperHexagonRedemption Redemption)> Joined => Attempts.Join(Redemptions, a => a.RedemptionId, r => r.RedemptionId, (a, r) => (a, r));
 }
 
 public readonly struct SuperHexagonAttempt
