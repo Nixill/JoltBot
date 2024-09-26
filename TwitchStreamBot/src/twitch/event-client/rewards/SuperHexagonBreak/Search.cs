@@ -27,14 +27,56 @@ public static class SuperHexagonSearchParser
         ParseDate(query, modifier, year, month, day);
         continue;
       }
+      else if (word == "redemption")
+      {
+        ParseRedemptionOrAttempt(query, modifier, words, true);
+        continue;
+      }
+      else if (word == "attempt")
+      {
+        ParseRedemptionOrAttempt(query, modifier, words, false);
+        continue;
+      }
     }
   }
 
   static void ParseDate(SuperHexagonSearchQuery query, DirectionalModifier modifier, int year, int? month, int? day)
   {
     LocalDate lowestDate = new LocalDate(year, month ?? 1, day ?? 1);
-    LocalDate lowestAttempt = SuperHexagonCSVs.Redemptions
-      .Where()
+    int lowestAttempt = SuperHexagonCSVs.Redemptions
+      .Where(r => r.Date >= lowestDate)
+      .MinBy(r => r.RedemptionID)
+      .GetAttempts()
+      .Min(a => a.AttemptId);
+
+    LocalDate highestDate = day != null
+      ? new LocalDate(year, month.Value, day.Value)
+      : new LocalDate(year, month ?? 12, CalendarSystem.Gregorian.GetDaysInMonth(year, month ?? 12));
+    int highestAttempt = SuperHexagonCSVs.Redemptions
+      .Where(r => r.Date <= highestDate)
+      .MaxBy(r => r.RedemptionID)
+      .GetAttempts()
+      .Max(a => a.AttemptId);
+
+    query.LowestAttempt = int.Max(query.LowestAttempt, modifier switch
+    {
+      DirectionalModifier.None or DirectionalModifier.GreaterOrEqual => lowestAttempt,
+      DirectionalModifier.GreaterThan => highestAttempt + 1,
+      _ => 0
+    });
+
+    query.HighestAttempt = int.Min(query.HighestAttempt, modifier switch
+    {
+      DirectionalModifier.None or DirectionalModifier.LessOrEqual => highestAttempt,
+      DirectionalModifier.LessThan => lowestAttempt - 1,
+      _ => int.MaxValue
+    });
+  }
+
+  static void ParseRedemptionOrAttempt(SuperHexagonSearchQuery query, DirectionalModifier modifier, IList<string> words,
+    bool isRedemption)
+  {
+
   }
 }
 

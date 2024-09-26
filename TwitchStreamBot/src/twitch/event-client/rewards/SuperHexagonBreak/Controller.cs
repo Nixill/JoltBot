@@ -120,7 +120,7 @@ public static class SuperHexagonController
           Level = SuperHexagonJson.Level,
           RedeemerID = SuperHexagonJson.LastRedeemerID,
           RedeemerUsername = SuperHexagonJson.LastRedeemerUsername,
-          RedemptionId = SuperHexagonJson.RedeemNum
+          RedemptionID = SuperHexagonJson.RedeemNum
         });
         SuperHexagonJson.RedeemPosted = true;
       }

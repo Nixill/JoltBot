@@ -30,7 +30,7 @@ public static class SuperHexagonCSVs
   internal static readonly CSVObjectCollection<SuperHexagonRedemption> Redemptions
     = CSVObjectCollection.ParseObjectsFromFile("data/SuperHexagon/redemptions.csv", dict => new SuperHexagonRedemption
     {
-      RedemptionId = int.Parse(dict["redemption_id"]),
+      RedemptionID = int.Parse(dict["redemption_id"]),
       Date = LocalDatePattern.Iso.Parse(dict["date"]).Value,
       RedeemerUsername = dict["redeemer"],
       RedeemerID = dict["redeemer_id"],
@@ -40,7 +40,7 @@ public static class SuperHexagonCSVs
   internal static IDictionary<string, string> FormatRedemption(SuperHexagonRedemption input)
     => new Dictionary<string, string>
     {
-      ["redemption_id"] = input.RedemptionId.ToString(),
+      ["redemption_id"] = input.RedemptionID.ToString(),
       ["date"] = LocalDatePattern.Iso.Format(input.Date),
       ["redeemer"] = input.RedeemerUsername,
       ["redeemer_id"] = input.RedeemerID ?? "",
@@ -58,8 +58,8 @@ public static class SuperHexagonCSVs
   }
 
   internal static SuperHexagonRedemption GetRedemption(this SuperHexagonAttempt attempt) => Redemptions[attempt.RedemptionId];
-  internal static IEnumerable<SuperHexagonAttempt> GetAttempts(this SuperHexagonRedemption redemption) => Attempts.Where(a => a.RedemptionId == redemption.RedemptionId);
-  internal static IEnumerable<(SuperHexagonAttempt Attempt, SuperHexagonRedemption Redemption)> Joined => Attempts.Join(Redemptions, a => a.RedemptionId, r => r.RedemptionId, (a, r) => (a, r));
+  internal static IEnumerable<SuperHexagonAttempt> GetAttempts(this SuperHexagonRedemption redemption) => Attempts.Where(a => a.RedemptionId == redemption.RedemptionID);
+  internal static IEnumerable<(SuperHexagonAttempt Attempt, SuperHexagonRedemption Redemption)> Joined => Attempts.Join(Redemptions, a => a.RedemptionId, r => r.RedemptionID, (a, r) => (a, r));
 }
 
 public readonly struct SuperHexagonAttempt
@@ -73,7 +73,7 @@ public readonly struct SuperHexagonAttempt
 
 public readonly struct SuperHexagonRedemption
 {
-  public required int RedemptionId { get; init; }
+  public required int RedemptionID { get; init; }
   public required LocalDate Date { get; init; }
   public required string RedeemerUsername { get; init; }
   public string RedeemerID { get; init; }
