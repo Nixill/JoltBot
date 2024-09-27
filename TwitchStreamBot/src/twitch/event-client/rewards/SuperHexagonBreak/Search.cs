@@ -29,12 +29,12 @@ public static class SuperHexagonSearchParser
       }
       else if (word == "redemption")
       {
-        ParseRedemptionOrAttempt(query, modifier, words, true);
+        ParseRedemption(query, modifier, words, true);
         continue;
       }
       else if (word == "attempt")
       {
-        ParseRedemptionOrAttempt(query, modifier, words, false);
+        ParseAttempt(query, modifier, words, false);
         continue;
       }
     }
@@ -73,7 +73,7 @@ public static class SuperHexagonSearchParser
     });
   }
 
-  static void ParseRedemptionOrAttempt(SuperHexagonSearchQuery query, DirectionalModifier modifier, IList<string> words,
+  static void ParseRedemption(SuperHexagonSearchQuery query, DirectionalModifier modifier, IList<string> words,
     bool isRedemption)
   {
 
