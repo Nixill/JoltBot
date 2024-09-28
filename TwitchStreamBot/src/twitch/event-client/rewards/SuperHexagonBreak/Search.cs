@@ -14,29 +14,35 @@ public static class SuperHexagonSearchParser
     SuperHexagonSearchQuery query = new();
     DirectionalModifier modifier = DirectionalModifier.None;
 
-    while (words.Count > 0)
+    try {
+      while (words.Count > 0)
+      {
+        string word = words.Pop().ToLower();
+
+        if (partialDate.TryMatch(word, out Match mtc))
+        {
+          int year = int.Parse(mtc.Groups[1].Value);
+          int? month = mtc.Groups[2].Success ? int.Parse(mtc.Groups[2].Value) : null;
+          int? day = mtc.Groups[3].Success ? int.Parse(mtc.Groups[3].Value) : null;
+
+          ParseDate(query, modifier, year, month, day);
+          continue;
+        }
+        else if (word == "redemption")
+        {
+          ParseRedemption(query, modifier, words, true);
+          continue;
+        }
+        else if (word == "attempt")
+        {
+          ParseAttempt(query, modifier, words, false);
+          continue;
+        }
+      }
+    }
+    catch (IndexOutOfRangeException ex)
     {
-      string word = words.Pop().ToLower();
-
-      if (partialDate.TryMatch(word, out Match mtc))
-      {
-        int year = int.Parse(mtc.Groups[1].Value);
-        int? month = mtc.Groups[2].Success ? int.Parse(mtc.Groups[2].Value) : null;
-        int? day = mtc.Groups[3].Success ? int.Parse(mtc.Groups[3].Value) : null;
-
-        ParseDate(query, modifier, year, month, day);
-        continue;
-      }
-      else if (word == "redemption")
-      {
-        ParseRedemption(query, modifier, words, true);
-        continue;
-      }
-      else if (word == "attempt")
-      {
-        ParseAttempt(query, modifier, words, false);
-        continue;
-      }
+      throw new IndexOutOfRangeException("Unexpected end of input", ex);
     }
   }
 
@@ -76,7 +82,17 @@ public static class SuperHexagonSearchParser
   static void ParseRedemption(SuperHexagonSearchQuery query, DirectionalModifier modifier, IList<string> words,
     bool isRedemption)
   {
+    string word = words.Pop().Replace("#", "");
+    string[] pair = word.Split('-');
+    int lowestAttempt = 0;
+    int highestAttempt = int.MaxValue;
 
+    if (pair.Length == 1)
+    {
+      int parsed = int.Parse(pair[0]);
+      if (parsed == 0 || parsed > SuperHexagonCSVs.Redemptions.Max(r => r.RedemptionID))
+        throw new IndexOutOfRangeException();
+    }
   }
 }
 
