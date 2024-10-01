@@ -13,7 +13,10 @@ public readonly partial struct SuperHexagonScore : IComparable<SuperHexagonScore
   IComparisonOperators<SuperHexagonScore, double, bool>,
   IAdditionOperators<SuperHexagonScore, SuperHexagonScore, SuperHexagonScore>,
   ISubtractionOperators<SuperHexagonScore, SuperHexagonScore, SuperHexagonScore>,
-  IAdditiveIdentity<SuperHexagonScore, SuperHexagonScore>
+  IAdditiveIdentity<SuperHexagonScore, SuperHexagonScore>,
+  IDivisionOperators<SuperHexagonScore, int, SuperHexagonScore>,
+  IMultiplyOperators<SuperHexagonScore, int, SuperHexagonScore>,
+  IMultiplicativeIdentity<SuperHexagonScore, int>
 {
   public int Frames { get; init; }
 
@@ -78,9 +81,16 @@ public readonly partial struct SuperHexagonScore : IComparable<SuperHexagonScore
     => new SuperHexagonScore { Frames = left.Frames + right.Frames };
   public static SuperHexagonScore operator -(SuperHexagonScore left, SuperHexagonScore right)
     => new SuperHexagonScore { Frames = left.Frames - right.Frames };
+  public static SuperHexagonScore operator *(SuperHexagonScore left, int right)
+    => new SuperHexagonScore { Frames = left.Frames * right };
+  public static SuperHexagonScore operator *(int left, SuperHexagonScore right)
+    => new SuperHexagonScore { Frames = right.Frames * left };
+  public static SuperHexagonScore operator /(SuperHexagonScore left, int right)
+    => new SuperHexagonScore { Frames = left.Frames / right };
 
   public static readonly SuperHexagonScore Zero = new() { Frames = 0 };
   public static SuperHexagonScore AdditiveIdentity => Zero;
+  public static int MultiplicativeIdentity => 1;
   public static readonly SuperHexagonScore Win = new() { Frames = 3600 };
   public static readonly SuperHexagonScore Lose = new() { Frames = 7200 };
 

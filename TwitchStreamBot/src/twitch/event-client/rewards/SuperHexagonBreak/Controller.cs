@@ -19,15 +19,20 @@ public static class SuperHexagonController
   private static void StreamStartedHandler(object sender, OutputStateChanged e)
   {
     if (SuperHexagonJson.Status == SuperHexagonStatus.None)
+    {
       if (Timer != null)
       {
         Timer.Cancel();
         Timer = null;
       }
-      else
+
+      if (SuperHexagonJson.LastActive <= Now - Duration.FromMinutes(90) && MemoryJson.Clock.LastEndTime <= Now - Duration.FromMinutes(30))
       {
+        SuperHexagonJson.LastActive = Now;
+        SuperHexagonJson.Played = [];
         SuperHexagonJson.StreamDate = Now.InZone(MemoryJson.TimeZone).LocalDateTime.Date;
       }
+    }
   }
 
   private static void StreamStoppedHandler(object sender, OutputStateChanged e)
@@ -54,12 +59,72 @@ public static class SuperHexagonController
     JoltOBSClient.Client.Events.Outputs.StreamStopped += StreamStoppedHandler;
   }
 
+  public static string GetFriendlyTime(SuperHexagonScore score, bool precise = false)
+  {
+    var frames = score.Frames;
+    if (frames < 7200 /* two minutes */) return $"{frames / 60} second{(frames >= 60 && frames < 120 ? "" : "s")}";
+
+    var twelfths = (frames + 15 * 30) / 5 * 60;
+    var quarters = (twelfths) / 3;
+
+    var minutes = twelfths / 12;
+
+    var subQuarters = quarters % 4;
+    var subSubThirds = twelfths % 3;
+
+    var partialTwelfths = twelfths % (60 * 12); // for plural rules
+    var partialMinutes = minutes % 60;
+    var hours = minutes / 60;
+    var partialHours = hours % 24;
+    var days = hours / 24;
+
+    List<string> ret = [];
+    if (days == 1) ret.Add("1 day");
+    else if (days > 1) ret.Add($"{days} days");
+
+    if (partialHours == 1) ret.Add("1 hour");
+    else if (partialHours > 1) ret.Add($"{partialHours} hours");
+
+    var minutesAndQuarters = $"{(partialMinutes != 0 ? partialMinutes : "")}{subQuarters switch
+    {
+      1 => "¼",
+      2 => "½",
+      3 => "¾",
+      _ => ""
+    }} minute{(partialTwelfths > 12 ? "s" : "")}";
+    if (minutesAndQuarters != " minute") ret.Add(minutesAndQuarters);
+
+    if (precise) return $"{subSubThirds switch
+    {
+      0 => "just under ",
+      2 => "just over ",
+      _ => ""
+    }}{ret.SJoin(", ")}";
+    else return ret.SJoin(", ");
+  }
+
   public static async Task SuperHexagonBreak(RewardContext ctx, SuperHexagonLevel level)
   {
-    await ctx.MessageAsync("⚠️ Super Hexagon contains spinning and "
-      + "flashing lights that may be problematic for some viewers. ⚠️");
-    await ctx.MessageAsync("It usually lasts about 3 minutes. Nix's PB "
-      + "is just under 5½ minutes.");
+    await ctx.MessageAsync("⚠️ Super Hexagon contains spinning and flashing lights that may be problematic for some "
+      + "viewers. ⚠️");
+
+    var redemptionsOfLevel = SuperHexagonCSVs.Redemptions.Where(r => r.Level == level);
+    var averageTime = GetFriendlyTime(redemptionsOfLevel
+      .Select(r => r.GetAttempts().Select(r => r.Score).Sum())
+      .Average<SuperHexagonScore>(SuperHexagonScore.Zero)
+    );
+    var bestTime = redemptionsOfLevel
+      .SelectMany(r => r.GetAttempts())
+      .Max(a => a.Score);
+    await ctx.MessageAsync($"It usually lasts about {averageTime}. Nix's PB is {bestTime} ({GetFriendlyTime(bestTime,
+      true)}).");
+
+    var redemptionsOfUser = SuperHexagonCSVs.Redemptions.Where(r => r.RedeemerID == ctx.UserId);
+    var totalTimeSpent = redemptionsOfUser
+      .SelectMany(r => r.GetAttempts().Select(a => a.Score))
+      .Sum();
+    await ctx.MessageAsync($"{ctx.UserName} has redeemed {totalTimeSpent} ({GetFriendlyTime(totalTimeSpent)}) of Super "
+      + "Hexagon Breaks.");
 
     Instant now = Now;
 
@@ -120,7 +185,7 @@ public static class SuperHexagonController
           Level = SuperHexagonJson.Level,
           RedeemerID = SuperHexagonJson.LastRedeemerID,
           RedeemerUsername = SuperHexagonJson.LastRedeemerUsername,
-          RedemptionId = SuperHexagonJson.RedeemNum
+          RedemptionID = SuperHexagonJson.RedeemNum
         });
         SuperHexagonJson.RedeemPosted = true;
       }
@@ -135,7 +200,7 @@ public static class SuperHexagonController
       await SuperHexagonCSVs.AddAttempt(new SuperHexagonAttempt
       {
         AttemptId = attempt,
-        RedemptionId = SuperHexagonJson.RedeemNum,
+        RedemptionID = SuperHexagonJson.RedeemNum,
         Score = score
       });
 

@@ -11,7 +11,7 @@ public static class SuperHexagonCSVs
     = CSVObjectCollection.ParseObjectsFromFile("data/SuperHexagon/attempts.csv", dict => new SuperHexagonAttempt
     {
       AttemptId = int.Parse(dict["attempt_id"]),
-      RedemptionId = int.Parse(dict["redemption_id"]),
+      RedemptionID = int.Parse(dict["redemption_id"]),
       Score = SuperHexagonScore.Parse(dict["score"]),
       Highlight = dict.TryGetValue("highlight", out string highlight) ? new Uri(highlight) : null,
       Notes = dict["notes"]
@@ -21,7 +21,7 @@ public static class SuperHexagonCSVs
     => new Dictionary<string, string>
     {
       ["attempt_id"] = input.AttemptId.ToString(),
-      ["redemption_id"] = input.RedemptionId.ToString(),
+      ["redemption_id"] = input.RedemptionID.ToString(),
       ["score"] = input.Score.ToString(),
       ["highlight"] = input.Highlight?.ToString() ?? "",
       ["notes"] = input.Notes?.ToString() ?? ""
@@ -30,7 +30,7 @@ public static class SuperHexagonCSVs
   internal static readonly CSVObjectCollection<SuperHexagonRedemption> Redemptions
     = CSVObjectCollection.ParseObjectsFromFile("data/SuperHexagon/redemptions.csv", dict => new SuperHexagonRedemption
     {
-      RedemptionId = int.Parse(dict["redemption_id"]),
+      RedemptionID = int.Parse(dict["redemption_id"]),
       Date = LocalDatePattern.Iso.Parse(dict["date"]).Value,
       RedeemerUsername = dict["redeemer"],
       RedeemerID = dict["redeemer_id"],
@@ -40,7 +40,7 @@ public static class SuperHexagonCSVs
   internal static IDictionary<string, string> FormatRedemption(SuperHexagonRedemption input)
     => new Dictionary<string, string>
     {
-      ["redemption_id"] = input.RedemptionId.ToString(),
+      ["redemption_id"] = input.RedemptionID.ToString(),
       ["date"] = LocalDatePattern.Iso.Format(input.Date),
       ["redeemer"] = input.RedeemerUsername,
       ["redeemer_id"] = input.RedeemerID ?? "",
@@ -56,12 +56,16 @@ public static class SuperHexagonCSVs
   {
     await File.AppendAllTextAsync("data/SuperHexagon/attempts.csv", "\n" + Attempts.NewRow(input, FormatAttempt));
   }
+
+  internal static SuperHexagonRedemption GetRedemption(this SuperHexagonAttempt attempt) => Redemptions[attempt.RedemptionID];
+  internal static IEnumerable<SuperHexagonAttempt> GetAttempts(this SuperHexagonRedemption redemption) => Attempts.Where(a => a.RedemptionID == redemption.RedemptionID);
+  internal static IEnumerable<(SuperHexagonAttempt Attempt, SuperHexagonRedemption Redemption)> Joined => Attempts.Join(Redemptions, a => a.RedemptionID, r => r.RedemptionID, (a, r) => (a, r));
 }
 
 public readonly struct SuperHexagonAttempt
 {
   public required int AttemptId { get; init; }
-  public required int RedemptionId { get; init; }
+  public required int RedemptionID { get; init; }
   public required SuperHexagonScore Score { get; init; }
   public Uri Highlight { get; init; }
   public string Notes { get; init; }
@@ -69,7 +73,7 @@ public readonly struct SuperHexagonAttempt
 
 public readonly struct SuperHexagonRedemption
 {
-  public required int RedemptionId { get; init; }
+  public required int RedemptionID { get; init; }
   public required LocalDate Date { get; init; }
   public required string RedeemerUsername { get; init; }
   public string RedeemerID { get; init; }
