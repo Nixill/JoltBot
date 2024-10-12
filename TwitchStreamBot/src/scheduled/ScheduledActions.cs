@@ -12,7 +12,7 @@ public class ScheduledActions
   public static void RunAll()
   {
     Task.Run(ClockTicks);
-    Task.Run(AudioMonitoring.Tick);
+    // Task.Run(AudioMonitoring.Tick);
     Task.Run(TextScrolls.Tick);
     Task.Run(StreamMemoryClock.Tick);
   }

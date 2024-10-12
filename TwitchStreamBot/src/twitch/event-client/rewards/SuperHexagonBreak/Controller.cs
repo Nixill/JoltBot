@@ -64,7 +64,7 @@ public static class SuperHexagonController
     var frames = score.Frames;
     if (frames < 7200 /* two minutes */) return $"{frames / 60} second{(frames >= 60 && frames < 120 ? "" : "s")}";
 
-    var twelfths = (frames + 15 * 30) / 5 * 60;
+    var twelfths = (frames + 15 * 30) / (5 * 60);
     var quarters = (twelfths) / 3;
 
     var minutes = twelfths / 12;
@@ -111,7 +111,7 @@ public static class SuperHexagonController
     var redemptionsOfLevel = SuperHexagonCSVs.Redemptions.Where(r => r.Level == level);
     var averageTime = GetFriendlyTime(redemptionsOfLevel
       .Select(r => r.GetAttempts().Select(r => r.Score).Sum())
-      .Average<SuperHexagonScore>(SuperHexagonScore.Zero)
+      .Average(SuperHexagonScore.Zero)
     );
     var bestTime = redemptionsOfLevel
       .SelectMany(r => r.GetAttempts())

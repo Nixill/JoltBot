@@ -6,11 +6,9 @@ namespace Nixill.Streaming.JoltBot;
 
 public static class Serializers
 {
-  [Deserializer]
   public static Color DeserializeColor(string input)
     => Color.FromRGBA(input);
 
-  [Serializer]
   public static string SerializeColor(Color input)
     => input.ToRGBHex();
 

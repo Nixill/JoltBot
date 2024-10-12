@@ -7,7 +7,8 @@ namespace Nixill.Streaming.JoltBot.Scheduled;
 
 public static class AudioMonitoring
 {
-  public static ILogger Logger = Log.Factory.CreateLogger(typeof(AudioMonitoring));
+  // WARNING: THIS ENTIRE CLASS'S CODE IS CURRENTLY UNUSED.
+  static readonly ILogger Logger = Log.Factory.CreateLogger(typeof(AudioMonitoring));
 
   public static async Task Tick()
   {

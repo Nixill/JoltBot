@@ -22,8 +22,6 @@ class JoltMain
     var obsSetupTask = JoltOBSClient.SetUp();
     var discordSetupTask = WebhookClient.SetUp();
 
-    DataTableCSVParser.AddDeserializers([typeof(Serializers)]);
-    DataTableCSVParser.AddSerializers([typeof(Serializers)]);
     PipeRunner.SetUp();
     ScheduledActions.RunAll();
 
