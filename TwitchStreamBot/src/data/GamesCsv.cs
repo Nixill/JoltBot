@@ -7,56 +7,38 @@ namespace Nixill.Streaming.JoltBot.Data;
 
 public static class GamesCsv
 {
-  public static readonly Color DefaultColor = Color.FromRGBA("#b42b42");
-
-  static DataTable _table;
-  public static DataTable Table
-  {
-    get => _table ??= DataTableCSVParser.FileToDataTable("data/games.csv",
-      [
-        new DataColumn("gameName", typeof(string)),
-        new DataColumn("color", typeof(Color)) { DefaultValue = Color.FromRGBA("#b42b42") },
-        new DataColumn("aliases", typeof(string[])) { DefaultValue = Array.Empty<string>() },
-        new DataColumn("ignoreTitle", typeof(bool)) { DefaultValue = false }
-      ], new Dictionary<Type, Func<string, object>>().AddArrayDeserializer(";"),
-      ["gameName"]
-    );
-  }
+  static readonly CSVObjectDictionary<string, GameInfo> Games = CSVObjectDictionary.ParseObjectsFromFile("data/games.csv", GameInfo.Parse);
 
   public static void Save()
   {
-    DataTableCSVParser.DataTableToFile(Table, "data/games.csv",
-      new Dictionary<Type, Func<object, string>>().AddArraySerializer(";"));
+    Games.FormatCSVToFile("data/games.csv", GameInfo.UnparseKVP);
   }
 
-  public static DataRow GameRow(string gameName)
-    => Table.AsEnumerable()
-      .FirstOrDefault(r => ((string)r["gameName"]).Equals(gameName, StringComparison.InvariantCultureIgnoreCase));
+  public static GameInfo GetGame(string gameName)
+    => Games.TryGetValue(gameName.ToLower(), out GameInfo info) ? info : null;
 
-  public static DataRow NewGameRow(string gameName)
+  public static GameInfo GetOrCreateGame(string gameName)
   {
-    var gameRow = GameRow(gameName);
-    if (gameRow == null)
-    {
-      gameRow = Table.NewRow();
-      gameRow["gameName"] = gameName;
-      Table.Rows.Add(gameRow);
-    }
-    return gameRow;
+    if (Games.TryGetValue(gameName.ToLower(), out GameInfo info))
+      return info;
+
+    info = new GameInfo { GameName = gameName };
+    Games.Add(gameName.ToLower(), info);
+    return info;
   }
 
   public static bool IsTitleIgnored(string gameName)
-    => (bool?)GameRow(gameName)?["ignoreTitle"] ?? false;
+    => GetGame(gameName)?.IsTitleIgnored ?? false;
 
-  public static string[] GetAliases(string gameName)
-    => (string[])GameRow(gameName)?["aliases"] ?? [];
+  public static List<string> GetAliases(string gameName)
+    => GetGame(gameName)?.Aliases ?? [];
 
   public static Color GetGameColor(string gameName)
-    => (Color?)GameRow(gameName)?["color"] ?? DefaultColor;
+    => GetGame(gameName)?.GameColor ?? Color.FromRGBA("#b42b42");
 
   public static void SetGameColor(string gameName, Color color)
   {
-    NewGameRow(gameName)["color"] = color;
+    GetOrCreateGame(gameName).GameColor = color;
     Save();
   }
 
@@ -77,4 +59,44 @@ public static class GamesCsv
     // No? Then it's not a valid title.
     return false;
   }
+}
+
+public class GameInfo
+{
+  public static readonly Color DefaultColor = Color.FromRGBA("#b42b42");
+
+  public required string GameName { get; init; }
+  public List<string> Aliases { get; private init; } = [];
+  public IEnumerable<string> InitAliases { init { Aliases = [.. value]; } }
+  public bool IsTitleIgnored { get; set; } = false;
+  public Color GameColor { get; set; } = DefaultColor;
+
+  public static KeyValuePair<string, GameInfo> Parse(IDictionary<string, string> dictionary)
+  {
+    return new KeyValuePair<string, GameInfo>(
+      dictionary["gameName"].ToLower(),
+      new GameInfo
+      {
+        GameName = dictionary["gameName"],
+        InitAliases = dictionary["aliases"].Split(';'),
+        IsTitleIgnored = dictionary["ignoreTitle"] == "true",
+        GameColor = Color.FromRGBA(dictionary["color"] ?? "b42b42")
+      }
+    );
+  }
+
+  internal IDictionary<string, string> Unparse()
+  {
+    string test = GameColor.ToRGBHex();
+    return new Dictionary<string, string>
+    {
+      ["gameName"] = GameName,
+      ["color"] = test != "#b42b42" ? test : "",
+      ["aliases"] = string.Join(';', Aliases),
+      ["ignoreTitle"] = IsTitleIgnored ? "true" : ""
+    };
+  }
+
+  internal static IDictionary<string, string> UnparseKVP(KeyValuePair<string, GameInfo> kvp)
+    => kvp.Value.Unparse();
 }
