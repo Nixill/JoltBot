@@ -30,19 +30,30 @@ public static class InfoCommands
       count++;
     }
 
-    if (count == 0)
+    if (count >= 1)
     {
-      await ctx.ReplyAsync("No multistream tonight!");
-    }
-    else if (count == 1)
-    {
-      await ctx.ReplyAsync($"https://multi.nixill.net{multiOutput}/layout4");
+      await ctx.ReplyAsync($"https://multi.nixill.net{multiOutput}{count switch
+      {
+        1 => "/layout4",
+        2 => "/layout7",
+        3 => "/layout11",
+        4 => "/layout15",
+        5 => "/layout17",
+        6 => "/layout19",
+        7 => "/layout22",
+        _ => ""
+      }}");
     }
     else
     {
-      await ctx.ReplyAsync($"https://multi.nixill.net{multiOutput}");
+      await ctx.ReplyAsync("No multistream tonight!");
     }
   }
+
+  [Command("overscan")]
+  public static Task OverscanCommand(BaseContext ctx)
+    => ctx.ReplyAsync("I'm using overscan compensation! I can see more of the game than is visible on stream;"
+      + " but the view on stream is larger for readability.");
 
   [Command("pronouns")]
   public static Task PronounsCommand(BaseContext ctx)

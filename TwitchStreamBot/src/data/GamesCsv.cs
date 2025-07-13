@@ -78,7 +78,7 @@ public class GameInfo
       new GameInfo
       {
         GameName = dictionary["gameName"],
-        InitAliases = dictionary["aliases"].Split(';'),
+        InitAliases = dictionary["aliases"]?.Split(';') ?? [],
         IsTitleIgnored = dictionary["ignoreTitle"] == "true",
         GameColor = Color.FromRGBA(dictionary["color"] ?? "b42b42")
       }

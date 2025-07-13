@@ -8,37 +8,37 @@ namespace Nixill.Streaming.JoltBot.Twitch.Events.Rewards;
 public static class SuperHexagonRewards
 {
   [ChannelPointsReward("SuperHexagon.Hexagon")]
-  // [DisableTemporarily]
+  [DisableTemporarily]
   [SuperHexagon(SuperHexagonLevel.Hexagon)]
   public static async Task SuperHexagonBreakHexagon(RewardContext ctx)
     => await SuperHexagonController.SuperHexagonBreak(ctx, SuperHexagonLevel.Hexagon);
 
   [ChannelPointsReward("SuperHexagon.Hexagoner")]
-  // [DisableTemporarily]
+  [DisableTemporarily]
   [SuperHexagon(SuperHexagonLevel.Hexagoner, SuperHexagonLevel.Hexagon)]
   public static async Task SuperHexagonBreakHexagoner(RewardContext ctx)
     => await SuperHexagonController.SuperHexagonBreak(ctx, SuperHexagonLevel.Hexagoner);
 
   [ChannelPointsReward("SuperHexagon.Hexagonest")]
-  // [DisableTemporarily]
+  [DisableTemporarily]
   [SuperHexagon(SuperHexagonLevel.Hexagonest, SuperHexagonLevel.Hexagoner)]
   public static async Task SuperHexagonBreakHexagonest(RewardContext ctx)
     => await SuperHexagonController.SuperHexagonBreak(ctx, SuperHexagonLevel.Hexagonest);
 
   [ChannelPointsReward("SuperHexagon.HyperHexagon")]
-  // [DisableTemporarily]
+  [DisableTemporarily]
   [SuperHexagon(SuperHexagonLevel.HyperHexagon, SuperHexagonLevel.Hexagon)]
   public static async Task SuperHexagonBreakHyperHexagon(RewardContext ctx)
     => await SuperHexagonController.SuperHexagonBreak(ctx, SuperHexagonLevel.HyperHexagon);
 
   [ChannelPointsReward("SuperHexagon.HyperHexagoner")]
-  // [DisableTemporarily]
+  [DisableTemporarily]
   [SuperHexagon(SuperHexagonLevel.HyperHexagoner, SuperHexagonLevel.Hexagoner, SuperHexagonLevel.HyperHexagon)]
   public static async Task SuperHexagonBreakHyperHexagoner(RewardContext ctx)
     => await SuperHexagonController.SuperHexagonBreak(ctx, SuperHexagonLevel.HyperHexagoner);
 
   [ChannelPointsReward("SuperHexagon.HyperHexagonest")]
-  // [DisableTemporarily]
+  [DisableTemporarily]
   [SuperHexagon(SuperHexagonLevel.HyperHexagonest, SuperHexagonLevel.Hexagonest, SuperHexagonLevel.HyperHexagoner)]
   public static async Task SuperHexagonBreakHyperHexagonest(RewardContext ctx)
     => await SuperHexagonController.SuperHexagonBreak(ctx, SuperHexagonLevel.HyperHexagonest);

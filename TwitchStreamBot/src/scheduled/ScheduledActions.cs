@@ -12,8 +12,7 @@ public class ScheduledActions
   public static void RunAll()
   {
     Task.Run(ClockTicks);
-    // Task.Run(AudioMonitoring.Tick);
-    Task.Run(TextScrolls.Tick);
+    Task.Run(AudioMonitoring.Tick);
     Task.Run(StreamMemoryClock.Tick);
   }
 
@@ -21,8 +20,8 @@ public class ScheduledActions
   {
     await Task.Delay(0);
 
-    ZonedDateTimePattern pattern1 = ZonedDateTimePattern.CreateWithInvariantCulture("ddd HH:mm:ss", null);
-    ZonedDateTimePattern pattern2 = ZonedDateTimePattern.CreateWithInvariantCulture("ddd uuuu-MM-dd HH:mm:ss", null);
+    ZonedDateTimePattern pattern1 = ZonedDateTimePattern.CreateWithInvariantCulture("ddd HH:mm", null);
+    ZonedDateTimePattern pattern2 = ZonedDateTimePattern.CreateWithInvariantCulture("ddd uuuu-MM-dd HH:mm", null);
     BclDateTimeZone defaultZone = BclDateTimeZone.ForSystemDefault();
 
     string lastTimeUpdate = "";

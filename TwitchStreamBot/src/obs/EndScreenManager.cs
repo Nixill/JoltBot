@@ -97,9 +97,9 @@ public static class EndScreenManager
         JsonObject streamInfo = new();
         streamInfo["date"] = evt.Key.Time.Value.ToString("yyyy-MM-dd");
         streamInfo["name"] = evt.Value.Event.Summary;
-        streamInfo["game"] = evt.Value.Event.Description.Split("\n")
+        streamInfo["game"] = (evt.Value.Event.Description ?? "").Split("\n")
           .FirstOrDefault(s => s.ToLower().StartsWith("game: "), $"game: {evt.Value.Event.Summary}")[6..].Trim();
-        streamInfo["channel"] = evt.Value.Event.Location;
+        streamInfo["channel"] = evt.Value.Event.Location ?? "https://twitch.tv/nixillshadowfox/";
         streamInfo["andMore"] = (streamsToday.Count() > 1);
 
         list.Add(streamInfo);
