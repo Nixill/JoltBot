@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Nixill.Collections;
 using Nixill.Streaming.JoltBot.Data;
-using Nixill.Utils;
+using Nixill.Utils.Extensions;
 using NodaTime;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelInformation;
 using TwitchLib.EventSub.Core.SubscriptionTypes.Channel;

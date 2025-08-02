@@ -1,5 +1,5 @@
 using Nixill.Streaming.JoltBot.Twitch.Api;
-using Nixill.Utils;
+using Nixill.Utils.Extensions;
 
 namespace Nixill.Streaming.JoltBot.Twitch.Commands;
 
@@ -13,7 +13,7 @@ public static class BasicCommands
 
   [Command("add")]
   public static Task AddCommand(BaseContext ctx, int left, params int[] right)
-    => ctx.ReplyAsync($"{(right.Length <= 9 ? right.Prepend(left).SJoin(" + ")
+    => ctx.ReplyAsync($"{(right.Length <= 9 ? right.Prepend(left).StringJoin(" + ")
       : $"The sum of your {right.Length + 1} numbers")} = {left + right.Sum()}");
 
   [Command("group")]

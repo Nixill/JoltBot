@@ -3,7 +3,7 @@ using Nixill.OBSWS;
 using Nixill.Streaming.JoltBot.Data;
 using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Streaming.JoltBot.Twitch.Api;
-using Nixill.Utils;
+using Nixill.Utils.Extensions;
 using NodaTime;
 using TwitchLib.Api.Core.Enums;
 using TwitchLib.Api.Helix.Models.ChannelPoints.UpdateCustomReward;
@@ -99,8 +99,8 @@ public static class SuperHexagonController
       0 => "just under ",
       2 => "just over ",
       _ => ""
-    }}{ret.SJoin(", ")}";
-    else return ret.SJoin(", ");
+    }}{ret.StringJoin(", ")}";
+    else return ret.StringJoin(", ");
   }
 
   public static async Task SuperHexagonBreak(RewardContext ctx, SuperHexagonLevel level)

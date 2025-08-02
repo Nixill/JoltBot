@@ -1,5 +1,5 @@
 using Nixill.Streaming.JoltBot.Data;
-using Nixill.Utils;
+using Nixill.Utils.Extensions;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelInformation;
 
 namespace Nixill.Streaming.JoltBot.Twitch.Events.Rewards;

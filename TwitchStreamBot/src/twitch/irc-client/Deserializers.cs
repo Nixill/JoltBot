@@ -1,4 +1,4 @@
-using Nixill.Utils;
+using Nixill.Utils.Extensions;
 
 namespace Nixill.Streaming.JoltBot.Twitch;
 
@@ -10,7 +10,7 @@ public static class Deserializers
   {
     if (isLongText)
     {
-      string ret = input.SJoin(" ");
+      string ret = input.StringJoin(" ");
       input.Clear();
       return ret;
     }

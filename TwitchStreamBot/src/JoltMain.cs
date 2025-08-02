@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Nixill.Collections.Grid.CSV;
 using Nixill.Streaming.JoltBot.Discord;
 using Nixill.Streaming.JoltBot.Files;
 using Nixill.Streaming.JoltBot.OBS;

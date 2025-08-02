@@ -1,4 +1,4 @@
-using Nixill.Collections.Grid.CSV;
+using Nixill.Collections;
 using Nixill.Streaming.JoltBot.Twitch.Events.Rewards;
 using NodaTime;
 using NodaTime.Text;

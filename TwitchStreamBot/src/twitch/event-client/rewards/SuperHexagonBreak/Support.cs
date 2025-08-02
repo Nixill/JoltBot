@@ -1,8 +1,7 @@
 using System.Numerics;
 using System.Text.RegularExpressions;
-using Nixill.Utils;
+using Nixill.Utils.Extensions;
 using NodaTime;
-using TwitchLib.Api.Helix.Models.Moderation.ShieldModeStatus;
 
 namespace Nixill.Streaming.JoltBot.Twitch.Events.Rewards;
 

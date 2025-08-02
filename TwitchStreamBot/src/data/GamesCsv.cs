@@ -1,6 +1,5 @@
 using System.Data;
-using Nixill.Collections.Grid;
-using Nixill.Collections.Grid.CSV;
+using Nixill.Collections;
 using Nixill.Colors;
 
 namespace Nixill.Streaming.JoltBot.Data;

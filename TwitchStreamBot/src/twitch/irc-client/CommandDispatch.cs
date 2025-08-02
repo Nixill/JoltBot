@@ -2,7 +2,7 @@ using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Nixill.Streaming.JoltBot.Data;
 using Nixill.Streaming.JoltBot.Twitch.Api;
-using Nixill.Utils;
+using Nixill.Utils.Extensions;
 using TwitchLib.Api;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelEditors;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelFollowers;
@@ -73,7 +73,7 @@ public static class CommandDispatch
           }
         }).Where(t => !Deserializers.ContainsKey(t));
         if (unusableTypes.Any())
-          throw new IllegalCommandException(m, $"No deserializer exists for type(s) {unusableTypes.SJoin(", ")}");
+          throw new IllegalCommandException(m, $"No deserializer exists for type(s) {unusableTypes.StringJoin(", ")}");
         if (pars.SkipLast(pars.Length == 1 ? 0 : 1).Any(p => p.GetCustomAttribute(typeof(LongTextAttribute)) != null))
           if (pars.Length == 1)
             throw new IllegalCommandException(m, "Only a command parameter (not the initial OnCommandReceivedArgs) may be [LongText].");
@@ -131,14 +131,14 @@ public static class CommandDispatch
 
   public static async Task Dispatch(List<string> words, OnChatCommandReceivedArgs ev = null)
   {
-    string message = words.SJoin(" ");
+    string message = words.StringJoin(" ");
     string commandName = "";
     List<string> commandNameWords = words[0..Math.Min(words.Count, LongestCommandName)];
     words = words[Math.Min(words.Count, LongestCommandName)..];
 
     while (true)
     {
-      commandName = commandNameWords.SJoin(" ");
+      commandName = commandNameWords.StringJoin(" ");
 
       if (Commands.ContainsKey(commandName)) break;
 
@@ -218,14 +218,14 @@ public static class CommandDispatch
     {
       string usage = $"Usage: !{commandName}" + cmd.Parameters
         .Select(p => p.IsVararg ? $" [{p.Name} ...]" : p.Optional ? $" [{p.Name}]" : $" <{p.Name}>")
-        .SJoin("");
+        .StringJoin("");
       await ctx.ReplyAsync(usage);
     }
     catch (TargetInvocationException e) when (e.InnerException is NoValueException)
     {
       string usage = $"Usage: !{commandName}" + cmd.Parameters
         .Select(p => p.IsVararg ? $" [{p.Name} ...]" : p.Optional ? $" [{p.Name}]" : $" <{p.Name}>")
-        .SJoin("");
+        .StringJoin("");
       await ctx.ReplyAsync(usage);
     }
     catch (TargetInvocationException e) when (e.InnerException is InvalidDeserializeException ide)

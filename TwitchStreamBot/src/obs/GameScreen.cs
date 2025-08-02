@@ -5,7 +5,7 @@ using Nixill.Colors;
 using Nixill.OBSWS;
 using Nixill.Streaming.JoltBot.Data;
 using Nixill.Streaming.JoltBot.Twitch.Api;
-using Nixill.Utils;
+using Nixill.Utils.Extensions;
 using TwitchLib.Api.Helix.Models.Channels.GetChannelInformation;
 
 namespace Nixill.Streaming.JoltBot.OBS;
