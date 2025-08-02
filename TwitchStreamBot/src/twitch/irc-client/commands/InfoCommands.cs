@@ -51,9 +51,15 @@ public static class InfoCommands
   }
 
   [Command("overscan")]
+  [AllowedWithTitle("!overscan")]
   public static Task OverscanCommand(BaseContext ctx)
     => ctx.ReplyAsync("I'm using overscan compensation! I can see more of the game than is visible on stream;"
       + " but the view on stream is larger for readability.");
+
+  [Command("racing")]
+  [AllowedWithTitle("!racing")]
+  public static Task RacingCommand(BaseContext ctx)
+    => ctx.ReplyAsync("I'm on the bottom. @GeorgeMHall is top left. @Jeynick is top right.");
 
   [Command("pronouns")]
   public static Task PronounsCommand(BaseContext ctx)
