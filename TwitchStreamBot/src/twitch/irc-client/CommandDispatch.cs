@@ -136,19 +136,28 @@ public static class CommandDispatch
     List<string> commandNameWords = words[0..Math.Min(words.Count, LongestCommandName)];
     words = words[Math.Min(words.Count, LongestCommandName)..];
 
-    while (true)
+    while (commandNameWords.Count > 0)
     {
       commandName = commandNameWords.StringJoin(" ");
 
-      if (Commands.ContainsKey(commandName)) break;
+      if (Commands.ContainsKey(commandName))
+      {
+        await DispatchClassicCommand(words, ev, message, commandName);
+        return;
+      }
+      else if (CommandsCsv.TryGetCommand(commandName, out SimpleCommand scmd))
+      {
+        await DispatchSimpleCommand(scmd, ev);
+      }
 
       string word = commandNameWords[^1];
       commandNameWords.RemoveAt(commandNameWords.Count - 1);
       words.Insert(0, word);
-
-      if (commandNameWords.Count == 0) return; // No error if no such command
     }
+  }
 
+  private static async Task DispatchClassicCommand(List<string> words, OnChatCommandReceivedArgs ev, string message, string commandName)
+  {
     BotCommand cmd = Commands[commandName];
     BaseContext ctx = (ev != null) ? new CommandContext(ev) : new StreamDeckContext(message);
     bool allowed = true;
@@ -243,6 +252,22 @@ public static class CommandDispatch
     {
       await ctx.ReplyAsync($"Error: {e.GetType().Name}: {e.Message}");
       logger.LogError(e, "Error in command execution");
+    }
+  }
+
+  private static async Task DispatchSimpleCommand(SimpleCommand scmd, OnChatCommandReceivedArgs ev)
+  {
+    if (scmd.RequireTitle && !(await JoltCache.GetOwnChannelInfo()).Title
+      .Contains("!" + scmd.CommandName, StringComparison.InvariantCultureIgnoreCase)) return;
+
+    if (ev != null)
+    {
+      if (scmd.RequireModerator && !(await JoltCache.GetUserGroup(ev.ChatMessage.UserId)).HasFlag(TwitchUserGroup.AllModeratorRoles)) return;
+      await JoltChatBot.Client.SendReplyAsync(TwitchJson.Channel.Name, ev.ChatMessage.Id, scmd.Response);
+    }
+    else
+    {
+      await JoltChatBot.Client.SendMessageAsync(TwitchJson.Channel.Name, scmd.Response);
     }
   }
 
