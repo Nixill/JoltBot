@@ -20,10 +20,10 @@ public static class PipeServer
       StreamReader reader = new StreamReader(server);
 
       string data = reader.ReadToEnd();
-      JsonObject obj = (JsonObject)JsonNode.Parse(data);
+      List<string> list = ((JsonArray)JsonNode.Parse(data)).Select(n => (string)n).ToList();
       PipeMessage msg = new PipeMessage
       {
-        Data = obj
+        Data = list
       };
 
       Task _ = Task.Run(() => MessageReceived.Invoke(null, msg));
@@ -36,5 +36,5 @@ public static class PipeServer
 
 public class PipeMessage : EventArgs
 {
-  public JsonObject Data { get; init; }
+  public List<string> Data { get; init; }
 }

@@ -1,15 +1,18 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
 using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Streaming.JoltBot.Twitch;
 using Nixill.Streaming.JoltBot.Twitch.Events;
+using Nixill.Utils;
+using Nixill.Utils.Extensions;
 using NodaTime;
 using NodaTime.Text;
 
 namespace Nixill.Streaming.JoltBot.Pipes;
 
-public static class PipeRunner
+public static partial class PipeRunner
 {
   static ILogger Logger = Log.Factory.CreateLogger(typeof(PipeRunner));
 
@@ -19,25 +22,25 @@ public static class PipeRunner
 
     PipeServer.MessageReceived += (sender, args) =>
     {
-      JsonObject data = args.Data;
-      Logger.LogInformation($"Received message from pipe: {data.ToJsonString()}");
-
-      string req = (string)data["request"];
+      List<string> pars = args.Data;
+      Logger.LogInformation($"Received message from pipe: {pars.StringJoin(" ")}");
 
       try
       {
+        string req = pars.Pop();
+
         Task _;
         switch (req)
         {
-          case null: break;
+          case null or "": break;
           case "Ad.Start":
-            AdManager.TryStartAd((int?)data["length"] ?? 180);
+            AdManager.TryStartAd(NumParser.Int(pars.Pop(), 180));
             break;
           case "Ad.Stop":
             AdManager.TryStopAd();
             break;
           case "Commands.Run":
-            _ = Task.Run(() => CommandDispatch.Dispatch(((string)data["commandText"]).Split(" ").ToList()));
+            _ = Task.Run(() => CommandDispatch.Dispatch(pars));
             break;
           case "Markers.Place":
             _ = Task.Run(() => MarkerButton.Place());
@@ -46,28 +49,16 @@ public static class PipeRunner
             _ = JoltRewardDispatch.Modify();
             break;
           case "Scenes.Switch":
-            string scene = (string)data["scene"];
-            string[] show = JsonSerializer.Deserialize<string[]>(data["show"]);
+            string scene = ParseName(pars);
+            string[] show = [.. ParseNames(pars)];
             _ = Task.Run(() => SceneSwitcher.SwitchTo(scene, show));
             break;
           case "Screenshots.Save":
-            string format = (string)data["format"] ?? "png";
-            string source, sourceType;
-            if (data["source"] != null)
-            {
-              source = (string)data["source"];
-              sourceType = "source";
-            }
-            else
-            {
-              source = (string)data["special"] ?? "gameSources";
-              sourceType = "special";
-            }
-            _ = Task.Run(() => ScreenshotButton.Press(format, source, sourceType));
+            _ = Task.Run(() => ScreenshotButton.Parse(pars));
             break;
           case "Upcoming.Read":
             LocalDate? date = null;
-            if (data.ContainsKey("date")) date = LocalDatePattern.Iso.Parse((string)data["date"]).Value;
+            if (pars.Count > 0) date = LocalDatePattern.Iso.Parse(pars.Pop()).Value;
             _ = Task.Run(() => EndScreenManager.UpdateStreamData(date));
             break;
           case "Upcoming.Write":
@@ -81,4 +72,42 @@ public static class PipeRunner
       }
     };
   }
+
+  public static string ParseName(List<string> pars)
+  {
+    string output = "";
+    while (pars.TryPop(out string val))
+    {
+      Match mtc = TrailingBackslashes().Match(val);
+      output += mtc.Groups[1].Value;
+      output += new string('\\', mtc.Groups[2].Length / 2);
+      if (mtc.Groups[2].Length % 2 == 1) output += " ";
+      else return output;
+    }
+
+    return output;
+  }
+
+  public static IEnumerable<string> ParseNames(List<string> pars)
+  {
+    string output = "";
+
+    while (pars.TryPop(out string val))
+    {
+      Match mtc = TrailingBackslashes().Match(val);
+      output += mtc.Groups[1].Value;
+      output += new string('\\', mtc.Groups[2].Length / 2);
+      if (mtc.Groups[2].Length % 2 == 1) output += " ";
+      else
+      {
+        yield return output;
+        output = "";
+      }
+    }
+
+    if (output != "") yield return output;
+  }
+
+  [GeneratedRegex(@"(.*?)(\\*)$")]
+  private static partial Regex TrailingBackslashes();
 }

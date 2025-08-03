@@ -5,6 +5,7 @@ using Nixill.Streaming.JoltBot.OBS;
 using NodaTime;
 using NodaTime.Text;
 using NodaTime.TimeZones;
+using Nixill.Utils.Extensions;
 
 namespace Nixill.Streaming.JoltBot.Pipes;
 
@@ -15,27 +16,46 @@ public static class ScreenshotButton
   static readonly BclDateTimeZone CurrentZone = BclDateTimeZone.ForSystemDefault();
   static ZonedDateTime Now => SystemClock.Instance.GetCurrentInstant().InZone(CurrentZone);
 
-  public static async Task Press(string format, string source, string sourceType)
+  public static async Task Parse(List<string> pars)
   {
-    string[] sources = [];
+    string format = "png";
+    string sourceType = "namedSources";
+    List<string> sources = [];
 
-    if (sourceType == "source")
-      sources = [source];
-    else if (sourceType == "special")
-      switch (source)
-      {
-        case "gameSources":
-          sources = ["vcd_GameStick", "gc_Primary", "dc_TopScreen", "gc_MelonDS"];
-          break;
-        case "activeScene":
-          sources = [(await OBSRequests.Scenes.GetCurrentProgramScene().Send()).Name];
-          break;
-        case "previewScene":
-          if (await OBSRequests.UI.GetStudioModeEnabled().Send())
-            sources = [(await OBSRequests.Scenes.GetCurrentPreviewScene().Send()).Name];
-          else return;
-          break;
-      }
+    while (pars.TryPop(out string val))
+    {
+      if ((val == "-f" || val == "--format") && pars.TryPop(out string fmt)) format = fmt;
+      else if (val == "-j" || val == "--jpg" || val == "--jpeg") format = "jpg";
+      else if (val == "--gameSources") sourceType = "gameSources";
+      else if (val == "--activeScene") sourceType = "activeScene";
+      else if (val == "--previewScene") sourceType = "previewScene";
+      else if (val == "--") break;
+      else sources.Add(val);
+    }
+
+    sources.AddRange(pars);
+
+    await Press(format, sources, sourceType);
+  }
+
+  public static async Task Press(string format, List<string> sources, string sourceType)
+  {
+    switch (sourceType)
+    {
+      case "gameSources":
+        sources = ["vcd_GameStick", "gc_Primary", "dc_TopScreen", "gc_MelonDS"];
+        break;
+      case "activeScene":
+        sources = [(await OBSRequests.Scenes.GetCurrentProgramScene().Send()).Name];
+        break;
+      case "previewScene":
+        if (await OBSRequests.UI.GetStudioModeEnabled().Send())
+          sources = [(await OBSRequests.Scenes.GetCurrentPreviewScene().Send()).Name];
+        else return;
+        break;
+        // can also be "namedSources", in which case don't modify the
+        // existing sources list
+    }
 
     foreach (var src in sources)
     {
