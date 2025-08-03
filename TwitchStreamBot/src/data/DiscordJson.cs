@@ -8,7 +8,7 @@ namespace Nixill.Streaming.JoltBot.Data;
 public static class DiscordJson
 {
   static JsonObject _root;
-  public static JsonObject Root => _root ?? (_root = (JsonObject)JsonNode.Parse(File.ReadAllText("data/discord.json")));
+  public static JsonObject Root => _root ??= (JsonObject)JsonNode.Parse(File.ReadAllText("data/discord.json"));
 
   public static void Save()
   {
