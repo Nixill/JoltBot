@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Nixill.OBSWS;
 using Nixill.Streaming.JoltBot.Data;
+using Websocket.Client.Exceptions;
 
 namespace Nixill.Streaming.JoltBot.OBS;
 
@@ -8,8 +9,11 @@ public static class JoltOBSClient
 {
   const int GlobalTimeout = 3600;
   internal static OBSClient Client;
-  static ILogger Logger = Log.Factory.CreateLogger(typeof(JoltOBSClient));
+  static readonly ILogger Logger = Log.Factory.CreateLogger(typeof(JoltOBSClient));
 
+  static readonly TimeSpan ReconnectTimeout = TimeSpan.FromSeconds(5);
+
+  public static bool IsConnecting { get; private set; } = false;
   public static bool IsConnected => Client.IsConnected;
   public static bool IsIdentified => Client.IsIdentified;
 
@@ -20,7 +24,36 @@ public static class JoltOBSClient
     Client.Events.Outputs.StreamStarted += (s, e) => Task.Run(() => JoltOBSEventHandlers.StreamStarted(s, e));
     Client.Events.Outputs.StreamStopped += (s, e) => Task.Run(() => JoltOBSEventHandlers.StreamStopped(s, e));
 
-    await Client.ConnectAsync();
+    Client.Disconnected += Reconnect;
+
+    await ConnectAsync();
+  }
+
+  private static async Task ConnectAsync()
+  {
+    IsConnecting = true;
+    while (!Client.IsConnected)
+    {
+      try
+      {
+        await Client.ConnectAsync();
+      }
+      catch (Exception)
+      {
+        Logger.LogError("Failed to connect to OBS websocket server.");
+      }
+      await Task.Delay(ReconnectTimeout);
+    }
+    IsConnecting = false;
+  }
+
+  private static void Reconnect(object sender, OBSDisconnectedArgs e)
+  {
+    if (!IsConnecting)
+    {
+      Client.Dispose();
+      Task _ = SetUp();
+    }
   }
 
   public static Task<T> Send<T>(this OBSRequest<T> request, int timeout = GlobalTimeout) where T : OBSRequestResult
