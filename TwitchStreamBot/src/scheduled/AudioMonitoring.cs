@@ -58,7 +58,7 @@ public static class AudioMonitoring
         var trackStates = await audioMonitoringStates.Keys.SelectOBSResults(
           JoltOBSClient.Client,
           i => OBSRequests.Inputs.GetInputAudioTracks(i),
-          r => (r.RequestResult as InputAudioTracksResult).AudioTracks,
+          r => (r.RequestResult as InputAudioTracks).AudioTracks,
           resultCondition: r => r.RequestSuccessful
         );
 
