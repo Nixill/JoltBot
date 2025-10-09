@@ -15,11 +15,12 @@ public static class RewardsJson
   public static readonly Dictionary<string, string> RewardsByKey = Root
     .Select(kvp => ((string)kvp.Value, kvp.Key)).ToDictionary();
 
-
   public static void AddReward(string name, string uuid)
   {
     RewardKeys[name] = uuid;
     RewardsByKey[uuid] = name;
     Root[name] = uuid;
+
+    File.WriteAllText("data/twitch-rewards.json", Root.ToJsonString());
   }
 }

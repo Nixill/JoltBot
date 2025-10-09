@@ -29,7 +29,7 @@ public static class JoltRewardDispatch
         if (pars.Length != 1) throw new IllegalRewardException(m, "It must have exactly one parameter.");
         if (m.ReturnType != typeof(Task)) throw new IllegalRewardException(m, "It must return Task.");
         if (!pars[0].ParameterType.IsAssignableFrom(typeof(RewardContext)))
-          throw new IllegalCommandException(m, "The sole parameter must be Redemption Context (or a less derived type).");
+          throw new IllegalCommandException(m, "The sole parameter must be RewardContext (or a less derived type).");
 
         ChannelPointsRewardAttribute attr = m.GetCustomAttribute<ChannelPointsRewardAttribute>();
 

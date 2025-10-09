@@ -34,7 +34,7 @@ public static partial class PipeRunner
         {
           case null or "": break;
           case "Ad.Start":
-            AdManager.TryStartAd(NumParser.Int(pars.Pop(), 180));
+            AdManager.TryStartAd(NullParser.Int(pars.Pop(), 180));
             break;
           case "Ad.Stop":
             AdManager.TryStopAd();
