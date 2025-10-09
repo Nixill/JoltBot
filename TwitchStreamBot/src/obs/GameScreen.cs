@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using Nixill.Colors;
 using Nixill.OBSWS;
+using Nixill.OBSWS.Utils;
 using Nixill.Streaming.JoltBot.Data;
 using Nixill.Streaming.JoltBot.Twitch.Api;
 using Nixill.Utils.Extensions;
@@ -18,7 +18,7 @@ public static partial class GameScreen
   {
     ChannelInformation info = await JoltCache.GetOwnChannelInfo();
 
-    Color color = GamesCsv.GetGameColor(info.GameName);
+    uint color = GamesCsv.GetGameColor(info.GameName);
     await OBSExtraRequests.Inputs.Color.SetColor("clr_BottomFilter", color).Send();
 
     string gameName = info.GameName;

@@ -11,10 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TwitchLib.EventSub.Websocke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TwitchLib.EventSub.Websockets", "TwitchLib.EventSub.Websockets\TwitchLib.EventSub.Websockets\TwitchLib.EventSub.Websockets.csproj", "{35F93C8B-180F-42EF-B154-9B6210496061}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp.Nixill.Color", "CSharp.Nixill.Color", "{612E5769-1C3F-4D64-8A49-EC07D4773F3F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp.Nixill.Color", "CSharp.Nixill.Color\CSharp.Nixill.Color\CSharp.Nixill.Color.csproj", "{08A7F221-B19F-4730-A309-A7A654C7511E}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CSharp.Nixill", "CSharp.Nixill", "{88043BA5-7296-4BBC-9C84-3D5EA6EC82EA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharp.Nixill", "CSharp.Nixill\CSharp.Nixill\CSharp.Nixill.csproj", "{771A4CB5-501D-46C2-90D1-A7B9F8C7439F}"

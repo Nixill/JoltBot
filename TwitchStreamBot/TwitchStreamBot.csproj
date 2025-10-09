@@ -22,7 +22,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CSharp.Nixill\CSharp.Nixill\CSharp.Nixill.csproj" />
-    <ProjectReference Include="..\CSharp.Nixill.Color\CSharp.Nixill.Color\CSharp.Nixill.Color.csproj" />
     <ProjectReference Include="..\CSharp.Nixill.OBSWS\CSharp.Nixill.OBSWS.csproj" />
     <ProjectReference Include="..\TwitchLib.EventSub.Websockets\TwitchLib.EventSub.Websockets\TwitchLib.EventSub.Websockets.csproj" />
   </ItemGroup>

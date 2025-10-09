@@ -1,6 +1,6 @@
 using System.Data;
 using Nixill.Collections;
-using Nixill.Colors;
+using Nixill.OBSWS.Utils;
 
 namespace Nixill.Streaming.JoltBot.Data;
 
@@ -32,12 +32,12 @@ public static class GamesCsv
   public static List<string> GetAliases(string gameName)
     => GetGame(gameName)?.Aliases ?? [];
 
-  public static Color GetGameColor(string gameName)
-    => GetGame(gameName)?.GameColor ?? Color.FromRGBA("#b42b42");
+  public static uint GetGameColor(string gameName)
+    => GetGame(gameName)?.GameColor ?? ColorConversions.FromRGB("#B42B42");
 
-  public static void SetGameColor(string gameName, Color color)
+  public static void SetGameColor(string gameName, string color)
   {
-    GetOrCreateGame(gameName).GameColor = color;
+    GetOrCreateGame(gameName).GameColor = ColorConversions.FromRGB(color);
     Save();
   }
 
@@ -62,13 +62,13 @@ public static class GamesCsv
 
 public class GameInfo
 {
-  public static readonly Color DefaultColor = Color.FromRGBA("#b42b42");
+  public static readonly uint DefaultColor = ColorConversions.FromRGB("#b42b42");
 
   public required string GameName { get; init; }
   public List<string> Aliases { get; private init; } = [];
   public IEnumerable<string> InitAliases { init { Aliases = [.. value]; } }
   public bool IsTitleIgnored { get; set; } = false;
-  public Color GameColor { get; set; } = DefaultColor;
+  public uint GameColor { get; set; } = DefaultColor;
 
   public static KeyValuePair<string, GameInfo> Parse(IDictionary<string, string> dictionary)
   {
@@ -79,14 +79,14 @@ public class GameInfo
         GameName = dictionary["gameName"],
         InitAliases = dictionary["aliases"]?.Split(';') ?? [],
         IsTitleIgnored = dictionary["ignoreTitle"] == "true",
-        GameColor = Color.FromRGBA(dictionary["color"] ?? "b42b42")
+        GameColor = ColorConversions.FromRGB(dictionary["color"] ?? "b42b42")
       }
     );
   }
 
   internal IDictionary<string, string> Unparse()
   {
-    string test = GameColor.ToRGBHex();
+    string test = ColorConversions.ToRGBHex(GameColor);
     return new Dictionary<string, string>
     {
       ["gameName"] = GameName,
