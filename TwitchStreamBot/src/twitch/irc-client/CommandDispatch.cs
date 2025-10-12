@@ -237,6 +237,14 @@ public static class CommandDispatch
         .StringJoin("");
       await ctx.ReplyAsync(usage);
     }
+    catch (UserInputException e)
+    {
+      await ctx.ReplyAsync($"Error: {e.Message}");
+    }
+    catch (TargetInvocationException e) when (e.InnerException is UserInputException ex)
+    {
+      await ctx.ReplyAsync($"Error: {ex.Message}");
+    }
     catch (TargetInvocationException e) when (e.InnerException is InvalidDeserializeException ide)
     {
       string error = $"Error: {ide.Value} is not a valid {ide.HumanReadableType}"

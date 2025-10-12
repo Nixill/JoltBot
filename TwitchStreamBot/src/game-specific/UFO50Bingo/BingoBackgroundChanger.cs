@@ -9,7 +9,7 @@ using Nixill.Streaming.JoltBot.Twitch.Events.Rewards;
 namespace Nixill.Streaming.JoltBot.Games.UFO50;
 
 [RewardContainer]
-public static class UFO50BGChanger
+public static class BingoBackgroundChanger
 {
   [ChannelPointsReward("UFO50.ChangeBackground")]
   [AllowedWithGame("UFO 50")]

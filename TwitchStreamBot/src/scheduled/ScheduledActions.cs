@@ -37,8 +37,8 @@ public class ScheduledActions
           if (timeNow != lastTimeUpdate)
           {
             JoltOBSClient.Client.SendBatchRequestWithoutWaiting(new OBSRequestBatch(
-              OBSExtraRequests.Inputs.Text.SetInputText("txt_Clock", timeNow),
-              OBSExtraRequests.Inputs.Text.SetInputText("txt_ClockWithDate", pattern2.Format(now))
+              OBSExtraRequests.Inputs.Text.SetText("txt_Clock", timeNow),
+              OBSExtraRequests.Inputs.Text.SetText("txt_ClockWithDate", pattern2.Format(now))
             ), executionType: RequestBatchExecutionType.Parallel);
             lastTimeUpdate = timeNow;
           }

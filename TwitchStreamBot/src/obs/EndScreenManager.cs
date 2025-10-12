@@ -168,10 +168,10 @@ public static class EndScreenManager
         });
 
       new OBSRequestBatch(
-        OBSExtraRequests.Inputs.Text.SetInputText($"txt_UpcomingGame{i}", stream.Value.Name),
+        OBSExtraRequests.Inputs.Text.SetText($"txt_UpcomingGame{i}", stream.Value.Name),
         OBSExtraRequests.Inputs.Image.SetInputImage($"img_UpcomingGame{i}", gameImage),
-        OBSExtraRequests.Inputs.Text.SetInputText($"txt_UpcomingDate{i}", dateStr),
-        OBSExtraRequests.Inputs.Text.SetInputText($"txt_ChannelUrl{i}", stream.Value.Channel),
+        OBSExtraRequests.Inputs.Text.SetText($"txt_UpcomingDate{i}", dateStr),
+        OBSExtraRequests.Inputs.Text.SetText($"txt_ChannelUrl{i}", stream.Value.Channel),
         OBSRequests.SceneItems.SetSceneItemEnabled("sc_Raiding Screen", channelID, stream.Value.Channel.ToLowerInvariant() switch
         {
           "nixillshadowfox" or "https://twitch.tv/nixillshadowfox" or "https://twitch.nixill.net/" => false,
@@ -223,7 +223,7 @@ public static class EndScreenManager
   public static async Task PrepareRaid(string user, string targetPfp)
   {
     await new OBSRequestBatch(
-      OBSExtraRequests.Inputs.Text.SetInputText("txt_RaidUsername", user),
+      OBSExtraRequests.Inputs.Text.SetText("txt_RaidUsername", user),
       OBSExtraRequests.Inputs.Browser.SetBrowserURL("brs_RaidTargetIcon", targetPfp)
     ).Send();
     await SceneSwitcher.SwitchTo("sc_Raiding Screen", "txt_RaidFound", "cln_grp_RaidTarget");

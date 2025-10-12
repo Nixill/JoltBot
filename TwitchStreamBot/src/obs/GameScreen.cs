@@ -37,6 +37,6 @@ public static partial class GameScreen
       titleBuilder.Append($" (Part {number})");
     }
 
-    await OBSExtraRequests.Inputs.Text.SetInputText("txt_BottomText", titleBuilder.ToString()).Send();
+    await OBSExtraRequests.Inputs.Text.SetText("txt_BottomText", titleBuilder.ToString()).Send();
   }
 }

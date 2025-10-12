@@ -10,7 +10,9 @@ public static class MarkerButton
 {
   public static ILogger Logger = Log.Factory.CreateLogger(typeof(MarkerButton));
 
-  public static async Task Place()
+  public static Task Place() => Place(null);
+
+  public static async Task Place(string markerText)
   {
     var checkStreaming = OBSRequests.Stream.GetStreamStatus().Send();
     var checkRecording = OBSRequests.Record.GetRecordStatus().Send();
@@ -23,7 +25,7 @@ public static class MarkerButton
       // Live on Twitch
       var markerCreationTask = JoltApiClient.WithToken((api, id) => api.Helix.Streams.CreateStreamMarkerAsync(new CreateStreamMarkerRequest
       {
-        Description = "Created by JoltBot!",
+        Description = markerText ?? "Created by JoltBot!",
         UserId = id
       }));
 
@@ -60,7 +62,7 @@ public static class MarkerButton
       string time = recordStatus.Timecode;
 
       // And finally, actually write it!
-      File.AppendAllText(markerFilename, time + "\n", System.Text.Encoding.UTF8);
+      File.AppendAllText(markerFilename, time + (markerText ?? "") + "\n", System.Text.Encoding.UTF8);
       Logger.LogInformation("Placed a recording marker in local file!");
     }
   }

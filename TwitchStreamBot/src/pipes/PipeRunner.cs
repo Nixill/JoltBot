@@ -2,6 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using Microsoft.Extensions.Logging;
+using Nixill.Streaming.JoltBot.Games.UFO50;
 using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Streaming.JoltBot.Twitch;
 using Nixill.Streaming.JoltBot.Twitch.Events;
@@ -29,7 +30,6 @@ public static partial class PipeRunner
       {
         string req = pars.Pop();
 
-        Task _;
         switch (req)
         {
           case null or "": break;
@@ -43,7 +43,7 @@ public static partial class PipeRunner
             _ = Task.Run(() => CommandDispatch.Dispatch(pars));
             break;
           case "Markers.Place":
-            _ = Task.Run(() => MarkerButton.Place());
+            _ = Task.Run(MarkerButton.Place);
             break;
           case "Rewards.Refresh":
             _ = JoltRewardDispatch.Modify();
@@ -62,7 +62,44 @@ public static partial class PipeRunner
             _ = Task.Run(() => EndScreenManager.UpdateStreamData(date));
             break;
           case "Upcoming.Write":
-            _ = Task.Run(() => EndScreenManager.UpdateStreamScene());
+            _ = Task.Run(EndScreenManager.UpdateStreamScene);
+            break;
+          case "UFO50.Reset":
+            _ = Task.Run(BingoSetup.ResetBoardAsync);
+            break;
+          case "UFO50.ChangeGoal":
+            if (pars.Count > 1) pars.Pop();
+            _ = Task.Run(() => BingoSetup.ChangeGoalImage(pars.Pop()));
+            break;
+          case "UFO50.PlayerColor":
+            _ = Task.Run(() => BingoSetup.SetPlayerColor(pars.Pop(), pars.Pop()));
+            break;
+          case "UFO50.FinishSetup":
+            _ = Task.Run(BingoSetup.FinishSetup);
+            break;
+          case "UFO50.Discord":
+            _ = Task.Run(BingoSetup.SetDiscordCapture);
+            break;
+          case "UFO50.Reveal":
+            _ = Task.Run(BingoSetup.RevealCardAndGoals);
+            break;
+          case "UFO50.GameSelect":
+            int player = int.Parse(pars.Pop());
+            BingoGameChanger.LastPlayerChanged = player;
+            break;
+          case "UFO50.OpenGame":
+            _ = Task.Run(() => BingoGameChanger.SwitchToGame(int.Parse(pars.Pop()), pars.Count > 0));
+            break;
+          case "UFO50.Score":
+            if (pars.Count >= 3) _ = Task.Run(() => BingoScorecard.IncrementGoalScore(int.Parse(pars.Pop()),
+              int.Parse(pars.Pop()), pars.Pop()));
+            else _ = Task.Run(() => BingoScorecard.IncrementBigScore(int.Parse(pars.Pop()), pars.Pop()));
+            break;
+          case "UFO50.GeneralWin":
+            _ = Task.Run(() => BingoScorecard.ToggleGeneralWin(pars.Pop(), pars.Pop()));
+            break;
+          case "UFO50.UpgradeCart":
+            _ = Task.Run(() => BingoGameChanger.UpgradeCartridge(int.Parse(pars.Pop())));
             break;
         }
       }

@@ -2,44 +2,24 @@ using System.Reflection;
 
 namespace Nixill.Streaming.JoltBot.Twitch;
 
-public class NoDeserializerException : Exception
+public class NoDeserializerException(Type t) : Exception($"There is no deserializer for the type {t.Name}")
 {
-  public readonly Type AttemptedType;
-
-  public NoDeserializerException(Type t) : base($"There is no deserializer for the type {t.Name}")
-  {
-    AttemptedType = t;
-  }
+  public readonly Type AttemptedType = t;
 }
 
-public class IllegalDeserializerException : Exception
+public class IllegalDeserializerException(MethodInfo m, string message) : Exception($"The method {m} is an invalid deserializer: {message}")
 {
-  public MethodInfo Method;
-
-  public IllegalDeserializerException(MethodInfo m, string message) : base($"The method {m} is an invalid deserializer: {message}")
-  {
-    Method = m;
-  }
+  public MethodInfo Method = m;
 }
 
-public class IllegalCommandException : Exception
+public class IllegalCommandException(MethodInfo m, string message) : Exception($"The method {m} is an invalid command: {message}")
 {
-  public readonly MethodInfo Method;
-
-  public IllegalCommandException(MethodInfo m, string message) : base($"The method {m} is an invalid command: {message}")
-  {
-    Method = m;
-  }
+  public readonly MethodInfo Method = m;
 }
 
-public class NoValueException : Exception
+public class NoValueException(string param) : Exception($"No values remaining for parameter {param}")
 {
-  public readonly string Parameter;
-
-  public NoValueException(string param) : base($"No values remaining for parameter {param}")
-  {
-    Parameter = param;
-  }
+  public readonly string Parameter = param;
 }
 
 public class InvalidDeserializeException : Exception
@@ -72,3 +52,6 @@ public class InvalidDeserializeException : Exception
     CustomMessage = message;
   }
 }
+
+public class UserInputException(string message) : Exception($"User input exception: {message}")
+{ }
