@@ -122,16 +122,27 @@ public static class BingoMusicController
     Log("Selected game {0} {1}", game, UFO50Games.Get(int.Parse(game)));
 
     string[] songs = [.. MusicJson.GetTracksFor(game)];
-    string randomSong = songs[Random.Shared.Next(songs.Length)];
-    string trackTitle = MusicJson.GetTitleOf(randomSong);
+    string randomSong, trackTitle;
 
-    Log("Selected song {0}.", trackTitle);
-
-    if (!UnplayedTracks.Contains(randomSong))
+    if (songs.Length > 0)
     {
+      randomSong = songs[Random.Shared.Next(songs.Length)];
+      trackTitle = MusicJson.GetTitleOf(randomSong);
+      Log("Selected song {0}.", trackTitle);
+
+      if (!UnplayedTracks.Contains(randomSong))
+      {
+        randomSong = UnplayedTracks[Random.Shared.Next(UnplayedTracks.Count)];
+        trackTitle = MusicJson.GetTitleOf(randomSong);
+        Log("That song was already played. Replacing with song {0}.", trackTitle);
+      }
+    }
+    else
+    {
+      Log("No tracks exist! Replacing with a random global song.");
       randomSong = UnplayedTracks[Random.Shared.Next(UnplayedTracks.Count)];
       trackTitle = MusicJson.GetTitleOf(randomSong);
-      Log("That song was already played. Replacing with song {0}.", trackTitle);
+      Log("Selected song {0}.", trackTitle);
     }
 
     UnplayedTracks.Remove(randomSong);
@@ -141,8 +152,6 @@ public static class BingoMusicController
       OBSExtraRequests.Inputs.Media.SetMediaFile("med_UFO50Music",
         @$"C:\Users\Nixill\Documents\Streaming-2024\Music\ufo50\ogg\{randomSong}.ogg")
     ]).Send();
-
-    // LastTrackChange = Now;
   }
 }
 
