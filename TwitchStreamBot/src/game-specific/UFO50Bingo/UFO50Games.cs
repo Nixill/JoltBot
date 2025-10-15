@@ -3,7 +3,7 @@ namespace Nixill.Streaming.JoltBot.Games.UFO50;
 public static class UFO50Games
 {
   private static readonly string[] GameList = [
-    "None",
+    "Library",
     "Barbuta",
     "Bug Hunter",
     "Ninpek",
@@ -32,8 +32,8 @@ public static class UFO50Games
     "Hot Foot",
     "Divers",
     "Rail Heist",
-    "Vainter",
-    "Rock On!! Island",
+    "Vainger",
+    "Rock On! Island",
     "Pingolf",
     "Mortol II",
     "Fist Hell",

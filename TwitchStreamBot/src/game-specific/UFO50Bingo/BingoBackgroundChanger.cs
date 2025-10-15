@@ -25,7 +25,12 @@ public static class BingoBackgroundChanger
           @$"C:\Users\Nixill\Documents\Streaming-2024\Images\UFO50\Library_Backgrounds\{bg.Name}.png"),
         OBSExtraRequests.Inputs.Color.SetColor("clr_Bingo-UI-BG_410x60", ColorConversions.FromRGBA(bg.ScreenColor)),
         OBSExtraRequests.Inputs.Color.SetColor("clr_Bingo-UI-BG_410x100", ColorConversions.FromRGBA(bg.ScreenColor)),
+        OBSExtraRequests.Inputs.Color.SetColor("clr_Bingo-UI-BG 440x120", ColorConversions.FromRGBA(bg.ScreenColor)),
         OBSExtraRequests.Filters.ColorCorrection.SetMultipliedColor("grp_BingoUIColors",
+          "cc_Bingo Background Coloration", ColorConversions.FromRGB(bg.UIColor)),
+        OBSExtraRequests.Filters.ColorCorrection.SetMultipliedColor("grp_BingoUIColors2",
+          "cc_Bingo Background Coloration", ColorConversions.FromRGB(bg.UIColor)),
+        OBSExtraRequests.Filters.ColorCorrection.SetMultipliedColor("grp_BingoUIColors3",
           "cc_Bingo Background Coloration", ColorConversions.FromRGB(bg.UIColor))
       ).Send();
 

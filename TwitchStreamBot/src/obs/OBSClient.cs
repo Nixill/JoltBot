@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Nixill.OBSWS;
 using Nixill.Streaming.JoltBot.Data;
+using Nixill.Streaming.JoltBot.Games.UFO50;
 using Websocket.Client.Exceptions;
 
 namespace Nixill.Streaming.JoltBot.OBS;
@@ -23,6 +24,7 @@ public static class JoltOBSClient
 
     Client.Events.Outputs.StreamStarted += (s, e) => Task.Run(() => JoltOBSEventHandlers.StreamStarted(s, e));
     Client.Events.Outputs.StreamStopped += (s, e) => Task.Run(() => JoltOBSEventHandlers.StreamStopped(s, e));
+    Client.Events.MediaInputs.MediaInputPlaybackEnded += (s, e) => Task.Run(() => BingoMusicController.MusicPlaybackEnded(s, e));
 
     Client.Disconnected += Reconnect;
 

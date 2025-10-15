@@ -10,7 +10,7 @@ public static class BingoGameChanger
 {
   public static int LastPlayerChanged { get; set; } = 1;
 
-  static string[] LastGame = ["" /* unused */, "0", "0"];
+  internal static string[] LastGame = ["" /* unused */, "0", "0"];
   static bool[] GameOnScreen = [false /* unused */, false, false];
 
   static string[][] GameFrames = [
@@ -33,10 +33,8 @@ public static class BingoGameChanger
     GameOnScreen[player] = false;
 
     await new OBSRequestBatch([
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "grp_BingoCurrentGamesClose",
-        $"img_BingoP{player}CurrentGame", false),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "grp_BingoCurrentGamesClose",
-        $"img_BingoP{player}Frame-0", false),
+      await OBSUtils.SceneItemDisabler("grp_BingoCurrentGamesClose", $"img_BingoP{player}CurrentGame"),
+      await OBSUtils.SceneItemDisabler("grp_BingoCurrentGamesClose", $"img_BingoP{player}Frame-0"),
       OBSRequests.Filters.SetSourceFilterEnabled($"grp_BingoP{player}HistoryOuter", "mv_ToTheRight", true)
     ]).Send();
 
@@ -98,6 +96,8 @@ public static class BingoGameChanger
 
       LastGame[player] = $"{(terminal ? "t" : "")}{game}";
     }
+
+    await BingoMusicController.EndMenuMusic();
   }
 
   public static async Task UpgradeCartridge(int player)
@@ -115,11 +115,9 @@ public static class BingoGameChanger
     };
 
     await new OBSRequestBatch([
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "sc_UFO 50 Bingo",
-        $"img_BingoP{player}FrameFlash", true),
+      await OBSUtils.SceneItemEnabler("sc_UFO 50 Bingo", $"img_BingoP{player}FrameFlash"),
       OBSRequests.General.Sleep(millis: 50),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "sc_UFO 50 Bingo",
-        $"img_BingoP{player}FrameFlash", false),
+      await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", $"img_BingoP{player}FrameFlash"),
       OBSExtraRequests.Inputs.Image.SetInputImage($"img_BingoP{player}Frame-0",
         @$"C:\Users\Nixill\Documents\Streaming-2024\Images\UFO50\Games\{cartridge}.png")
     ]).Send();

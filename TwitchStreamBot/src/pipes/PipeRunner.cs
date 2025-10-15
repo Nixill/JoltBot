@@ -64,6 +64,9 @@ public static partial class PipeRunner
           case "Upcoming.Write":
             _ = Task.Run(EndScreenManager.UpdateStreamScene);
             break;
+          case "UFO50.IntroMusic":
+            _ = Task.Run(BingoMusicController.PlayIntroMusic);
+            break;
           case "UFO50.Reset":
             _ = Task.Run(BingoSetup.ResetBoardAsync);
             break;
@@ -74,11 +77,14 @@ public static partial class PipeRunner
           case "UFO50.PlayerColor":
             _ = Task.Run(() => BingoSetup.SetPlayerColor(pars.Pop(), pars.Pop()));
             break;
+          case "UFO50.Discord":
+            _ = Task.Run(BingoSetup.SetDiscordCapture);
+            break;
           case "UFO50.FinishSetup":
             _ = Task.Run(BingoSetup.FinishSetup);
             break;
-          case "UFO50.Discord":
-            _ = Task.Run(BingoSetup.SetDiscordCapture);
+          case "UFO50.CloseRules":
+            _ = Task.Run(BingoSetup.CloseRules);
             break;
           case "UFO50.Reveal":
             _ = Task.Run(BingoSetup.RevealCardAndGoals);

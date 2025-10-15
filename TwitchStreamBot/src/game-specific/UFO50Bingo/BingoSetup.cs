@@ -91,18 +91,12 @@ public static partial class BingoSetup
 
     // Set game card positions/enables back to default
     var gameCardAppearance = new OBSRequestBatch([
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "grp_BingoCurrentGamesOpen",
-        "img_BingoP1CurrentGame", false),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "grp_BingoCurrentGamesOpen",
-        "img_BingoP2CurrentGame", false),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "grp_BingoCurrentGamesReopen",
-        "img_BingoP1CurrentGame", false),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "grp_BingoCurrentGamesReopen",
-        "img_BingoP2CurrentGame", false),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "grp_BingoCurrentGamesClose",
-        "img_BingoP1CurrentGame", false),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "grp_BingoCurrentGamesClose",
-        "img_BingoP2CurrentGame", false),
+      await OBSUtils.SceneItemDisabler("grp_BingoCurrentGamesOpen", "img_BingoP1CurrentGame"),
+      await OBSUtils.SceneItemDisabler("grp_BingoCurrentGamesOpen", "img_BingoP2CurrentGame"),
+      await OBSUtils.SceneItemDisabler("grp_BingoCurrentGamesReopen", "img_BingoP1CurrentGame"),
+      await OBSUtils.SceneItemDisabler("grp_BingoCurrentGamesReopen", "img_BingoP2CurrentGame"),
+      await OBSUtils.SceneItemDisabler("grp_BingoCurrentGamesClose", "img_BingoP1CurrentGame"),
+      await OBSUtils.SceneItemDisabler("grp_BingoCurrentGamesClose", "img_BingoP2CurrentGame"),
       await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemTransform, "grp_BingoP1HistoryOuter",
         "cln_grp_BingoP1HistoryInner", new SceneItemTransformSetter {
           PositionX = 66
@@ -115,18 +109,12 @@ public static partial class BingoSetup
 
     // Set discord voice states back to hidden
     var discordVoiceOverlays = new OBSRequestBatch([
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "sc_UFO 50 Bingo",
-        "brs_UFO 50 Discord 1 200x315", false),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "sc_UFO 50 Bingo",
-        "brs_UFO 50 Discord 2 200x315", false),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "sc_UFO 50 Bingo",
-        "brs_UFO 50 Discord 3 200x315", false),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "sc_UFO 50 Bingo",
-        "brs_UFO 50 Discord 4 200x315", false),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "sc_UFO 50 Bingo",
-        "brs_UFO 50 Discord 5 200x315", false),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "sc_UFO 50 Bingo",
-        "brs_UFO 50 Discord 6 200x315", false)
+      await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "brs_UFO 50 Discord 1 200x315"),
+      await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "brs_UFO 50 Discord 2 200x315"),
+      await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "brs_UFO 50 Discord 3 200x315"),
+      await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "brs_UFO 50 Discord 4 200x315"),
+      await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "brs_UFO 50 Discord 5 200x315"),
+      await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "brs_UFO 50 Discord 6 200x315")
     ]).Send();
 
     // Turn off all win/loss filters in goal scores
@@ -138,7 +126,7 @@ public static partial class BingoSetup
 
     var enableStudioMode = OBSRequests.UI.SetStudioModeEnabled(true).Send();
 
-    await SceneSwitcher.SwitchTo("sc_Title Screen", ["grp_UFO50Bingo"]);
+    await SceneSwitcher.SwitchTo("sc_UFO 50 Setup", []);
     await enableStudioMode;
 
     // Set preview scene to behind-the-scenes
@@ -173,6 +161,8 @@ public static partial class BingoSetup
       if (!responses[8].FinishedWithoutErrors) Logger.LogError("Error hiding Discord voice overlays");
       if (!responses[9].FinishedWithoutErrors) Logger.LogError("Error removing win/loss scoring filters");
     }
+
+    await BingoMusicController.PlayIntroMusic();
   }
 
   static int GoalCursor = 1;
@@ -205,12 +195,6 @@ public static partial class BingoSetup
     ]).Send();
   }
 
-  public static async Task FinishSetup()
-  {
-    await OBSRequests.UI.SetStudioModeEnabled(false).Send();
-    await OBSRequests.Scenes.SetCurrentProgramScene("sc_UFO 50 Bingo").Send();
-  }
-
   public static async Task SetDiscordCapture()
   {
     IEnumerable<PropertyItem> windows = await OBSRequests.Inputs.GetInputPropertiesListPropertyItems("wc_DiscordForBingo", "window").Send();
@@ -226,8 +210,7 @@ public static partial class BingoSetup
       if (match.Success)
       {
         requests.Add(
-          await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "sc_UFO 50 Bingo",
-            $"brs_UFO 50 Discord {match.Groups[1].Value} 200x315", true)
+          await OBSUtils.SceneItemEnabler("sc_UFO 50 Bingo", $"brs_UFO 50 Discord {match.Groups[1].Value} 200x315")
         );
       }
 
@@ -240,15 +223,22 @@ public static partial class BingoSetup
   [GeneratedRegex(@"^PrivateMatch(\d):Chrome_WidgetWin_1:Discord.exe$")]
   static partial Regex PrivateMatchRegex { get; }
 
+  public static async Task FinishSetup()
+  {
+    await BingoMusicController.PlayForever();
+    await OBSRequests.UI.SetStudioModeEnabled(false).Send();
+    await OBSRequests.Scenes.SetCurrentProgramScene("sc_UFO 50 Rules").Send();
+  }
+
+  public static Task CloseRules()
+    => OBSRequests.Scenes.SetCurrentProgramScene("sc_UFO 50 Bingo").Send();
+
   public static async Task RevealCardAndGoals()
   {
     _ = new OBSRequestBatch([
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "sc_UFO 50 Bingo",
-        "grp_BingoGoalsUnrevealed", false),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "sc_UFO 50 Bingo",
-        "grp_BingoGoals", true),
-      await OBSUtils.WithSceneItemIndex(OBSRequests.SceneItems.SetSceneItemEnabled, "sc_UFO 50 Bingo",
-        "wc_FirefoxForBingo", true)
+      await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "grp_BingoGoalsUnrevealed"),
+      await OBSUtils.SceneItemEnabler("sc_UFO 50 Bingo", "grp_BingoGoals"),
+      await OBSUtils.SceneItemEnabler("sc_UFO 50 Bingo", "wc_FirefoxForBingo")
     ]).Send();
     _ = MarkerButton.Place("Bingo card revealed!");
   }
