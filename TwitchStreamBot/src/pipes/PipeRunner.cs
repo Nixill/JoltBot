@@ -107,6 +107,12 @@ public static partial class PipeRunner
           case "UFO50.UpgradeCart":
             _ = Task.Run(() => BingoGameChanger.UpgradeCartridge(int.Parse(pars.Pop())));
             break;
+          case "UFO50.RefreshMusic":
+            _ = Task.Run(BingoMusicController.SelectNextTrack);
+            break;
+          case "UFO50.ResetMusic":
+            _ = Task.Run(BingoMusicController.ResetMusic);
+            break;
         }
       }
       catch (Exception ex)

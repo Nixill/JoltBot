@@ -153,6 +153,12 @@ public static class BingoMusicController
         @$"C:\Users\Nixill\Documents\Streaming-2024\Music\ufo50\ogg\{randomSong}.ogg")
     ]).Send();
   }
+
+  public static async Task ResetMusic()
+  {
+    UnplayedTracks = MusicJson.GetAllTracks();
+    await SelectNextTrack();
+  }
 }
 
 internal enum BingoMusicState
