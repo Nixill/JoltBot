@@ -2,6 +2,7 @@ bin/
 data/*
 !data/get-tokens.bat
 !data/formats.md
+!data/UFO50/
 ext-data/*
 obj/
 logs/
