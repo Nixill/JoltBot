@@ -115,6 +115,12 @@ public static class BingoMusicController
     var MusicState = ReturnedState.State;
     if (!MusicState.IsStopped() && ReturnedState.Duration != null && ReturnedState.Duration > 100) return;
 
+    if (UnplayedTracks.Count == 0)
+    {
+      Log("Resetting music list!");
+      UnplayedTracks = MusicJson.GetAllTracks();
+    }
+
     Log("Selecting a gameplay song to play.");
 
     string game = BingoGameChanger.LastGame[Random.Shared.Next() % 2 + 1];
@@ -157,6 +163,7 @@ public static class BingoMusicController
 
   public static async Task ResetMusic()
   {
+    Log("Resetting music list!");
     UnplayedTracks = MusicJson.GetAllTracks();
     await SelectNextTrack();
   }
