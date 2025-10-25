@@ -62,7 +62,7 @@ public static class MarkerButton
       string time = recordStatus.Timecode;
 
       // And finally, actually write it!
-      File.AppendAllText(markerFilename, time + (markerText ?? "") + "\n", System.Text.Encoding.UTF8);
+      File.AppendAllText(markerFilename, time + (markerText != null ? $" - {markerText}" : "") + "\n", System.Text.Encoding.UTF8);
       Logger.LogInformation("Placed a recording marker in local file!");
     }
   }
