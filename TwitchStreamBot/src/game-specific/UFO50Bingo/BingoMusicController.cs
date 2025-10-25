@@ -118,6 +118,7 @@ public static class BingoMusicController
     Log("Selecting a gameplay song to play.");
 
     string game = BingoGameChanger.LastGame[Random.Shared.Next() % 2 + 1];
+    if (game.StartsWith('t')) game = game[1..];
 
     Log("Selected game {0} {1}", game, UFO50Games.Get(int.Parse(game)));
 
@@ -142,7 +143,7 @@ public static class BingoMusicController
       Log("No tracks exist! Replacing with a random global song.");
       randomSong = UnplayedTracks[Random.Shared.Next(UnplayedTracks.Count)];
       trackTitle = MusicJson.GetTitleOf(randomSong);
-      Log("Selected song {0}.", trackTitle);
+      Log("Selected global song {0}.", trackTitle);
     }
 
     UnplayedTracks.Remove(randomSong);
