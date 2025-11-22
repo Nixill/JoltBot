@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Nixill.OBSWS;
 using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Streaming.JoltBot.Pipes;
@@ -6,6 +7,8 @@ namespace Nixill.Streaming.JoltBot.Games.UFO50;
 
 public static class BingoGameChanger
 {
+  static readonly ILogger Logger = Log.Factory.CreateLogger(typeof(BingoGameChanger));
+
   public static int LastPlayerChanged { get; set; } = 1;
 
   internal static string[] LastGame = ["" /* unused */, "0", "0"];
@@ -29,7 +32,12 @@ public static class BingoGameChanger
   {
     if (Enum.TryParse(mode, true, out UFO50DraftMode newMode))
     {
+      Logger.LogInformation("Changed draft mode to {newMode}", newMode);
       DraftMode = newMode;
+    }
+    else
+    {
+      Logger.LogError("Failed to change draft mode to {mode}", mode);
     }
   }
 

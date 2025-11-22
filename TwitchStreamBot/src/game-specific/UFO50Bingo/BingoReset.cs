@@ -118,8 +118,8 @@ public static partial class BingoSetup
 
     // Set all drafted games to blank
     var blankDraftedGames = new OBSRequestBatch(
-      SetExtensions.Product(["P1", "P2", "Shared"], Enumerable.Range(1, 10),
-        (l, r) => OBSExtraRequests.Inputs.Image.SetInputImage($"img_BingoDraftedGame{l}G{r}",
+      Enumerable.Range(1, 10).Product(["P1", "P2", "Shared"],
+        (l, r) => OBSExtraRequests.Inputs.Image.SetInputImage($"img_BingoDraftedGame{r}G{l}",
           @"C:\Users\Nixill\Documents\Streaming-2024\Images\UFO50\Games\blank.png"))).Send();
 
     // Set all games on the draft board to unselected

@@ -46,7 +46,7 @@ public static class BingoDraftController
     string cart =
       (isProtected ? "g" : isBanned ? "d" :
       isAssignedP1 ? (isAssignedP2 ? "g" : "") : (isAssignedP2 ? "c" : "d")) + game;
-    cart = $"{GameCartPath:cart}";
+    cart = GameCartPath(cart);
 
     await OBSExtraRequests.Inputs.Image.SetInputImage($"img_UFO50GameCard{game}", cart).Send();
   }
@@ -153,11 +153,11 @@ public static class BingoDraftController
     // Otherwise, don't show the game carts on the bingo scene at all.
 
     // Lastly, hide bingo general goals and show selected carts instead.
-    _ = await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "grp_BingoP1GoalScores");
-    _ = await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "grp_BingoP2GoalScores");
-    _ = await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "grp_BingoGoals");
-    _ = await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "grp_BingoGoalsUnrevealed");
-    _ = await OBSUtils.SceneItemEnabler("sc_UFO 50 Bingo", "grp_BingoDraftedGames");
+    _ = (await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "grp_BingoP1GoalScores")).Send();
+    _ = (await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "grp_BingoP2GoalScores")).Send();
+    _ = (await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "grp_BingoGoals")).Send();
+    _ = (await OBSUtils.SceneItemDisabler("sc_UFO 50 Bingo", "grp_BingoGoalsUnrevealed")).Send();
+    _ = (await OBSUtils.SceneItemEnabler("sc_UFO 50 Bingo", "grp_BingoDraftedGames")).Send();
 
     // NOTE TO FUTURE SELF: It is INTENTIONAL that I'm not changing the
     // scene here! I need to see the game selection screen a little longer

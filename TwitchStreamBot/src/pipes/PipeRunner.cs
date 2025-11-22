@@ -15,7 +15,7 @@ namespace Nixill.Streaming.JoltBot.Pipes;
 
 public static partial class PipeRunner
 {
-  static ILogger Logger = Log.Factory.CreateLogger(typeof(PipeRunner));
+  static readonly ILogger Logger = Log.Factory.CreateLogger(typeof(PipeRunner));
 
   public static void SetUp()
   {
@@ -81,7 +81,13 @@ public static partial class PipeRunner
             _ = Task.Run(BingoSetup.SetDiscordCapture);
             break;
           case "UFO50.FinishSetup":
-            _ = Task.Run(BingoSetup.FinishSetup);
+            _ = Task.Run(() => BingoSetup.FinishSetup(pars.Pop()));
+            break;
+          case "UFO50.DraftMode":
+            _ = Task.Run(() => BingoGameChanger.DraftModeButtonPressed(pars.Pop()));
+            break;
+          case "UFO50.DraftFinish":
+            _ = Task.Run(BingoDraftController.FinalizeGames);
             break;
           case "UFO50.CloseRules":
             _ = Task.Run(BingoSetup.CloseRules);
@@ -94,7 +100,7 @@ public static partial class PipeRunner
             BingoGameChanger.LastPlayerChanged = player;
             break;
           case "UFO50.OpenGame":
-            _ = Task.Run(() => BingoGameChanger.SwitchToGame(int.Parse(pars.Pop()), pars.Count > 0));
+            _ = Task.Run(() => BingoGameChanger.GameButtonPressed(int.Parse(pars.Pop()), pars.Count > 0));
             break;
           case "UFO50.Score":
             if (pars.Count >= 3) _ = Task.Run(() => BingoScorecard.IncrementGoalScore(int.Parse(pars.Pop()),

@@ -29,6 +29,9 @@ internal static class OBSUtils
     string inputName, T3 otherArg, int searchOffset = 0) where TResult : OBSRequest
   => func(sceneName, await GetSceneItemIndex(sceneName, inputName, searchOffset), otherArg);
 
+  public static async Task<OBSVoidRequest> SceneItemSetter(string sceneName, string inputName, bool state, int searchOffset = 0)
+    => OBSRequests.SceneItems.SetSceneItemEnabled(sceneName, await GetSceneItemIndex(sceneName, inputName, searchOffset), state);
+
   public static async Task<OBSVoidRequest> SceneItemEnabler(string sceneName, string inputName, int searchOffset = 0)
     => OBSRequests.SceneItems.SetSceneItemEnabled(sceneName, await GetSceneItemIndex(sceneName, inputName, searchOffset), true);
 

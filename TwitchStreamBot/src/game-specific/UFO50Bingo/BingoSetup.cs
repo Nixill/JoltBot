@@ -75,11 +75,22 @@ public static partial class BingoSetup
   [GeneratedRegex(@"^PrivateMatch(\d):Chrome_WidgetWin_1:Discord.exe$")]
   static partial Regex PrivateMatchRegex { get; }
 
-  public static async Task FinishSetup()
+  static async Task SetBingoRulesEnabled(string whichRules, string requestedRules)
   {
-    await BingoMusicController.PlayForever();
-    await OBSRequests.UI.SetStudioModeEnabled(false).Send();
-    await OBSRequests.Scenes.SetCurrentProgramScene("sc_UFO 50 Rules").Send();
+    await (await OBSUtils.SceneItemSetter("sc_UFO 50 Rules", $"img_{whichRules}RulesBody", whichRules == requestedRules)).Send();
+    await (await OBSUtils.SceneItemSetter("grp_BingoUIColors3", $"img_{whichRules}RulesHeader", whichRules == requestedRules)).Send();
+  }
+
+  public static async Task FinishSetup(string requestedRules)
+  {
+    await Task.Delay(0);
+    _ = BingoMusicController.PlayForever();
+    _ = OBSRequests.UI.SetStudioModeEnabled(false).Send();
+    _ = SetBingoRulesEnabled("Standard", requestedRules);
+    _ = SetBingoRulesEnabled("Playoff", requestedRules);
+    _ = SetBingoRulesEnabled("PlayoffBo3", requestedRules);
+    _ = SetBingoRulesEnabled("Underground", requestedRules);
+    _ = OBSRequests.Scenes.SetCurrentProgramScene("sc_UFO 50 Rules").Send();
   }
 
   public static Task CloseRules()
