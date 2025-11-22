@@ -1,8 +1,6 @@
 using Nixill.OBSWS;
 using Nixill.Streaming.JoltBot.OBS;
 using Nixill.Streaming.JoltBot.Pipes;
-using Nixill.Utils;
-using Quartz.Xml.JobSchedulingData20;
 
 namespace Nixill.Streaming.JoltBot.Games.UFO50;
 
@@ -13,11 +11,27 @@ public static class BingoGameChanger
   internal static string[] LastGame = ["" /* unused */, "0", "0"];
   static bool[] GameOnScreen = [false /* unused */, false, false];
 
+  internal static UFO50DraftMode DraftMode = UFO50DraftMode.None;
+
   static string[][] GameFrames = [
     [ /* this array intentionally left blank */ ],
     [.. Enumerable.Repeat("blank", 51)],
     [.. Enumerable.Repeat("blank", 51)]
   ];
+
+  public static async Task GameButtonPressed(int game, bool terminal)
+  {
+    if (DraftMode != UFO50DraftMode.None) await BingoDraftController.DraftGamePressed(game, LastPlayerChanged, DraftMode);
+    else await SwitchToGame(game, terminal);
+  }
+
+  public static async Task DraftModeButtonPressed(string mode)
+  {
+    if (Enum.TryParse(mode, true, out UFO50DraftMode newMode))
+    {
+      DraftMode = newMode;
+    }
+  }
 
   public static async Task SwitchToGame(int game, bool terminal)
   {
@@ -136,4 +150,12 @@ public static class BingoGameChanger
       [.. Enumerable.Repeat("blank", 51)]
     ];
   }
+}
+
+public enum UFO50DraftMode
+{
+  None = 0,
+  Pick = 1,
+  Protect = 2,
+  Ban = 3
 }
